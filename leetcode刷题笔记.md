@@ -226,7 +226,7 @@ int[][] arr = new int[3][2];
 int row = arr.length;
  
 	//  arr[i].length 得到对应的 每个一维数组的长度，也就是"列" 
-	int col = arr[0].length
+	int col = arr[0].length;
 
 
 
@@ -380,7 +380,7 @@ String str = "Hello sb six boy";
 		// 我们仍要 按照 空格 分隔，并且 当有 多个空格 的时候，我们也是 能 只分割 单词
 
 		// + 加号 的话就是，会 按照1个或者多个 空格 对 单词进行 分割 
-		// //  返回的就会是 我们想要的答案 了 ["Hello","sb"] 
+		//   返回的就会是 我们想要的答案 了 ["Hello","sb"] 
         String[] split = str.split(" +");
 ```
 
@@ -1034,6 +1034,31 @@ Map<Integer,Integer> maps=new HashMap<>();
         System.out.println(list); // 此时 对list 排序好之后变为 [3=1, 2=2, 4=3, 1=5, 5=6]
 ```
 
+
+
+### 为数组中的元素映射 累加次数
+
+```java
+		
+		int[] nums = new int[]{1,2,3,1,3,5,0,2};
+	
+		// 给数组中的 每个数字 ，记录它们出现的次数 
+        HashMap<Integer,Integer> map = new HashMap<>();
+
+        for(int i=0;i<nums.length;i++){
+            
+           // 1. getOrDefault(nums[i],0) 方法很关键！！如果第一次查询到这个元素的时候，不存在 map集合中，那么这个方法返回的是 0 
+          //  如果之后又遇到 它这个元素 的话，那么就是直接返回之前它的 value值
+            
+            // 2.不管是哪种情况，都要在 getOrDefault(nums[i],0)的后面 +1 ，因为要累加次数 
+   // 记得要把它们放在 put()方法 其实就是通过覆盖 原来的key，通过累加+1，达到  更新次数 的效果
+  		map.put(nums[i],map.getOrDefault(nums[i],0)+1);
+            		
+        }
+```
+
+
+
 ## Stack 栈的方法
 
 “**先进后出**”的
@@ -1363,35 +1388,60 @@ int c = Math.min(a,b);
 
 ### 704 二分查找
 
+#### 二分查找
+
+题目描述：
+
+```
+给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。
+
+
+示例 1:
+
+输入: nums = [-1,0,3,5,9,12], target = 9
+输出: 4
+解释: 9 出现在 nums 中并且下标为 4
+示例 2:
+
+输入: nums = [-1,0,3,5,9,12], target = 2
+输出: -1
+解释: 2 不存在 nums 中因此返回 -1
+```
+
 题解 ：https://leetcode.cn/problems/binary-search/solutions/6700/hua-jie-suan-fa-704-er-fen-cha-zhao-by-guanpengchn/
 
-#### 暴力
-
 ```java
+
 // "二分查找"的前提是 ----> 有序 
 
-// 这道题 --》可以当 模板了。
 class Solution {
     public int search(int[] nums, int target) {
          
         int left = 0 , right = nums.length-1;
         	 
         //因为是 “左闭右闭” 原则 , 所以是  带等号的 <=
-        
         while(left <= right){
            
             
              int mid = (left + right)/2;
-            if(nums[mid]>target)
-                //  high 下标要更新成  mid-1 了
-                right = mid - 1;
-            else if (nums[mid]<target)
-                // low 下标 要更新成 mid+1 了
-                left = mid + 1;
-            else
+            //说明找到了，直接 return 
+            if(nums[mid]==target)
                 return mid;
+            
+            
+            if(target<nums[mid])
+     //  当这个target 元素小于mid的元素，说明target在左半边，right 下标要更新成  mid-1 了
+                right = mid - 1;
+            
+            else 
+     // 当这个target 元素大于 mid的元素，说明target在右半边， left 下标 要更新成 mid +1 了
+                left = mid + 1;
+            
+            	
 
         }
+        
+        // 执行完 while 循环，也没找到，直接 return -1 。
         return -1;
 
     }
@@ -1400,12 +1450,33 @@ class Solution {
 
 ### 35 搜索插入位置
 
-#### 暴力
+#### 二分查找
+
+题目描述：
+
+```
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 O(log n) 的算法。
+
+ 
+
+示例 1:
+
+输入: nums = [1,3,5,6], target = 5
+输出: 2
+示例 2:
+
+输入: nums = [1,3,5,6], target = 2
+输出: 1
+```
 
 题解：https://leetcode.cn/problems/search-insert-position/solutions/8017/hua-jie-suan-fa-35-sou-suo-cha-ru-wei-zhi-by-guanp/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
 // "二分查找"的前提是 ----> 有序 
+// 这道题 建立在“二分查找”的基础上的 
+
 class Solution {
     public int searchInsert(int[] nums, int target) {
          
@@ -1417,29 +1488,26 @@ class Solution {
            
             
              int mid = (left + right)/2 ;
-            if(nums[mid]>target)
-                //  high 下标要更新成  mid-1 了
-                right = mid - 1;
-            else if (nums[mid]<target)
-                // low 下标 要更新成 mid +1 了
-                left = mid + 1;
-            else
+           if(nums[mid]==target)
                 return mid;
+            
+            
+            if(target<nums[mid])
+     //  当这个target 元素小于mid的元素，说明target在左半边，right 下标要更新成  mid-1 了
+                right = mid - 1;
+            
+            else 
+     // 当这个target 元素大于 mid的元素，说明target在右半边， left 下标 要更新成 mid +1 了
+                left = mid + 1;
 
-        }
-      		  // 必须是返回 left。只需要改动这个地方！！！具体原因如下 ：
+        }	 	
+         				// 主要是这行代码，很重要 ！！！
         		return left;
+        
  	 /*** 
-          *  以上while循环中，若找到了target直接返回
-
-          *  当原数组不包含target时，考虑while循环最后一次执行的总是 left=right=mid,
-
-          *  此时nums[mid] 左边的数全部小于target，nums[mid]右边的数全部大于target,
-
-          *  则此时我们要返回的插入位置  分为两种情况：
-
-          *  ①是该位置的右边一个，即nums[mid]<target时，此时执行了left=mid+1,返回left也正确
-          *  ②就是这个位置，即nums[mid]>target时，此时执行了right=mid-1，返回left正确
+        可以返回 right + 1，也可以返回 left 的原因： 
+        因为循环的最后一步一定是left==right，如果导致这个循环打破只有两个原因，要么是right = mid - 1导致left>right，说明我们要插入的元素位置应该是小于mid元素。这种情况也就导致了right的最终下标相对我们要插入的元素位置是左移的，所以最后的位置应该是right + 1； 
+        要么是left=mid +1，导致的 left >right，说明我们要插入的元素位置应该是大于mid元素的。这就说明left的最终位置是相对插入元素右移了一位，因为本身插入的元素就应该右移，所以只需要返回left即可
            
            ***/
 
@@ -1451,14 +1519,39 @@ class Solution {
 
 ### 34 在排序数组中查找元素的第一个和最后一个位置
 
-#### 暴力
+#### 二分查找
+
+题目描述：
+
+```
+给你一个按照非递减顺序排列的整数数组 nums，和一个目标值 target。请你找出给定目标值在数组中的开始位置和结束位置。
+
+如果数组中不存在目标值 target，返回 [-1, -1]。
+
+你必须设计并实现时间复杂度为 O(log n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [5,7,7,8,8,10], target = 8
+输出：[3,4]
+示例 2：
+
+输入：nums = [5,7,7,8,8,10], target = 6
+输出：[-1,-1]
+```
 
 题解：https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/solutions/536360/yi-wen-dai-ni-gao-ding-er-fen-cha-zhao-j-ymwl/?envType=study-plan-v2&envId=top-100-liked
 
-这个题解很长，你自己往下滑就行
+往下滑，有对应的
 
 ```java
-// 定义两个方法，也就是进行 两次 二分查找 
+
+// 主要思想 ：  相比于之前的 二分查找(真正的递增有序)，本题目是 非递减，其实也就是类似 递增“有序”，也就是里面的一些  元素会重复！！如果此时我们的 nums[mid] = target ,但是我们不能确定 mid 是否为该目标数的左边界，所以此时我们不可以返回下标。所以就是要把判断  == 和 < 一起合并，继续在左半区间 查询。 == 和 > 的也类似 。。。。
+
+// 定义两个方法，也就是进行 两次 “二分查找”，，，分别找 下边界 和上边界 。。。。
+
 class Solution {
 
     public int[] searchRange (int[] nums, int target) {
@@ -1467,11 +1560,12 @@ class Solution {
          int upper = upperBound(nums,target);   // 找 上边界 的方法 
          
 
-      //  也就是如果  upper 小于 low 的话，就说明没找到。。此时就要返回 [-1,-1]
+      //  也就是如果  upper 小于 low 的话，就说明没找到 target元素。。此时就要返回 [-1,-1]
          if (upper < low) {
              return new int[]{-1,-1};
          }
-
+			
+     //  其他情况的话， 如果 ==，那么就只有一个元素， > 就说明 target存在多个，有上下边界
          return new int[]{low,upper};
     }
 
@@ -1484,11 +1578,12 @@ class Solution {
         while (left <= right) {
             
             int mid = (left + right)/2;
-            			
+           	
+            
             if (target <= nums[mid]) 
                 
                    // 小于的时候，此时要 带上 = 
-                //当目标值 小于等于 nums[mid]时，继续在左区间检索，找到第一个数
+                //当目标值 小于等于 nums[mid]时，继续在左区间查询
                 right = mid - 1;
 
             else if (target > nums[mid]) 
@@ -1496,13 +1591,14 @@ class Solution {
                 left = mid + 1;
             
         }
-        			// 这里的话返回 left 
+        
+       //此时跳出while 循环的时候，left 指向的下标刚好是我们的下边界，所以return left 
         return left;
         
     }
     
     
-    //  计算上边界，此时里面的 2处地方 和上面的方法， 就是，相反的改动 
+    //  计算上边界， 和上面的求 上边界， 里面的代码 就是相反的改动 
     int upperBound(int[] nums, int target) {
         
         int left = 0, right = nums.length - 1;
@@ -1512,14 +1608,15 @@ class Solution {
             int mid = (left + right)/2;
             
             		      //  大于的时候，此时要 带上 = 
-            		//当目标值 大于等于 nums[mid]时，继续在左区间检索，找到第一个数
+            		//当target目标值 大于等于 nums[mid]时，继续在右区间查询
             if (target >= nums[mid]) 
                  left = mid + 1;               
             else if (target < nums[mid]) 
                 right = mid - 1;
                      
         }
-        			// 这里的话返回 right
+    
+   //此时跳出while 循环的时候，right 指向的下标刚好是我们的上边界，所以return right 
         return right;
     
     }
@@ -1531,63 +1628,80 @@ class Solution {
 
 ### 33 搜索旋转排序数组
 
-#### 暴力
+#### 二分查找
 
-题解：https://leetcode.cn/problems/search-in-rotated-sorted-array/solutions/221435/duo-si-lu-wan-quan-gong-lue-bi-xu-miao-dong-by-swe/    方法2更好理解一点
+题目描述 ：
+
+```
+整数数组 nums 按升序排列，数组中的值互不相同 。
+
+在传递给函数之前，nums 在预先未知的某个下标 k（0 <= k < nums.length）上进行了 旋转，使数组变为 [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]（下标从0开始  计数）。例如， [0,1,2,4,5,6,7] 在下标 3 处经旋转后可能变为 [4,5,6,7,0,1,2] 。
+
+给你旋转后的数组 nums 和一个整数 target ，如果 nums 中存在这个目标值 target ，则返回它的下标，否则返回 -1 。
+
+示例 1：
+
+输入：nums = [4,5,6,7,0,1,2], target = 0
+输出：4
+示例 2：
+
+输入：nums = [4,5,6,7,0,1,2], target = 3
+输出：-1
+```
+
+题解：https://leetcode.cn/problems/search-in-rotated-sorted-array/solutions/221435/duo-si-lu-wan-quan-gong-lue-bi-xu-miao-dong-by-swe/    思路2更好理解一点
 
 ```java
-// 这道题 的话，就是有点不一样，因为 数组并不是完全有序的，只是两边 是有序的。
-// 所以要先判断 target是在 左半段 还是 右半段
+
+// 这道题 的话，就是有点不一样，因为 数组并不是完全有序的，只是 两边 是有序的。
+//主要思想：先根据 nums[mid] 与 nums[lo] 的关系判断 mid 是在左段还是右段，接下来再判断 target 是在 mid 的左边还是右边，从而来调整左右边界 left 和 right 。。
+//举个例子 nums = [4,5,6,7,8,9,0,1,2]  ，target =5 ，nums[mid]对应元素 8 大于 nums[left]元素 4 ，所以在左半段。然后 target 是5 小于 8，那么继续缩小范围，去left 和 mid-1的区间查找 
+
+
 class Solution {
     
-    // 大致的 二分查找的代码模板，还是在的
     public int search(int[] nums, int target) {
         
-        int left = 0, right = nums.length - 1;
+    	int left = 0, right = nums.length - 1, mid = 0;
         
-        while (left <= right) {
+    while (left <= right) {
+        
+        	mid = (left+right)/2;
+        if (nums[mid] == target) {
+            return mid;
+        }
+
+        
+        // 先根据 nums[mid] 与nums[left]的关系判断 mid 是在 左段还是右段
+        	  // 如果  mid 对应的元素值 大于  left 的值，就说明 mid 在左半段 
+        if (nums[mid] >= nums[left]) {
             
-            int mid = (left + right)/2;
-            
-            
-            // 就是 比之前多了这个 --->if  else 的判断 
-            
-            // 1.1先根据 nums[0] 与 target 的关系，判断target目标值是在左半段还是右半段
-            // 如果target的值大于 nums[0]，就说明在 左半段。。这个很容易能理解的
-            if (target >= nums[0]) {
-                
-               //  细节1 ---->这里的话 上面是>=,里面的话就是 < 。因为你这么思考一下，如果是<=的话，也就是说nums[mid]等于 nums[0]的时候，那么其实 mid就是在左半段的了。。。所以必须严格小于<，这样mid 才会 是 右半段
-                
-                // 1.2  然后还要判断 mid 下标 在  左半段还是右半段
-      // 如果mid的元素小于 nums[0]，说明 mid 在右半段，则将 mid 索引的值改成 inf整数最大值，以便在后续比较中忽略 右半段的值。
-                if (nums[mid] < nums[0]) {
-                    nums[mid] = Integer.MAX_VALUE;
-                }
-                
-            } 
-            
-            //同理， target目标值在右半段时，若 mid 在左半段，则将 mid 索引的值改成 -inf，以便在后续比较中忽略  左半段的那些值。
-            else {
-                		//  细节1 ---->这里的话 上面是<,里面的话就是 >= 。因为 当 nums[mid]等于 = nums[0]的时候，也是属于 左半段的，所以这里可以带等号=
-                if (nums[mid] >= nums[0]) {
-                    nums[mid] = Integer.MIN_VALUE;
-                }
+              // 再判断 target是在 mid的左边还是右边，从而调整左右边界left和right
+             //  注意，这里面的 话 target 严格 小于< ，因为要不断调整 left 和 right
+            if (target >= nums[left] && target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
             }
-			
+
             
-            if (nums[mid] == target) {
-                return mid;
-            }
-            
-            else if (nums[mid] < target) {
+        } 
+        
+        //  说明在右段，思路类似
+        else {
+            if (target > nums[mid] && target <= nums[right]) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
-        
-        return -1;
     }
+
+			
+  			  return -1;
+}
+
+
 }
 
 
@@ -1597,25 +1711,42 @@ class Solution {
 
 ### 153 寻找旋转排序数组中的最小值
 
-#### 暴力
+#### 二分查找
+
+题目描述：
+
+```
+已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
+若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]
+
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 
+
+给你一个元素值互不相同的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的最小元素 。
+
+示例 1：
+
+输入：nums = [3,4,5,1,2]
+输出：1
+解释：原数组为 [1,2,3,4,5] ，旋转 3 次得到输入数组。
+```
 
 题解：https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/solutions/134812/yi-wen-jie-jue-4-dao-sou-suo-xuan-zhuan-pai-xu-s-3/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
 // 这道题 也是 非完全有序的 ，也是左半段，右半段才有序 。
-// 这道题是 搜索最小值min，并不是 搜索目标值 target，不需要 if(nums[mid]==target)语句
+// 这道题是 搜索最小值min，并不是 搜索目标值 target，不需要 if(nums[mid]==target)语句....
 
 class Solution {
-    // 但是 二分查找 的代码模板大差不差。
+    
+    
     public int findMin(int[] nums) {
         
         int left = 0, right = nums.length - 1;
         
         while (left <= right) {
             
-            // 就是 这里要每次先加上 这句if 判断。。。但是它很重要！！用于一直缩小区间之后的，  最终找到最小值 进行返回 return 的
-            
-          // 一直缩小左、右区间。直到 left,right 的左右区间里面的数组 是 完全有序 的时候，那么nums[left]的值就是最小值 ！！
+           
+          // 1.一直缩小 左、右区间。直到 left,right 的左右区间里面的数组 是 完全有序 的时候，那么nums[left]的值就是最小值 ！！
             if (nums[left] <= nums[right]) {
                 return nums[left];
             }
@@ -1623,19 +1754,21 @@ class Solution {
             
            int mid = (left + right)/2;
             
+           // 2.这里就是开始 缩小  左、右边界的 判断了。。。。
+         
             
-          //  若 nums[left] <= nums[mid]，说明区间 [left,mid] 连续递增，则最小元素一定不在这个区间里，可以直接排除。因此，令 left = mid+1，在 [mid+1,right] 继续查找
+          //  2.1若 nums[left] <= nums[mid]，说明区间 [left,mid] 连续递增，则最小元素一定不在这个区间里，可以直接排除。因此，令 left = mid+1，在 [mid+1,right] 继续查找
             if (nums[left] <= nums[mid]) 
                 left = mid + 1;
             
             
-         // 否则，说明区间 [left,mid] 不连续，则最小元素一定在这个区间里。因此，令 right = mid，在 [left,mid] 继续查找 !!!这里的话 right 必须赋值 mid，而不是mid-1。。因为 mid也是可能的
+         // 2.2否则，说明区间 [left,mid] 不连续，则最小元素一定在这个区间里。因此，令 right = mid，在 [left,mid] 继续查找!!这里的话 right 必须赋值 mid，而不是mid-1。。因为 mid无法被排除!比如 说 mid指向的值可能就是 右边的最小值呢？所以 right 必须改成 mid ！！！
             else 
                 right = mid;
 
         }
    
-// 这个返回值实际上永远不会被触发，因为输入数组总是有一个最小值，所以只是为了 让 leetcode编译器通过而已。。。。        
+// 这个返回值实际上永远不会被触发，因为输入数组总是有一个最小值，所以只是为了 让  编译器通过而已。。        
         return -1; 
         
     }
@@ -1648,34 +1781,42 @@ class Solution {
 
 #### 暴力
 
-题解：https://leetcode.cn/problems/median-of-two-sorted-arrays/solutions/259086/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/?envType=study-plan-v2&envId=top-100-liked  这道题太难，所以采用 时间复杂度 O（m+n）的暴力算法了。。。。。。。
+题目描述：
+
+```
+给定两个大小分别为m和n的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的中位数 。
+
+算法的时间复杂度应该为 O(log (m+n)) 。
+
+示例 1：
+
+输入：nums1 = [1,3], nums2 = [2]
+输出：2.00000
+解释：合并数组 = [1,2,3] ，中位数 2
+
+示例 2：
+
+输入：nums1 = [1,2], nums2 = [3,4]
+输出：2.50000
+解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5
+```
+
+题解：https://leetcode.cn/problems/median-of-two-sorted-arrays/solutions/259086/er-fen-fa-duo-yu-yan-javajs4-xun-zhao-liang-ge-zhe/?envType=study-plan-v2&envId=top-100-liked  直接看 暴力解法
 
 ```java
+ // 1.先把 nums1 和 nums2 这两个数组 合并成 一个有序的数组 
+// 2.然后再计算 中位数，就比较方便了 。。。。 
+// 时间复杂度 是O(m+n)
+
 class Solution {
+    
       public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         
-        // 合并两个数组为一个新的排序数组，调用下面写好的 合并数组函数，得到第3个数组。
-        int[] newArr = mergeTwoSortedArray(nums1, nums2);
-        int n = newArr.length; // 新数组的长度
-
-        // 如果新数组的长度是偶数
-        if (n % 2 == 0) {
-            // 计算偶数长度数组的中位数，即中间两个数的平均值
-            return (double) (newArr[n / 2] + newArr[n / 2 - 1]) / 2;
-        } else {
-            // 如果新数组的长度是奇数
-            // 返回中间的数作为中位数
-            return (double) newArr[n / 2];
-        }
-    }
-
-   
-    private int[] mergeTwoSortedArray(int[] nums1, int[] nums2) {
-        
+      //1. 先合并 
         int m = nums1.length; // 第一个数组的长度
         int n = nums2.length; // 第二个数组的长度
         
-        int[] res = new int[m + n]; // 创建第三个的数组，来存储合并后的有序数组
+        int[] newArr = new int[m + n]; // 创建第三个的数组，来存储合并后的有序数组
         
         int i = 0; // 第一个数组的 索引
         int j = 0; // 第二个数组的 索引
@@ -1684,9 +1825,9 @@ class Solution {
    // 合并两个 nums1 和nums2 数组 ，这里的while循环条件是 i和j 遍历索引都小于自身长度，才循环
         while (i < m && j < n) {
             if (nums1[i] <= nums2[j]) {
-                res[idx++] = nums1[i++]; // 将较小的数放入结果数组，并移动索引
+                newArr[idx++] = nums1[i++]; // 将较小的数放入结果数组，并移动索引
             } else {
-                res[idx++] = nums2[j++]; // 将较大的数放入结果数组，并移动索引
+                newArr[idx++] = nums2[j++]; // 将较大的数放入结果数组，并移动索引
             }
         }
         	
@@ -1694,179 +1835,90 @@ class Solution {
 		
         // 如果第一个数组还有剩余元素，将它们添加到结果数组
         while (i < m) {
-            res[idx++] = nums1[i++];
+            newArr[idx++] = nums1[i++];
         }
 
         // 如果第二个数组还有剩余元素，将它们添加到结果数组
         while (j < n) {
-            res[idx++] = nums2[j++];
+            newArr[idx++] = nums2[j++];
         }
+          
+          
+          //  2. 然后再 计算 中位数 。。
+          
+        int length = newArr.length; 
 
-        return res; // 返回合并后的排序数组
+        // 如果 新数组的长度 是偶数，那么计算偶数长度数组的中位数，其实是 中间两个数的平均值
+        if (length % 2 == 0) {
+            return (double) (newArr[length/2] + newArr[length/2 -1])/2;
+        }        
+          
+           // 如果新数组的长度是奇数， 返回中间的数作为中位数
+      	else {
+                return (double) newArr[length/2];
+        }
     }
+
 }
 ```
 
 
-
-
-
-### 27 移除元素
-
-#### 暴力
-
-题解：https://leetcode.cn/problems/remove-element/solutions/376992/27-yi-chu-yuan-su-bao-li-jie-fa-shuang-zhi-zhen-ji/
-
-```java
-class Solution {
-    public int removeElement(int[] nums, int val) {
-
-        
-        int size = nums.length;
-        
-      		// 两重循环,外层循环 一般下标 是 i ，主要是 遍历数组 
-        for(int i=0;i < size;i++){
-
-            if(nums[i]==val){
-                
-                // 内层循环 一般下标是 j ，主要是 移除元素 ，将后面的元素 向前移 ,其实就是 “覆盖”元素
-                 // j 是从 i+1 作为初始下标， 最大范围也是 小于< size 
-                for(int j=i+1;j<size;j++){
-                    nums[j-1]=nums[j];
-                }   
-                
-       //  为什么要 i--,因为删除元素是通过 将后面的元素 一个个的向前移过来,所以原来的i位置已经是新的元素值了,也是有可能是 目标值val,又因为之后下一次循环i++,所以这样的话就又可以扫到 nums[i]这个元素了
-                    i--;
-                // 因为删除一个元素之后,长度就减少1 ,
-                    size--;
-            } 
-        }
-            return size;
-    }
-    
-}
-```
-
-#### 双指针快慢指针
-
-题解：https://leetcode.cn/problems/remove-element/solutions/376992/27-yi-chu-yuan-su-bao-li-jie-fa-shuang-zhi-zhen-ji/
-
-```java
-//注意 ！！！！这道题的要求是“原地”，也就是在原来的 nums 数组里面进行修改，不需要声明一个 新 的 数组！
-class Solution {
-    public int removeElement(int[] nums, int val) {
-        
-         // 定义的 快慢指针 
-        int slow = 0,fast=0;
-        
-         int size  = nums.length;
-        	
-        while(fast<size){
-            
-   // 为什么if判断 是不等于 val 。因为 要删除的是 val元素，所以 最终数组剩下的元素中 就没有 val 了
-   // fast快指针 在前面“探路”的时候， 所以遇到的不是 val 的元素，就要让 slow 慢指针 维护的最终结果数组 进行更新，记得 还要让 slow  慢指针++，向右移动 
-            if(nums[fast]!=val){
-                nums[slow]=nums[fast];
-                slow++;
-            }
-
-            fast++;
-
-        }
-
-        // 其实 for循环结束后的 slow指向的下标就是 删除元素后 新数组的 长度  
-        //不确定的话 可以草稿纸画一下，代码里都试试 。到底是  slow+1 还是 slow
-        return slow;
-
-    }
-}
-```
 
 ### 26 删除排序数组中的重复项
 
 #### 双指针快慢指针
 
+题目描述：
+
+```
+给你一个 非严格递增排列 的数组 nums ，请你原地删除重复出现的元素，使每个元素只出现一次 ，返回删除后数组的新长度。元素的相对顺序应该保持一致 。然后返回 nums 中唯一元素的个数。
+
+
+示例 1：
+
+输入：nums = [1,1,2]
+输出：2, nums = [1,2,_]
+解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修改为 1, 2 。不需要考虑数组中超出新长度后面的元素。
+
+```
+
 题解 ：https://leetcode.cn/problems/remove-duplicates-from-sorted-array/solutions/34033/shuang-zhi-zhen-shan-chu-zhong-fu-xiang-dai-you-hu/
 
 ```java
-//注意 ！！！！这道题的要求是“原地”，也就是在原来的 nums 数组里面进行修改，不需要声明一个 新 的 数组！
+// 注意 ！！！这道题的要求是“原地” 修改，也就是在原来的 nums 数组里面进行修改，不需要声明一个新的 数组！！！
+// 数组是“有序” 的，那么重复的元素一定会 相邻--->这个是 前提条件。所以比较适合用 双指针，"快慢指针"
+ 
 class Solution {
     
-    // 数组是“有序” 的，那么重复的元素一定会 相邻，所以比较适合 用快慢指针。那个是前提条件。
-      // 但是基本上给你的 就是 有序 数组。如果无序的话，就要先数组进行排序 
     public int removeDuplicates(int[] nums) {
-
 			
         	// 快慢指针，都从 下标 0 开始 
             int slow=0;
             int fast=0;
+        
             int size= nums.length;
            
-            // 双指针的时候 ，模板都是 用 while循环来写的
+           
             while(fast<size){
                 
-				// 当元素不相同的时候,就需要删除元素，也就是 “覆盖”
-                if(nums[fast]!=nums[slow]){
-                    
-  // 这里切记!!因为数组的第1个元素永远是不重复的
-      //所以更新数组的时候就应该从下标 1 开始更新,要先放到slow+1的位置 ，然后再 对slow++ 慢指针后移
-                     // 具体为什么这样，到时候你可以在 草稿纸上 进行打草稿，画一画，就知道了
+		//	比较 慢指针slow 和 快指针fast 位置的元素是否相等。。如果相等，快指针fast后移 1 位
+                if(nums[fast]==nums[slow])
+                    	fast++;
+                
+        // 如果不相等，将 fast 位置的元素复制到 slow+1 位置上，fast 后移一位，slow 后移 1 位
+                else{  
                     
                     nums[slow+1]=nums[fast];
                     slow++;
+                    fast++;
+                    
                 }
-                
-                fast++;
-  
+                	
             }
         
-
-        	
-       // 其实 这个不是那么的纠结，因为最后的 话 无非 就是返回 slow 或者 slow+1
-        // 可以代码里都 运行试试，哪个通过 就用哪种 
+       				// 因为数组的长度是 末尾下标+1 。。。
             return slow+1;
         
-    }
-}
-```
-
-
-
-
-
-### 977 有序数组的平方
-
-
-
-#### 暴力
-
-题解 ：[https://leetcode.cn/problems/squares-of-a-sorted-array/solutions/875421/dai-ma-sui-xiang-lu-shu-zu-ti-mu-zong-ji-1rtz/](https://leetcode.cn/problems/squares-of-a-sorted-array/solutions/875421/dai-ma-sui-xiang-lu-shu-zu-ti-mu-zong-ji-1rtz/)
-
-```java
-	// 注意 ！！！！这道题的要求是 需要 声明一个   “新”   数组！！ 所以 不修改原来   nums 数组
-class Solution {
-public int[] sortedSquares(int[] nums) {
-            
-           
-    	
-    	    int size = nums.length;
-    
-   			 // 因为要 返回一个 "新" 数组，所以 就要声明 result 这个  新  数组 ！！  
-            // 而且 长度需固定 ， 和原数组 一样 length
-    
-            int[] result = new int[size];
-    		
-    				
-            for(int i=0;i<n;i++){
-                
-                result[i]=nums[i]*nums[i];
-               
-            }
-    
-             // 可以 调用java的  内置 排序  方法   的！！！！！
-             Arrays.sort(result);
-
-             return result;
     }
 }
 ```
@@ -1875,19 +1927,37 @@ public int[] sortedSquares(int[] nums) {
 
 #### 滑动窗口
 
+题目描述：
+
+```
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其总和大于等于 target 的长度最小的子数组[numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+ 
+
+示例 1：
+
+输入：target = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+```
+
 题解 ：
 
 https://leetcode.cn/problems/minimum-size-subarray-sum/solutions/1706223/by-carlsun-2-iiee/
 
 ```java
+// 就是使用 “滑动窗口”的思想去做 这道题
+// 定义两个while循环，外层循环的，right 右边界一直向右移动
+//  当满足题目条件的时候， sum>= target，就执行while内层循环，left左边界 一直向右收缩，窗口缩小，在里面不断比较 result ，记录 最小的长度
+
 class Solution {
     public int minSubArrayLen(int target, int[] nums) {
         
   // 因为要对 最终结果result 不断比较 和 更新，求数组长度的最小值。所以初始值一般是 Integer.MAX_VALUE 
             int result = Integer.MAX_VALUE;
         
-            // 子数组的长度
-            int sublength = 0;
         
         // 子数组的数值之和
             int sum =0;
@@ -1898,32 +1968,30 @@ class Solution {
             // 滑动窗口的左指针 left 
             int left=0;
               
+        		// 右指针 right 没有到数组末尾，就一直 while 循环下去
            while(right<nums.length){
                
-				 // 先向右扩展窗口，所以只需要移动right指针
+		 // 先向右扩展窗口，所以只需要移动right指针，每次移动都要累加，当前所指元素的值 
                 sum+=nums[right];
                
-                	// 当满足条件的时候，就要开始对 左指针 left 向右移动，开始缩小窗口 
+              // 当满足 题目条件 的时候，就要开始对 左指针 left 向右移动，开始缩小窗口 
                 while(sum>=target){
-  				//  求子数组的长度的时候，要不要+1，可以通过草稿纸 画图 ，就能知道
-                 sublength = right-left+1;
-                    
-   //因为是套 代码模板的，这道题是 求最“短”。所以更新结果result 的操作，应该是在 内层while循环 里面执行  
-           result = Math.min(result,sublength);
-                    
-                    
-                 //  这里体现出“滑动窗口”的精髓之处，左指针 left 不断向右移动，开始缩小窗口 
-                 
+  						    
+   //这道题是 求最“短”。当满足条件，就要在 内层while循环 更新结果 result 的操作 
+                    //  求子数组的长度，记得 +1
+          		 result = Math.min(result,right-left+1);
+                           
+         //这里体现出“滑动窗口”的精髓之处，左指针 left 不断向右移动，开始缩小窗口，也就是要把之前添加过的求和元素，把它移除！！！
                  sum-=nums[left];
 				 left++;
                 }
 		
-        // 切记要对 右指针right++ ，因为 右边指针的话只会不断的向右移动 ，这个是根据题目而变化
+        // 切记要对 右指针right++ ，因为 右边指针的话只会不断的向右移动
                 right++;
 
-
             }
-			  // 如果result没有被赋值的话，就返回0，说明没有符合条件的子数组 
+        
+			  // 如果result没有被赋值的话，就返回0，说明 没有符合条件 的子数组 
             return result==Integer.MAX_VALUE?0:result;
             
     }
@@ -1936,55 +2004,78 @@ class Solution {
 
 #### 暴力
 
-题解：[https://leetcode.cn/problems/spiral-matrix-ii/solutions/12594/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/](https://leetcode.cn/problems/spiral-matrix-ii/solutions/1706277/by-carlsun-2-72fa/)
+题目描述：
+
+```
+给你一个正整数 n ，生成一个包含 1到n2 所有元素，且元素 按顺时针 顺序螺旋排列的 n x n 正方形矩阵 matrix 。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20241005165415162.png" alt="image-20241005165415162" style="zoom:33%;" />
+
+题解：https://leetcode.cn/problems/spiral-matrix-ii/solutions/12594/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/
 
 ```java
+/** 填充上行从左到右→
+    填充右列从上到下↓
+    填充下行从右到左←
+    填充左列从下到上↑
+    由外向内一圈一圈这么画下去。
+ 
+**/
+// 先定义 当前 左右 、上下边界 
+// while最外层的循环 必须是 小于<= 终止值 target  ...
 
 class Solution {
 public int[][] generateMatrix(int n) {
-
-       
-   //  先定义 当前 左右、上下边界
+	
+       int[][] res = new int[n][n];
+  			 //  先定义 当前 左右 、上下边界
         int left = 0, right = n-1, top = 0, bottom = n-1;
+    			
+          // num 用来给 matrix矩阵的每一个空格 赋值，迭代终止值 target，也就是 n的平方
+        int num = 1, target = n * n;
     
-        int count = 1, target = n * n;
     
-        int[][] res = new int[n][n];
+       // 使用num <= tar，而不是l < r || t < b作为迭代条件。。。
+    // 主要是为了解决当 n为奇数时，是为了解决当 n为奇数时，矩阵中心数字 无法在迭代过程中 被填充
     
-        //for循环中变量定义成i或j的细节：按照通常的思维，i代表行，j代表列
-    
-        //这样，就可以很容易区分出来变化的量应该放在[][]的第一个还是第二个
-    
-        //对于变量的边界怎么定义：
-            //从左向右填充：填充的列肯定在[left,right]区间
-            //从上向下填充：填充的行肯定在[top,bottom]区间
-            //从右向左填充：填充的列肯定在[right,left]区间
-            //从下向上填充：填充的行肯定在[bootom,top]区间
-    
-        //通过上面的总结会发现边界的起始和结束与方向是对应的
-        while(count <= target){
+        while(num <= target){
             
-            //从左到右填充，相当于缩小上边界
-            for(int j = left; j <= right; j++) res[top][j] = count++;
-            //缩小上边界
+            //从左到右填充，相当于缩小上边界 top
+            for(int j = left; j <= right; j++) 
+            {
+                res[top][j] = num++;
+            }
+            //top 缩小上边界
             top++;
             
-            //从上向下填充，相当于缩小右边界
-            for(int i = top; i <=bottom; i++) res[i][right] = count++;
-            //缩小右边界
+            //从上向下填充，相当于缩小右边界 right
+            for(int i = top; i <=bottom; i++) 
+            {
+                res[i][right] = num++;
+            }
+            //缩小右边界 right
             right--;
             
-            //从右向左填充，相当于缩小下边界
-            for(int j = right; j >= left; j--) res[bottom][j] = count++;
-            //缩小下边界
+            //从右向左填充，相当于缩小下边界 bottom 
+            for(int j = right; j >= left; j--) 
+            {
+                res[bottom][j] = num++;
+            }
+            //缩小下边界 bottom
             bottom--;
             
-            //从下向上填充，相当于缩小左边界
-            for(int i = bottom; i >= top; i--) res[i][left] = count++;
-            //缩小左边界
+            //从下向上填充，相当于缩小左边界 left 
+            for(int i = bottom; i >= top; i--) 
+            {
+                res[i][left] = num++;
+            }
+            //缩小左边界 left
             left++;
+            
         }
-        return res;
+    
+                    return res;
 }
     
 }
@@ -1994,10 +2085,19 @@ public int[][] generateMatrix(int n) {
 
 #### 暴力
 
+题目描述：
+
+```
+给你一个 m 行 n 列的矩阵 matrix ，请按照顺时针螺旋顺序 ，返回矩阵中的所有元素。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20241005165138929.png" alt="image-20241005165138929" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/spiral-matrix/solutions/658573/dong-hua-mo-ni-yi-xia-jiu-neng-gao-dong-i27qf/
 
 ```java
-
+//通过左右边界，上下边界，一步步循环，从左到右遍历 →，从上到下遍历 ↓，从右到左遍历 ←，从下到上遍历↑
+// 然后 每次都要判断一下 左右边界、上下边界 是否 == ，这时候就要跳出while循环了。。
 
 class Solution {
     public List<Integer> spiralOrder(int[][] matrix) {
@@ -2010,7 +2110,7 @@ class Solution {
         int top = 0, down = matrix.length - 1;      // 上下边界
         
         // 开始螺旋遍历
-   // 这里的话就是先用一个 死循环 while(true)，然后配合 一些if条件 进行 break 跳出死循环。
+   //这里的话就是先用一个 死循环 while(true)，然后配合 一些if条件 进行 break 跳出死循环，就行。
         while (true) {
             
             
@@ -2018,16 +2118,16 @@ class Solution {
             for (int i = left; i <= right; i++) {
                 arr.add(matrix[top][i]);
             }
-            top++; // 上边界向下移动一行
-            if (top > down) break;     // 如果上下边界相遇，则退出循环
-            					// 从左到右遍历的话	和下面的从右到左 一样，if 条件都是 top > down 						
+            top++; // 上边界 top 向下移动一行
+            if (top > down) break;    // 如果 上下边界 相遇，则退出循环 break
+            				
             
             // 从上到下遍历并将元素添加到结果列表
             for (int i = top; i <= down; i++) {
                 arr.add(matrix[i][right]);
             }
-            right--; // 右边界向左移动一列
-            if (left > right) break; // 如果左右边界相遇，则退出循环
+            right--; // 右边界right 向左移动一列
+            if (left > right) break; // 如果左右边界相遇，则退出循环 break
             
             	// 从上到下遍历的话	和下面的从下到上 一样，if 条件都是 left > right 
             
@@ -2035,8 +2135,8 @@ class Solution {
             for (int i = right; i >= left; i--) {
                 arr.add(matrix[down][i]);
             }
-            down--; // 下边界向上移动一行
-            if (top > down) break; // 如果上下边界相遇，则退出循环
+            down--; // 下边界down 向上移动一行
+            if (top > down) break; // 如果上下边界相遇，则退出循环 break
             				
             
             
@@ -2046,10 +2146,11 @@ class Solution {
             }
             left++; // 左边界向右移动一列
             if (left == right) break; // 如果左右边界相遇，则退出循环
+        
         }
         
-        // 返回螺旋遍历的结果列表
-        return arr;
+                    // 返回 螺旋遍历的 结果列表集合arr
+                    return arr;
     }
 }
 
@@ -2061,20 +2162,38 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target  的那 两个 整数，并返回它们的数组下标。
+
+你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
+
+你可以按任意顺序返回答案。
+
+ 
+
+示例 1：
+
+输入：nums = [2,7,11,15], target = 9
+输出：[0,1]
+解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+```
+
 题解：
 
 [https://leetcode.cn/problems/two-sum/solutions/1980200/by-william_wsj-ucpl/](https://leetcode.cn/problems/two-sum/solutions/1980200/by-william_wsj-ucpl/)
 
 ```java
+// 暴力解法，双层 for 循环，一直去寻找。
+
 class Solution {
     
-    // 这道题目的话，用  暴力法  比较合适。主要是因为 要求它的 元素下标，而不是 元素值本身。
-                // 用 双指针的话，先排序，原来的下标就会打乱，不太好 
     public int[] twoSum(int[] nums, int target) {
 
-            //  因为 最后是返回 2个 数。所以 声明的长度 为 2
+          
             int[] result = new int[2];
-
+        
             // 暴力 解法 双层 for循环 
             for (int i = 0; i < nums.length; i ++) {
 
@@ -2086,14 +2205,12 @@ class Solution {
                         return result;
                     }
                 }
+                
 
             }
 
-    //  你可能会觉得奇怪，如果 双层  for循环跳出来之后，还是 没有 找到 2个数字 可以 相加 等于 target的话，最后返回的result数组 不就是 [0,0,]了吗？答案 不就不对了吗 ？ 你有这个想法 很正常  
-     //   但是 ，你仔细读一下题目，你就会发现，本题 只要给定一个 target，那么 它一定有解的， 也就是一定  能找到 2个数字相加为 target，然后返回它们的下标值  
-        
-        
-     // 因为 这里其实返回 result 就根本不会执行到这行代码，你写 return new int[]{1,2,3} 也可以的 
+  
+     // 因为 这道题说明了，肯定是有一个答案的。。。这里其实返回 result 就根本不会执行到这行代码。。主要是为了 leetcode的 编译通过。。。。
 
               return result;
 
@@ -2108,62 +2225,84 @@ class Solution {
 
 #### 哈希表set
 
+题目描述：
+
+```
+给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+示例 1：
+
+输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+解释：
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+注意，输出的顺序和三元组的顺序并不重要。
+示例 2：
+
+输入：nums = [0,1,1]
+输出：[]
+解释：唯一可能的三元组和不为 0 。
+示例 3：
+
+输入：nums = [0,0,0]
+输出：[[0,0,0]]
+解释：唯一可能的三元组和为 0 。
+```
+
 题解：[https://leetcode.cn/problems/3sum/solutions/12307/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/](https://leetcode.cn/problems/3sum/solutions/12307/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/)
 
 ```java
+// 主要思想就是，从头开始 每次固定一个 下标元素 a，然后在 从它的下一个元素 b 以及 末尾下标元素 c 作为 左右双指针->相向指针，不断向中间每次靠拢，去查找 三数之和。。。
+
+
 class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
-		
-        
-        //  这里取巧了，用的是 Set集合，可以“去重”！！！ 就不需要 再写 那些复杂的 判断 去重 的代码了
-      Set<List<Integer>> result = new HashSet<>();
-        
-        
-         //  要先 对数组 排序 ，有序， 这个是前提，这个为了后面使用 双指针-相向指针 。
-     		 Arrays.sort(nums);
+        // 这里用的是Set集合，可以对最终的答案集合“去重”元素！！！
+        Set<List<Integer>> result = new HashSet<>();
 
-        	
-        // 只不过 套模板的时候，这里外面还多了个 for循环，这个是特殊的地方。。。
-    // 这里只不过是 每次都固定住一个数字 a=nums[i]，其他的两个数字 b 和 c 就是作为双指针
-      for(int i =0;i<nums.length;i++){
 
-        // 每次 固定一个 新的 nums[i] 的时候，就要初始化默认 low 和 high 指针 ！
-     // low 是i的下一个元素 nums[i+1] ，high 当然永远是数组的最后一个元素 nums[nums.length-1]
-          int low = i+1;
-          int high = nums.length-1;
-        
-    
-          // 开始套双指针-相向指针的 代码模板了， while 循环 
-          while(low<high){
-                  
-                int sum = nums[i] +nums[low] + nums[high];
+        // 要先对数组排序 -->"有序"这个是前提!!!! 这样才能方便使用双指针（相向指针）。
+        Arrays.sort(nums);
 
-                if(sum<0)
-                    low++;
-                else if(sum>0)
-                    high--;
-              
-              // 如果 sum = 0 ,就说明找到了 一组解 a,b,c，把他们放在 list集合里面
-                else{
 
-            		result.add(Arrays.asList(nums[i],nums[low], nums[high]));     
-                    
-            // 这里的话也是比较特殊了，和双指针-双向指针 的代码模板不太一样的地方
-  // 如果不一起移动 low和high，那么 下一次循环的时候，low 和 high 还是 原来的值，还是原来的那组答案 
-                    // 所以这个是为了更新 下标，可以找 更多的解。不仅仅是 一组解就 return
-                		low++;
-                		high--;
+        // 在 "双指针"模板的基础上，这里外面还多了个for循环，这个是 特殊的地方！！！
+        // 这里只不过是每次都固定住一个数字a = nums[i]，其他的 两个数字 b和c就是作为 双指针
+        for (int i = 0; i < nums.length; i++) {
+            // 每次固定一个新的nums[i]的时候，必须重新初始化 left和right 指针！！！
+            // left是i的下一个元素nums[i + 1]，right当然永远是数组的最后一个元素nums[nums.length - 1]
+            int left = i + 1;
+            int right = nums.length - 1;
+
+            while (left < right) {
+                int sum = nums[i]+nums[left]+nums[right];
+
+                if (sum < 0)
+                    left++;
+                else if (sum > 0)
+                    right--;
+                // 如果sum = 0,就说明找到了一组解a,b,c，把他们放在list集合里面
+                else {
+                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+
+
+                   // 找到一组解之后，肯定是需要同时left和right每次都向中间移动一步。。更新下标
+                    left++;
+                    right--;
                 }
-              
-          }
+            }
+        }
 
-      }
-				//  这里取巧了，用的是 Set集合，可以去重 ！！！
-      //  既然  题目中要求的返回值 是list，那么还可以在new ArratList的()传入 set集合，转化为 list集合 ，最后返回，也是可以的
-            return new ArrayList<>(result);
-      }
 
+       // 题目中要求返回list集合，所以在new ArrayList的()传入set集合。。set转化为list集合就行
+        return new ArrayList<>(result);
     }
+}
+
 ```
 
 ### 18 四数之和
@@ -2175,106 +2314,49 @@ class Solution {
 题解：[https://leetcode.cn/problems/4sum/solutions/573011/shua-chuan-lc-pai-xu-shuang-zhi-zhen-jie-dqx7/](https://leetcode.cn/problems/4sum/solutions/573011/shua-chuan-lc-pai-xu-shuang-zhi-zhen-jie-dqx7/)
 
 ```java
-import java.util.*;
+// 在"三数之和"的基础上外层再 多加 for循环就行。。。
 
 class Solution {
-    
     public List<List<Integer>> fourSum(int[] nums, int target) {
-        
-        
+
+
         Set<List<Integer>> result = new HashSet<>();
-        
+
+
         Arrays.sort(nums);
-        
-        		// 只不过这里的要多定义一层 for循环了 ，其他思路 和 三数之和 一样 
+
+
+        // 只不过这里的要多定义一层for循环了，其他思路和三数之和一样
         for (int i = 0; i < nums.length; i++) {
-            
             for (int j = i + 1; j < nums.length; j++) {
-                
-                int low = j + 1;
-                int high = nums.length - 1;
-                
-                while (high > low) {
-                    
-                     //  为什么 要 这么做，因为 本题的 4个 整数 相加 超出 int 能表示的最大值 
-                    //  所以要强转 (long) 类型 ！！！
-      //  有时候  你做题的 时候 如果 感觉 逻辑都对的话，但是 只有2个 测试用例 不通过，往往可能是 int 类型 溢出了，所以要换成 long 类型 ！！！
-                    long sum = (long) nums[i] + nums[j] + nums[low] + nums[high];
+
+
+                int left = j + 1;
+                int right = nums.length - 1;
+
+
+                while (right > left) {
+
+
+                    // 为什么要这么做，因为本题的4个整数相加超出int能表示的最大值
+                    // 所以要强转(long)类型！！！
+                    long sum = (long) nums[i]+nums[j]+nums[left]+nums[right];
                     if (sum > target)
-                        high--;
-                    else if (sum < target) 
-                        low++;
+                        right--;
+                    else if (sum < target)
+                        left++;
                     else {
-                        result.add(Arrays.asList(nums[i], nums[j], nums[low], nums[high]));
-                        low++;
-                        high--;
+
+              result.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                        left++;
+                        right--;
                     }
                 }
             }
         }
+
+
         return new ArrayList<>(result);
-    }
-}
-
-```
-
-### 454 四数相加II
-
-#### 哈希表map
-
-题解 ：[https://leetcode.cn/problems/4sum-ii/solutions/65894/chao-ji-rong-yi-li-jie-de-fang-fa-si-shu-xiang-jia/](https://leetcode.cn/problems/4sum-ii/solutions/65894/chao-ji-rong-yi-li-jie-de-fang-fa-si-shu-xiang-jia/)
-
-```java
-
-//  所以 就想有没有优化的地方，2层 for 循环 并行 两次 ，O(n²) + O(n²) = O(n²) ，就可以通过了
-
-//  这题 不需要 “去重”！！！
-class Solution {
-    public int fourSumCount(int[] A, int[] B, int[] C, int[] D) {
-        
-        // 本题 和   “两数之和”  类似 ，因为求的是数组的 下标，而不是 元素值。。
-        //  并且要求出这样的答案共有几个，记录次数，所以还要用 map 遍历  
-        //  key 存放的是 A+B的和，而 value 存放的这次是  A+B 出现的次数 ，比较特殊 。。。
-        Map<Integer, Integer> map = new HashMap<>();
-        	
-        // res 变量 用于计数，统计 满足 题目条件的 解个数  
-        int res = 0;
-        
-        
-        // 第 一 个 2层 for 循环 ，先存储 A+B的和，并且 统计 次数 
-        for(int i = 0;i<A.length;i++){
-            for(int j= 0;j<B.length;j++){
-                
-                int sumAB = A[i]+B[j];
-                //  因为  很容易 和 是重复的，所以要在原有的 A+B的key值上覆盖，并且 出现次数 +1 
-                if(map.containsKey(sumAB)) 
-                    map.put(sumAB,map.get(sumAB)+1);
-                
-                //   如果 刚开始这个 A+B的值不存在，就默认出现1次 
-                else 
-                    map.put(sumAB,1);
-                
-            }
-        }
-		
- // 第 二 个 2层 for 循环 ，查找 C+D 的 相反数 ，也就是- (C+D) 是不是等于 == A+B的和，并且 统计 次数 ,记录res 
-        for(int i = 0;i<C.length;i++){
-            for(int j = 0;j<D.length;j++){
-                
-                //  比如 说 A+B = 6+6 =12 ，如果 C+D = (-6)+(-6) = -12 ,其实 这个就是 一组解，
-        	  // 如何 统计呢 ？ 只能  -(C+D) 的值 等于==  A+B ，如果 等于 就是满足 一个 解，
-                
-                
-                //   那么就是  res 要加上 原来 map中 A+B的 value 也就是 出现次数 
-                // 为什么加上 原来的 A+B的 value的次数作为res 的累加呢？因为sumCD只要一个满足条件的话，会和之前的sumAB出现的每一个组合都可以搭配，所以也就是有很多个答案
-                
-                int sumCD = -(C[i]+D[j]);
-                if(map.containsKey(sumCD))
-                   res += map.get(sumCD);
-                
-            }
-        }
-        return res;
     }
 }
 ```
@@ -2283,22 +2365,38 @@ class Solution {
 
 #### 哈希表set
 
+题目描述：
+
+```
+给定两个数组 nums1 和 nums2 ，返回它们的交集。输出结果中的每个元素一定是 唯一 的。我们可以 不考虑输出结果的顺序 。
+
+ 
+
+示例 1：
+
+输入：nums1 = [1,2,2,1], nums2 = [2,2]
+输出：[2]
+示例 2：
+
+输入：nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出：[9,4]
+解释：[4,9] 也是可通过的
+```
+
 题解：https://leetcode.cn/problems/intersection-of-two-arrays/solutions/469826/zhi-jie-ji-suan-he-pai-xu-yi-ji-er-fen-fa-cha-zhao/
 
 ```java
-
+// 求交集，比较适合 用哈希表。。这里选用 set集合，用于对最终的答案 "去重"
 
 class Solution {
    
     public int[] intersection(int[] nums1, int[] nums2) {
 
-        // 这个 哈希表 set1 用来 存储 数组nums1的去重之后 的 剩下元素。。。
-        // 其实用 List集合也可以 。。。！
+    // 这个 哈希表 set1 用来 存储 数组nums1的  "去重"之后 的 剩下元素。。。
         Set<Integer> set1 = new HashSet<>();
 
-        // 这个 哈希表 resSet 用来 存储 交集  的 元素
-        //  因为 在 遍历 数组 nums2 的 时候，里面 有可能有重复元素，所以 声明这个 resSet集合 可以“去重”
-        Set<Integer> resSet = new HashSet<>();
+        // 这个 哈希表 res 用来 存储 相交元素，而且会对结果 "去重"
+        Set<Integer> res = new HashSet<>();
 
         //遍历数组nums1，把元素 存入 哈希表set1中，会“去重” ！！！
         for (int i = 0; i < nums1.length; i++) {
@@ -2306,18 +2404,18 @@ class Solution {
         }
 
 
-        //遍历数组nums2的过程中，对nums2中的每个元素判断一下 它是否存在之前set1这个哈希表中，如果存在 ，那么 就是 “相交”元素！！！！！就把它添加到  “ 去重”  的保存结果的  哈希表resSet
+   // 遍历数组 nums2 的过程中，对nums2中的每个元素 判断一下 它是否存在之前 set1 哈希表中，如果 存在，那么 就是 “相交”元素！！！！！就把它添加到  的保存结果的  res 哈希表
         for (int i = 0; i < nums2.length; i++) {
             if (set1.contains(nums2[i])) {
-                resSet.add(nums2[i]);
+                res.add(nums2[i]);
             }
         }
 
-        //因为题目最后要求返回的是一个数组[]类型，所以要另外申请一个int []数组，存放集合resSet中的元素。int 数组长度 和 set集合 一样
+   //因为题目最后要求返回的是一个数组[]类型，所以要另外申请一个int []数组，存放 res集合。
 
-        int[] arr = new int[resSet.size()];
+        int[] arr = new int[res.size()];
         int j = 0;
-        for(Integer i : resSet){
+        for(Integer i : res){
             arr[j++] = i;
         }
 
@@ -2332,45 +2430,87 @@ class Solution {
 
 #### 哈希表set
 
+题目描述：
+
+```
+编写一个算法来判断一个数 n 是不是快乐数。
+
+「快乐数」 定义为：
+
+对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。
+然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。
+如果这个过程 结果为 1，那么这个数就是快乐数。
+如果 n 是 快乐数 就返回 true ；不是，则返回 false 。
+
+ 
+
+示例 1：
+
+输入：n = 19
+输出：true
+解释：
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+示例 2：
+
+输入：n = 2
+输出：false
+```
+
 题解：[https://leetcode.cn/problems/happy-number/solutions/376711/202-kuai-le-shu-setzai-ha-xi-fa-zhong-de-ying-yong/](https://leetcode.cn/problems/happy-number/solutions/376711/202-kuai-le-shu-setzai-ha-xi-fa-zhong-de-ying-yong/)
 
 ```java
+// 要证明是不是 快乐数？？？ 只要 排除 不是的情况，那么剩下的就是 快乐数的情况。。。
+// 那么 就是如何判断 不是快乐数？？？ 也就是 这个数字 是会一直循环下去的，也就是说  各位数的平方和后的 数字 后来又出现过。。。那么就会无限循环。。。
+
+// 那么就需要保存每一次 的平方和，然后每次都判断 求出来的平方和 是否之前出现过，存在过。。那么就是和用 哈希表 存储，判断是否存在。。。
+
+
 class Solution {
     public boolean isHappy(int n) {
 
-     //  声明 一个 哈希表，这里选择的是 set集合 来存储元素
+     //  声明 一个 哈希表，这里选择的是 set集合 来存储元素，每一次的 各位数平方和
         Set<Integer> set = new HashSet<>();
 
 
-        //  当然 是 n！=1作为 while循环的终止条件
+        //  当然是  n！=1 作为 while循环的终止条件
         while(n!=1){
-          //  题目中说了会 无限循环，如何判断 无限循环
- //  也就是说 这个 各位数的平方和  后的 数字 后来又出现过。。。那么就会无限循环，这里就选择 直接返回 false ，跳出 循环 
+            
+          //  题目中说了会 无限循环，如何判断  这个数字  会  无限循环？？？？？
+ //  也就是说  各位数的平方和后的 数字 后来又出现过。。。那么就会无限循环，这里就选择 直接返回 false ，跳出 循环 
             if(set.contains(n))
                 return false;
-            //  如果 在之前的 set集合中不存在 ，那么就将它存入 set集合中，并且继续  求 这个数 的 各位数的平方和 
-            set.add(n);
-         n = getNextNumber(n);
             
-        
+            else{
+                //  如果 在之前的 set集合中 不存在 ，那么就将它存入 set集合中，并且继续  求 这个数 的 各位数的平方和 
+            set.add(n);
+            		// 调用下面的方法，用于求 各位数的平方和，然后对 传入的n 这个数 重新赋值 。
+            n = getNextNumber(n);
+            }
+            
+            
         }
+        
         return true;
 
     }
 
 
-        //  这里也 是为了 上面while循环中 代码的 调用“简洁”，所以写了第2个 方法在下面。   功能是，求 某个整数的   各位的数字的平方和
+        //  所以写了 第2个 方法在下面。   功能是，求 某个整数的   各位的数字的平方和
         public int getNextNumber(int n){
 
             int sum=0;
 
                 //  一般固定写法  就是 n>0 作为 循环终止条件 
             while(n>0){
+                
           //  %10  就是  得到某个整数的 最后那个位置的 数值
                 int temp = n%10;
-                    sum+=temp*temp;
+                sum+=temp*temp;
            //  每次都要 截掉 整数的 最后那个数值，返回一个新的 整数，也就是少了 1位
-                    n = n/10;
+                n = n/10;
             }
 
             return sum;
@@ -2380,75 +2520,69 @@ class Solution {
 }
 ```
 
-
-
-### 217  存在重复元素
-
-#### 哈希表map
-
-```java
-// 纯自己写的 ，这道题也是自己补充的。。。。
-class Solution {
-    public boolean containsDuplicate(int[] nums) {
-
-        	// 给数组中的内每个数字 ，记录它们出现的次数 
-        HashMap<Integer,Integer> map = new HashMap<>();
-
-        for(int i=0;i<nums.length;i++){
-            
- // getOrDefault(nums[i],0) 方法很关键！！ 主要是为了让 某个数字 第一次被put 的时候要从 0 开始累加
-             		//  但是之后又遇到 它这个数字 的话，那么就是直接返回之前它的次数 ，然后 +1  
-                // put()方法 其实就是通过覆盖 原来的key，通过累加+1，达到  更新次数 的效果
-  		map.put(nums[i],map.getOrDefault(nums[i],0)+1);
-            		// 如果某个 数字的 出现次数，超过1 ，那么就是 出现过2次，就说明有重复的元素  
-            if(map.get(nums[i])>1)
-                return true;
-        }
-          
-          return false;
-    }
-}
-```
-
-
-
 ### 49 字母异位词分组
 
 #### 哈希表map
 
+题目描述：
+
+```
+给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+
+字母异位词 是由重新排列源单词的所有字母得到的一个新单词。
+
+ 
+
+示例 1:
+
+输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+示例 2:
+
+输入: strs = [""]
+输出: [[""]]
+示例 3:
+
+输入: strs = ["a"]
+输出: [["a"]]
+```
+
 题解：[https://leetcode.cn/problems/group-anagrams/solutions/845572/yuan-lai-hui-luo-ji-qing-xi-jian-dan-yi-rj6x3/](https://leetcode.cn/problems/group-anagrams/solutions/845572/yuan-lai-hui-luo-ji-qing-xi-jian-dan-yi-rj6x3/)
 
 ```java
+//  我们可以将 String [] 字符串数组中的，每个字符串 排序，就方便 后面分组了。。。
+// 然后，把它们存入 哈希表。。这里采用map 集合， 按照不同的 key 进行添加同一组的 字母异位词
+
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
        
         int len = strs.length;
         String[] tempstrs = new String[len];
 
- // 也可以 这么设置 map的数据类型，value的数据结构是 List<>
+ // 也可以 这么设置 map的数据类型。key就是 String 。。。。但是 value 可以设置为 是 List< > ，  保存一组 字符串。。。
         Map<String, List<String>> map = new HashMap<>();
 
         for(int i = 0; i < len; i++){ 
-             // 因为 是 字符串 String[]数组，所以先对 数组中 的 每一个 字符串  先转变成 char[] 字符数组                
-            char[] cs = strs[i].toCharArray();
             
-            //  对这个 转换后的 char[]字符数组  先sort排序一下
+            // 因为 是 字符串 String[]数组，所以先对 数组中 的 每一个 字符串String  先转变成 char[] 字符数组。。然后才方便 对 单个字符串的字符 进行排序                
+            char[] cs = strs[i].toCharArray();
             Arrays.sort(cs);
             
-            //  再 把 排序后的 char[]字符数组,转成字符串 ，作为key插入 map集合
-            // 			new String(cs)	对象声明式  转换 
+            //  再 把 排序后的 char[]字符数组 --> 转成 字符串String，作为key插入 map集合
             String key = new String(cs);
 
         //  这行代码很关键！！因为 如果 这个 排序后的字符串key 不存在，那么就第一次 插入key和 value，value先是一个空的 list集合。。。
-
-           //  因为 后期 会一直在在这个key中，累计 插入 新元素
-           // 所以 不可以 一直 key 覆盖 值，所以就必须要做一个判断，这个key原先 是否存在
+           // 后期 会一直在这个key中 对应的value， 也就是那个 list< >集合,累计 插入 新元素
             if (!map.containsKey(key))
                 map.put(key, new ArrayList<>());
             
-            // 这行代码的话，是插入 未排序之前的字符串strs哦！！！这个也很关键。。。”排序“ 只是为了方便 找到哪些字母异位词
+    // 如果 "排序"后的字符串 存在 map 集合，，那么是插入 "未排序"原始的字符串 strs哦！！！这个也很关键。。。
+    // 上面的”排序“逻辑。。。 只是为了方便 找到哪些 字母异位词
             map.get(key).add(strs[i]);
+            
         }
+        						
         return new ArrayList<>(map.values());
     }
 }
@@ -3071,22 +3205,22 @@ class Solution {
 }
 
     
-//  “二分查找” 的代码 ，就是 力扣第704题。 
-private int binarySearch(int[] nums, int target) {
-   int low = 0 , high = nums.length-1;
+//  “二分查找” 的代码 
+public int binarySearch(int[] nums, int target) {
+   int left = 0 , right = nums.length-1;
         	 
         //因为是 “左闭右闭” 原则 , 所以是  带等号的 <=
         
-        while(low <= high){
+        while(left <= right){
            
             
-             int mid = (low + high)/2 ;
+             int mid = (left + right)/2 ;
             if(nums[mid]>target)
-                // 所以 high 下标要更新成  mid-1 了
-                high = mid - 1;
+                // 所以 right 下标要更新成  mid-1 了
+                right = mid - 1;
             else if (nums[mid]<target)
-                // low 下标 要更新成 mid1 了
-                low = mid + 1;
+                // left 下标 要更新成 mid+1 了
+                left = mid + 1;
             else
                 return mid;
 
@@ -3123,22 +3257,22 @@ class Solution {
 }
 
     
-//  “二分查找” 的代码 ，就是 力扣第704题。 
-private int binarySearch(int[] nums, int target) {
-   int low = 0 , high = nums.length-1;
+//  “二分查找” 的代码 
+public int binarySearch(int[] nums, int target) {
+   int left = 0 , right = nums.length-1;
         	 
         //因为是 “左闭右闭” 原则 , 所以是  带等号的 <=
         
-        while(low <= high){
+        while(left <= right){
            
             
-             int mid = (low + high)/2 ;
+             int mid = (left + right)/2 ;
             if(nums[mid]>target)
-                // 所以 high 下标要更新成  mid-1 了
-                high = mid - 1;
+                // 所以 right 下标要更新成  mid-1 了
+                right = mid - 1;
             else if (nums[mid]<target)
-                // low 下标 要更新成 mid1 了
-                low = mid + 1;
+                // left 下标 要更新成 mid+1 了
+                left = mid + 1;
             else
                 return mid;
 
@@ -4668,135 +4802,46 @@ class Solution {
 
 #### 双指针相向指针
 
+题目描述：
+
+```
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+ 
+
+示例 1：
+
+输入：s = ["h","e","l","l","o"]
+输出：["o","l","l","e","h"]
+```
+
 题解：[https://leetcode.cn/problems/reverse-string/solutions/792118/shuang-zhi-zhen-jiao-huan-wei-zhi-by-dag-fnvf/](https://leetcode.cn/problems/reverse-string/solutions/2376290/ji-chong-bu-tong-de-xie-fa-pythonjavacgo-9trb/)
 
 ```java
-//  因为  是   “原地”  ，  所以只能用这种方法  
+// 因为要求 “原地”修改，  所以可以用 双指针来解决。。
+// 两个左、右指针left 和 right ，每次相互交换值，然后再向中间靠拢就行。
+
 class Solution {
     public void reverseString(char[] s) {
 		
-        //  用的是  双指针的相向指针  一个在最左端  ，另一个在 最右端   
-        int low = 0;
-        int high =s.length-1;
-			
-        //  主要就是  这个  while循环终止  条件 是 小于 <   ！！ 草稿纸列一下就行。。
-        //  其实，不管这个 字符数组的长度是 奇数还是偶数，只要是 满足了 < ，其实也就是反转完毕了
-        
-        
-         // 套用 双指针相向指针的  代码模板即可。
-        while(low < high){
-				
-              //  常见的 二值交换的 固定套路 
-            char temp = s[high];
-            s[high] = s[low];
-            s[low]  = temp;
-            
-            low++;
-            high--;
-
-        }
-
-    }
-}
-```
-
-### 541 反转字符串 II
-
-#### 双指针相向指针
-
-题解：[https://leetcode.cn/problems/reverse-string-ii/solutions/243583/zhu-yao-shi-yao-yi-shi-dao-stringdui-xiang-shi-bu-/](https://leetcode.cn/problems/reverse-string-ii/solutions/243583/zhu-yao-shi-yao-yi-shi-dao-stringdui-xiang-shi-bu-/)
-
-```java
-class Solution {
-
-
-    public String reverseStr(String s, int k) {
-        
-        
-        //  String 类型是 不可变长 字符串 。。。 不能原地对它修改！！ 所以要 额外声明 一个 变量空间,保存 结果 ，那么就是 用  char 字符数组 []
-        
-        	// 要把传入的 String 先转化为  char 字符数组 [] ，这样才方便接下来的字符串反转 
-        char[] ch = s.toCharArray();
-        
- //每隔 2k 个字符的前 k 个字符进行反转，所以这里 i的自增 步长 就是2*k,即 i+=2*k。而不是i++写法很特殊！！！
-        for (int i = 0; i< ch.length; i += 2 * k) {
-            
-            // 这里用的是 3分支，if  、else if、else 
-            
-           	//  剩余字符大于等于 2k 个，则反转前 k 个字符
-            if ( 2*k <= ch.length-i) {
-        	//  reverse 方法的右边参数 i+k-1，记得减去 1 ！！这里你可以根据草稿纸画出来，就知道了
-                reverse(ch, i, i + k -1);
-                
-            }
-             //  剩余字符小于 2k 个，但大于或等于 k 个，则反转前 k 个字符
-        else if ( k <=ch.length-i&& ch.length-i < 2*k){
-            //  reverse 方法的右边参数 i+k-1，记得减去 1 ！！！！
-                reverse(ch, i, i + k -1);
-                
-            }
-            //  如果剩余字符少于 k 个，则将剩余字符全部反转
-            else{
-                  reverse(ch,i,ch.length-1);
-            }
-           
-           
-            
-        }
-        
-        
-	// 因为最后还是要返回String 类型，那么就直接声明对象形式，把char [] 字符数组传进去就行
-        return  new String(ch);
-
-    }
-
-	//  也是可以 在下面再定义一个 方法，为了方便 上面 调用！！！
-    // 定义翻转函数，其实就是 344题 最基础的那个反转字符串的代码。。。利用双指针相向指针代码模板
-   public void reverse(char[] s,int low,int high) {
-			
-        while(low < high){
-			
-            char temp = s[high];
-            s[high] = s[low];
-            s[low]  = temp;
-            
-            low++;
-            high--;
-
-        }
-
-    }
-}
-```
-
-### 替换数字
-
-题解：[https://www.programmercarl.com/kama54.替换数字.html#思路](https://www.programmercarl.com/kama54.%E6%9B%BF%E6%8D%A2%E6%95%B0%E5%AD%97.html#%E6%80%9D%E8%B7%AF)
-
-```java
-//  String 类型是 不可变长 字符串 。。。。不能原地对它修改！！ 所以要 额外声明 一个新的 字符串,   用来保存 最终结果， 这里的话 就是 用 StringBuilder 字符串 进行 修改 ，它是可变的，而且功能更强 ！！
-
-class Solution {
-    public String replaceNumber(String s) {
+        //  用的是  双指针的相向指针  一个在最左端 left  ，另一个在 最右端 right   
+        int left = 0;
+        int right =s.length-1;
 		
-        // 一般 都是用这个 StringBuilder 字符串 类，因为它 的 内置方法 比较丰富！！。。。。
-        //  而且 它 是 可变长!!! 字符串 类型
-        StringBuilder sb = new StringBuilder();
-        
-        for (int i = 0; i < s.length(); i++) {
-            		  // 调用了 Character字符类的 判断  数字字符 的方法 ！！ 少见的！！
-            if (Character.isDigit(s.charAt(i))) {
-                sb.append("number");
-            }
-            else 
-            {
-                sb.append(s.charAt(i));
-            }
-        
+        while(left < right){
+				
+              //  常见的 二值交换的 固定代码，就是这么 3行 ！！！
+            char temp = s[right];
+            s[right] = s[left];
+            s[left]  = temp;
+            
+            left++;
+            right--;
+
         }
-                // StringBuilder类型转为 String类型，只需要 这样对象声明式就行。。
-       return new String(sb);
-        
+
     }
 }
 ```
@@ -4805,39 +4850,69 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给你一个字符串 s ，请你反转字符串中 单词 的顺序。
+
+单词是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的 单词 分隔开。
+
+返回 单词 顺序颠倒且 单词 之间用单个空格连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+示例 1：
+
+输入：s = "the sky is blue"
+输出："blue is sky the"
+
+示例 2：
+
+输入：s = "  hello world  "
+输出："world hello"
+解释：反转后的字符串中不能存在前导空格和尾随空格。
+
+示例 3：
+
+输入：s = "a good   example"
+输出："example good a"
+解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
+```
+
 题解 ： [https://leetcode.cn/problems/reverse-words-in-a-string/solutions/195397/151-fan-zhuan-zi-fu-chuan-li-de-dan-ci-shuang-zh-2/](https://leetcode.cn/problems/reverse-words-in-a-string/solutions/195397/151-fan-zhuan-zi-fu-chuan-li-de-dan-ci-shuang-zh-2/)
 
 ```java
-// 可 根据 split()方法 的特殊 用法 ，加上个  +  可以按照 多个空格 分隔 。
-// 那么 for 循环的 if ... 都不用写了
+// 先删除首位空格
+// 再根据 空格进行分割 字符串，得到 String[] 数组 
+// 从末尾遍历，反转字符串
+// 通过 StringBuilder的apend()每次添加 字符串 
 class Solution {
     
     public String reverseWords(String s) {
         							 
-        // 删除首尾空格，分割字符串 
-        // 这种情况 分割的话 ， 每个 单词 之间  的 空格 个数 比较多，那么 如果 之间有 3个空格，会分割产生2个 空字符串"",""  所以 后面for循环的时候还要判断 是不是 空字符串 "" ，是的话 就 continue 跳过
+        // 1.先trim() 删除首尾空格，然后按照空格 " " 去分割字符串 split()
+        // 这种情况 分割的话 ， 每个单词之间 的 空格个数 比较多，那么 如果 之间有 3个空格 ，   比如，"I am   happy"，会多会分割产生2个 空字符串["I","am","","","happy"]，所以采用" +"方式，就可以避免这样的问题 ！！！
 	
         String[] strs = s.trim().split(" +"); 
-        					
+        	
+        // 用于存储最终的结果 res ，不断添加 append()
         StringBuilder res = new StringBuilder();
         
-       // “倒序”遍历单词列表，然后 再插入 。 那么 i的初始值 就是 length-1 。  这种方法很“特殊”！！
+       // 2.“倒序”遍历单词列表，然后 再插入 。 那么 i的初始值 就是 length-1 。  这种方法很“特殊”！！
        // 从数组的 最后面 开始 遍历。。。
         for(int i = strs.length - 1; i >= 0; i--) { 
               
-            res.append(strs[i] + " "); // 调用 StringBuilder 的添加元素的方法 append()
+            res.append(strs[i] + " "); 
        
         }
         
         
-        // 方式二，也可以对 原来的 String 数组 ， “原地” 反转
-        		// 当然 要先把 String 数组 转为 list集合 
-       //  Collections.reverse(Arrays.asList(words));
+       
         
           
         					
-         //可以通过 new String(res)转化为String字符串。
-        // 为什么要 删除尾部空格？因为 添加 最后一个单词 的时候 它还会多 添加一个 空格  
+         
+        // 3. 为什么还要 删除尾部空格？因为 添加 最后一个单词 的时候 它还会多 添加一个 空格  
         return new String(res).trim();
     }
 }
@@ -4851,56 +4926,68 @@ class Solution {
 
 #### 哈希表map
 
-题解：
+题目描述：
 
-[https://blog.csdn.net/m0_65431718/article/details/130730847](https://blog.csdn.net/m0_65431718/article/details/130730847)   csdn博客里面的 3.5题
+```
+给定一个字符串 s ，请你找出其中不含有重复字符的最长子串的长度。
+
+示例 1:
+
+输入: s = "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+示例 2:
+
+输入: s = "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+
+题解：
 
 https://leetcode.cn/problems/longest-substring-without-repeating-characters/solutions/572876/shua-chuan-lc-shuang-zhi-zhen-ha-xi-biao-q08m/ 
 
 ```java
-class Solution {
-    public int lengthOfLongestSubstring(String s) {
-        
-        //创建哈希表,用来存储 字符串中 的每个 字符，出现的 次数 ，为了统计 “重复”
-        HashMap<Character,Integer>map=new HashMap<>();
-        
-        //定义滑动窗口的左右指针，left和right ,默认都从 0开始  
-        int left=0;
-        int right=0;
-        
-        //定义 字符串的长度
-        int size=s.length();
-        
-   // 用于保存结果，因为求的是 子串的最大的长度，所以这里默认就是 0 了 ，用于之后的比较和更新
-        int result=0;
-        	
-        while(right<size){
-            	// 右指针的话就是 对扫描过的 字符，不断进行 出现次数的累加，也就是“添加”元素
-            map.put(s.charAt(right),map.getOrDefault(s.charAt(right),0)+1);
-            
-  	// 因为是套 代码模板的，这道题是 求最“长” 。 所以内层的 while循环 就必须 是  不满足题目条件才触发
-      // 题目要 不重复字符，所以 不满足 不重复，翻译过来就是 => 要有重复字符 的时候 
-       // 所以就是 字符出现次数大于1，那么就是 get(right)>1 ，肯定是对于 右指针扫描到的元素咯
-            
-            while(map.get(s.charAt(right))>1){
-                
-  // left左指针仍然是 向右移动，缩小窗口，那么就要对扫描过的字符 的出现次数 -1 ，也就是“移除”元素
-                 map.put(s.charAt(left),map.get(s.charAt(left))-1);
-                 left++;
-                
+    class Solution {
+        public int lengthOfLongestSubstring(String s) {
+
+            //创建哈希表,用来存储 字符串中 的每个 字符，出现的 次数 ，为了统计 “重复”
+            HashMap<Character,Integer>map=new HashMap<>();
+
+            //定义滑动窗口的左右指针，left和right ,默认都从 0开始  
+            int left=0;
+            int right=0;
+
+       // result 用于保存 最终结果，求的是 子串的最大长度。所以这里默认就是 Integer.MIN_VALUE，用于之后的比较和更新
+            int result=Integer.MIN_VALUE;
+
+            while(right<s.length()){
+                    // 右指针的话就是 对扫描过的 字符，不断进行 出现次数的累加，也就是“添加”元素
+                map.put(s.charAt(right),map.getOrDefault(s.charAt(right),0)+1);
+
+        // 因为是套 代码模板的，这道题是 求最“长” 。 所以内层的 while循环 就必须 是  不满足题目条件才触发
+          // 题目要 不重复字符，所以 不满足 不重复，翻译过来就是 => 要有重复字符 的时候                	// 所以就是 字符出现次数大于1，那么就是 get(right)>1 
+
+                while(map.get(s.charAt(right))>1){
+
+      // left左指针仍然是 向右移动，缩小窗口，那么就要对扫描过的字符 的出现次数 -1 ，也就是“移除”元素
+                     map.put(s.charAt(left),map.get(s.charAt(left))-1);
+                     left++;
+
+                }
+
+      // 外层while循环的下面，这里就是 满足题目条件的，才去 不断比较，更新最终结果 result
+
+                result  = Math.max(result,right-left+1);
+
+                // 滑动窗口的右指针 向右移动，right++
+                right++;
             }
-            
-  //因为是套 代码模板的，这道题是 求最“长”。所以要比较之后，更新结果 result ，应该是在 内层while循环的下面执行  
-    
-            result  = Math.max(result,right-left+1);
-            
-            // right++ 仍然是在这个位置 执行 
-            right++;
+
+             // 如果result没有被赋值的话，就返回0，说明 没有符合条件 的子数组 
+           return result==Integer.MIN_VALUE?0:result; 
         }
-        
-       return result; 
     }
-}
 ```
 
 ### 76 最小覆盖子串 
@@ -4909,79 +4996,109 @@ class Solution {
 
 #### 哈希表map
 
-题解 ：
+题目描述：
 
-[https://blog.csdn.net/m0_65431718/article/details/130730847](https://blog.csdn.net/m0_65431718/article/details/130730847)   csdn博客里面的 3.2题
+```
+给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
+
+注意：
+
+对于 t 中重复字符，我们寻找的子字符串中该字符数量必须不少于 t 中该字符数量。
+如果 s 中存在这样的子串，我们保证它是唯一的答案。
+
+示例 1：
+
+输入：s = "ADOBECODEBANC", t = "ABC"
+输出："BANC"
+解释：最小覆盖子串 "BANC" 包含来自字符串 t 的 'A'、'B' 和 'C'。
+示例 2：
+
+输入：s = "a", t = "a"
+输出："a"
+解释：整个字符串 s 是最小覆盖子串。
+示例 3:
+
+输入: s = "a", t = "aa"
+输出: ""
+解释: t 中两个字符 'a' 均应包含在 s 的子串中，
+因此没有符合条件的子字符串，返回空字符串。
+```
+
+题解 ：
 
 https://leetcode.cn/problems/minimum-window-substring/solutions/9349/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-1-3/
 
 ```java
+//  采用 “滑动窗口”的思路
+// 先要对 遍历字符串 t，先初始化 每个字符的 出现次数，通过 map 实现
+//  然后才是 对字符串s 进行"滑动窗口"，添加元素，减少元素。。-->这里就是对 map的 value值-1和 +1
+
+/**主要就是 如何 判断 当前“窗口” 扫描到的 子串 已经包含 字符串t ？？？？
+  
+  循环遍历整个map的key ，通过 判断 map 所有的 value<=0 了，这样才说明包含了 字符串t，找到一个 子串。
+ 
+**/  
+
 class Solution {
+    
 public String minWindow(String s, String t) { 
     
     
     Map<Character, Integer> map = new HashMap<>();
     
-    //遍历字符串 t，初始化每个字符的次数。这个 其实已经是 常规操作了。。这里主要是为了 之后的 right 右指针扫描 S 字符串的时候不断“添加”元素进去，所以 每次扫描到一个字符，如果存在于 map，就得 出现次数 -1 。。。这主要是  为了判断是否包含的 字符串t 
+    // 1. 遍历字符串 t，先初始化 每个字符的 出现次数。
+    // 这里主要是为了 之后的 right 右指针扫描 s 字符串的时候，不断“添加”元素进去，所以 每次扫描到一个字符，如果存在于 map，就得 出现次数 -1 。。。
+    // 这主要是  为了判断 S 扫描的子串， 是否包含的 字符串t 
     for (int i = 0; i < t.length(); i++) {
         char char_i = t.charAt(i);
         map.put(char_i, map.getOrDefault(char_i, 0) + 1);
     }
     
-    
-    int left = 0; //滑动窗口的 左指针 
-    int right = 0; //滑动窗口的 右指针   ，初始化的时候还是 都指向 0 。
+     // 滑动窗口的 左、右指针
+            int left = 0;
+            int right = 0;
 
-        // 为什么这道题要定义这个 ans_ 版本 的 左、右边界？因为 这道题是 找最小子串 进行返回。  题目  要求 返回一个字符串Sting ，而不是 返回它的 子串的最小长度 int 那么简单。
+        // 为什么这道题要定义这个 ans_ 版本 的 左、右边界？因为 这道题是 找最小子串 进行返回。  题目  要求 返回一个 字符串String ，知道 边界的话，比较好返回。
 
-     int ans_left = 0; //保存最小子串 的左边界
-    int ans_right = -1; //保存最小子串 的右边界 ,这里很奇怪，为什么是 -1 ?
-    //子串的右边界初始化为-1，是因为我们在 找不到 符合的子串 时候，要返回 空字符串 "" 。恰好在返回时substring(0,-1+1)， 什么都没截取到（0,0）就是一个空字符串 ""
+            int ans_left = 0; //保存最小子串 的左边界
+            int ans_right = -1; //保存最小子串 的右边界 ,这里很奇怪，为什么是 -1 ?
+    //子串的右边界初始化为-1，是因为我们在 找不到 符合的子串 时候，要返回 空字符串 "" 。恰好在返回substring(0,-1+1)， 什么都没截取到（0,0）就是一个空字符串 ""
      
   
-    int ans_len = Integer.MAX_VALUE; //当前最小窗口的长度，因为要求最小，所以初始化成  整数 的最大值
+    int ans_len = Integer.MAX_VALUE; //当前最小窗口的长度，需要不断地更新比较，重新赋值。所以初始化成  整数 的最大值。
     
-    //遍历字符串 s ，  “滑动窗口”的 老套路，老模板了。
+    //2.遍历字符串 s，“滑动窗口”的 模板 。。每次记得要去调用下面的 match()判断，扫描的子串 是否已经包含 字符串t了。
     while (right < s.length()) {
         
-        char char_right = s.charAt(right);
-        
-        // 这里的对 right指针扫描过后的，“添加”元素的操作，和之前的有点不太一样，要 -1 。。。
-        //要先判断 map 中是否含有当前字符 ，只有有的情况下，才能执行操作 ！！  和下面的if差不多
-        if (map.containsKey(char_right)) {
+		// 特殊的地方！！！！
+   //这里对 right 右指针扫描，“添加”元素的操作--> 其实就是对 每个字符的 value出现 减去 1  。
+        // 要先 if判断 map 中是否 包含 当前字符 !!! 只有 包含 的情况下，才能执行 -1操作 ！！ 
+        if (map.containsKey(s.charAt(right))) {
 			
-            //有的话，当前的字符出现次数 -1 ！！
-            map.put(char_right, map.get(char_right) - 1);  
+            map.put(s.charAt(right), map.get(s.charAt(right)) - 1);  
 
-         // 这里的话，每次if判断 后面，if的内部 都要立即 进行 while()的循环判断，看看有没有   已经全部包含 所有t字符串的字母
-            //如果当前窗口包含了 所有字母，就进入循环
-            //开始移动左指针，减小窗口
-            
-            // 调用 次函数match() 判断，是否  已经“全部包含” ，
+         // 这里的话，if 的内部，都要立即 进行 while()的循环判断
+     // 也就是 调用 下面定义的次函数 match() 判断，是否  已经“全部包含” ，看看有没有  已经全部  包含 所有t字符串的字母
+        //如果当前窗口的子串包含了 所有字母，就进入循环
+        //开始移动 左指针left ，减小窗口
+    
             while (match(map)) { 
                
-              //计算 当前 子串的大小 ，这里的+1 可以通过草稿纸 得知，
-                int temp_len = right - left + 1;
-
-         //如果 当前子串的长度 更小，则更新相应结果变量，ans_的左、右边界
-        // 这道题的话，就必须这样更新和 比较 最小值了！！而不是Math.min()。。。
-       //  因为 我们内部还要对 滑动窗口的 ，ans_的左、右边界 进行不断更新，这样才能 通过这两个下标值，substring返回 最终结果的 最小子字符串String
-                if (temp_len < ans_len) {
+       // 这道题的话，就必须这样更新和 比较 最小值 ans_len ，而不是Math.min()！！！
+    // 因为只有 得到更小的 ans_len 时候，我们才要对 ans_的左、右边界 进行更新！！！
+                if (right-left+1 < ans_len) {
                     ans_left = left;
                     ans_right = right;
-                    ans_len = temp_len;
+                    ans_len = right-left+1;
                 }
-
-
-           // 接下来就是滑动窗口 左指针left 向右边移动，执行“移除”操作
                 
-                char char_left = s.charAt(left);
+          
+            // 接下来就是滑动窗口 左指针left 向右边移动，执行“移除”操作     
+         //判断 map 中是否有当前字母,有的话，才能进行 “移除”，所以这里的 if判断 是 必要的！！！
                 
-       //判断 map 中是否有当前字母,有的话，才能进行 “移除”，所以这里的 if判断 是 必要的 ！
-                if (map.containsKey(char_left)) {
-                    
-       //因为要把当前字母移除，所有相应次数要加 1 。这个 加1 就是和之前的右指针的操作  “反”一下
-                    map.put(char_left, map.get(char_left) + 1);
+                if(map.containsKey(s.charAt(left))) {
+   // 因为要把当前字母“移除”-->所有相应次数要加 1 。这个 加1 就是和之前的右指针的操作  “反”一下
+                    map.put(s.charAt(left), map.get(s.charAt(left)) + 1);
                 }
 
                 left++; // 左指针left 右移
@@ -4992,13 +5109,13 @@ public String minWindow(String s, String t) {
         right++;
     }
 
-                 // 为什么加1 ，可以在草稿纸上画画，每个都试试就知道了，别太纠结。
+                
         return s.substring(ans_left, ans_right+1);
     
 }
 
-    // 下面定义一个 次函数
-//判断所有的 value 是否为 0
+    // 3.下面定义一个  函数 ---> 这主要是  为了判断 滑动窗口内的字符串， 是否包含的 字符串t 
+// 通过 判断 map 所有的 value<=0 了，这样才说明包含了 字符串t，找到一个 子串。
 private boolean match(Map<Character, Integer> map) {
     for (Integer value : map.values()) {
         if (value > 0) {
@@ -5014,88 +5131,64 @@ private boolean match(Map<Character, Integer> map) {
 
 
 
-### 383 赎金信
-
-#### 哈希表map
-
-题解：[https://leetcode.cn/problems/ransom-note/solutions/2203789/383-shu-jin-xin-liang-chong-jie-fa-by-fr-vo4f/](https://leetcode.cn/problems/ransom-note/solutions/2203789/383-shu-jin-xin-liang-chong-jie-fa-by-fr-vo4f/)
-
-```java
-class Solution {
-
-    public boolean canConstruct(String ransomNote, String magazine) {
-
-        // 创建字典用于存储 magazine 中每个字符的出现次数
-        Map<Character, Integer> charCount = new HashMap<>();
-
-        // 因为本题目是要求， ransomNote  是否可以由  magazine 构成
-        // 所以，要先统计 magazine  中 每个字符 的 出现次数，存储在 map字典中 ！
-        for (int i = 0; i < magazine.length(); i++) {
-
-            //因为 magazine 字符串中 的 某个字符 会出现多次，所以  是要  累加 某个字符 出现的 次数，加 1
-            // 所以 在设置 value的时候 要调用 map字典的 getOrDefault()方法，看看 该 字符 之前 出现过的次数
-            //  如果 某个字符 已经存在 map字典中，那么就返回它出现的次数，不存在的话 就返回0
-            charCount.put(magazine.charAt(i), charCount.getOrDefault(magazine.charAt(i), 0) + 1);
-
-        }
-
-        // 然后遍历 ransomNote 中的每个字符，检查是否可以用 magazine 中的字符构成
-        for (int i = 0; i < ransomNote.length(); i++) {
-
-            if(charCount.containsKey(ransomNote.charAt(i))){
-                // 如果 ransomNote字符串 的字符 ch 存在于之前的 字典map 中，则 该字符 出现的 次数 value值 减1 ，也就是要 “抵消”  。因为 这个 字符 可能出现多次，所以每次 存在 都要 “抵消” 一次
-                charCount.put(ransomNote.charAt(i),charCount.get(ransomNote.charAt(i)) - 1);
-
-                // 还要进行if判断！！也就是说 magazine中的 这个字符 -- “抵消”之后，也就是出现 -1 了，这时候就要  返回fasle了
-                if(charCount.get(ransomNote.charAt(i)) < 0)
-
-                    return false;
-            }
-
-            // 这个 else 必须加！！因为如果  ransomNote 中扫描到的字符 如果不出现在 magazine中，就说明不能由 magazine中 构成了
-            else
-                return false;
-        }
-
-        //  如果for循环遍历完之后，那么就剩下true的 情况了。。。
-        return true;
-    }
-}
-```
-
-
-
 ### 242 有效的字母异位词
 
 #### 哈希表map
+
+题目描述：
+
+```
+给定两个字符串 s 和 t ，编写一个函数来判断 t是否是s 的字母异位词。
+
+
+示例 1:
+
+输入: s = "anagram", t = "nagaram"
+输出: true
+示例 2:
+
+输入: s = "rat", t = "car"
+输出: false
+```
 
 题解 ：
 
 https://leetcode.cn/problems/valid-anagram/solutions/493377/hashmapchang-gui-si-lu-by-clint/
 
 ```java
+// 如何判断 两个字符串 是不是  字母异位词 ？？？
+// 首先就是 它们的长度是一样的。
+// 其次就是，它们包含的 每个字符个数 都是一样的。。。
+
+// 思路就是 先遍历 s字符串的字符 出现次数。。用 map 集合 去累加。。。然后 遍历 字符串t ，对之前的 map集合出现过的字符 响应的if判断操作 。。。。
+
 class Solution {
    public  boolean isAnagram(String s, String t) {
 
         int len1 = s.length(), len2 = t.length();
 
-       
    	//  这行必须加！！！  因为 你下面的这个 map计数的方法，以及里面的判断，必须是 长度相等才行
+       // 其实也就是 ”剪枝“ 。。。。
         if (len1 != len2)
             return false;
+       
 
-
+			// 用于统计 字符串中的 每个字符 的出现次数 
         HashMap<Character, Integer> dic = new HashMap<>();
 
-       // 这里两个 for 循环并行 
+       
+       // 上面的这个 for循环，先去统计 s字符串， 每个字符的出现次数
         for (int i = 0; i < len1; i++) {
-
+				//  put() 和 getOrDefault()一起使用，更新累加
             dic.put(s.charAt(i) , dic.getOrDefault(s.charAt(i), 0) + 1);
         }
 
-       			
+       
+       	// 下面的这个 for循环，去遍历 t字符串的！！！！
         for (int i = 0; i < len2; i++) {
             
+             // 如果 s字符串的这个字符，存在 之前的map集合，那么对 出现次数 -1 操作。。。
+     // 并且内部还要if判断，此时的 出现次数 小于0 了吗，小于的话就说明 这两个字符串s和t 的字符出现次数不一致 。。。就不是 字母异位词 ！！return false 
             if (dic.containsKey(t.charAt(i))) {
                 
                 dic.put(t.charAt(i), dic.get(t.charAt(i)) - 1);
@@ -5103,11 +5196,12 @@ class Solution {
                     return false;
             }
             
+            // 如果这个字符都不存在 字符串s中，那么直接 return  false;
             else
                 return false;
         }
 
-
+			// 其余情况，那么就是 字母异位词 。返回true 
         
         return true;
     }
@@ -5320,6 +5414,12 @@ public class Solution {
 #### 哈希表map
 
 #### 滑动窗口
+
+题目描述：
+
+```
+
+```
 
 题解：https://leetcode.cn/problems/find-all-anagrams-in-a-string/solutions/1125936/gong-shui-san-xie-shuang-zhi-zhen-shi-xi-t5hc/
 
@@ -6606,7 +6706,7 @@ class Solution {
 
        
        
-       // 1.通过快慢指针，low 移动一步，fast 移动两步。当 fast 或者 fast.next 为 null 时，low 就指向了中间节点!!
+       // 1.通过快慢指针，slow 移动一步，fast 移动两步。当 fast 或者 fast.next 为 null 时，slow 就指向了中间节点!!
         while (fast!= null && fast.next!= null) {
             slow = slow.next;  // 慢指针移动
             fast = fast.next.next;  // 快指针移动，2步
@@ -9408,6 +9508,987 @@ class Solution {
 
 
 
+# 非常规leetcode题型
+
+## 线程交替打印
+
+### 线程交替打印奇数偶数
+
+```java
+// 两个线程交替打印 奇数偶数
+
+class OddEvenPrinter { 
+    
+    // count计数器，用于表示当前要打印的数字
+    private int count = 1;
+    // lock对象锁，用于线程间的同步
+    private final Object lock = new Object();
+
+    // 打印 奇数 的方法
+    public void printOdd() {
+        while (count < 100) {
+            // 进入同步块，确保线程安全
+            synchronized (lock) {
+                // 如果当前数字是奇数
+                if (count % 2 == 1) {
+                    System.out.println("奇数线程：" + count);
+                    count++;
+                    // 通知等待的线程
+                    lock.notify();
+                } else {
+                    try {
+                        // 当前数字不是奇数，等待
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+
+    // 打印 偶数 的方法
+    public void printEven() {
+        while (count <= 100) {
+            synchronized (lock) {
+                // 如果当前数字是偶数
+                if (count % 2 == 0) {
+                    System.out.println("偶数线程：" + count);
+                    count++;
+                    // 通知等待的线程
+                    lock.notify();
+                } else {
+                    try {
+                        // 当前数字不是偶数，等待
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+        
+        OddEvenPrinter printer = new OddEvenPrinter();
+        
+        // 创建打印奇数的线程
+        Thread oddThread = new Thread(printer::printOdd);
+        // 创建打印偶数的线程
+        Thread evenThread = new Thread(printer::printEven);
+
+        oddThread.start();
+        evenThread.start();
+    }
+
+
+}
+
+
+```
+
+### 三个线程交替打印ABC
+
+```java
+// 三个线程交替打印ABC，10轮 
+
+class PrintABC {
+
+ //number 表示当前编号，用于控制三个线程的 执行顺序。1代表 线程1，2代表 线程2，3代表 线程3
+    private  int number = 1;
+    // lock对象锁，用于线程间的同步
+    private final Object lock = new Object();
+
+    // 线程1，打印 A 的方法
+    public void printA() {
+        for (int i = 0; i < 20; i++) {    //  for循环 这里控制 轮数。为啥是20？？因为如果执行过一次了，那么就会 执行下一个循环，这时候就是阻塞了，所以每2次循环才会打印一次。
+            synchronized (lock) {
+                 // 如果number 是1，应该是线程 1 执行
+                if(number==1){
+                    // 打印 A
+                    System.out.println("线程 1：A" );
+                    // 更新状态，为下一个线程2 的执行做准备
+                    number=2;
+                    // 唤醒 其他两个等待的线程
+                    lock.notifyAll();
+                }
+                    // 如果不是 线程 1 执行，就等待
+                else{
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    // 线程2，打印 B 的方法
+    public void printB() {
+        for (int i = 0; i < 20; i++) {
+            synchronized (lock) {
+                // 如果number是2，应该是 线程2 执行
+                if(number==2){
+                    // 打印 B
+                    System.out.println("线程 2：B" );
+                    // 更新状态，为下一个线程3 的执行做准备
+                    number=3;
+                    // 唤醒 其他两个等待的线程
+                    lock.notifyAll();
+                }
+                 // 如果number 不是 2，那么就等待
+                else{
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+
+                }
+
+
+            }
+        }
+    }
+
+    // 线程3，打印 C 的方法
+    public void printC() {
+        for (int i = 0; i < 20; i++) {
+            synchronized (lock) {
+                // 如果number 是3，应该是线程 3 执行
+                if(number==3){
+                    // 打印 C
+                    System.out.println("线程 3：C" );
+                    // 更新状态，为下一个线程的执行做准备
+                    number=1;
+                    // 唤醒 其他两个等待的线程
+                    lock.notifyAll();
+                }
+              // 如果number 不是3 ，那么就等待
+                else{
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        PrintABC printer = new PrintABC();
+        // 创建线程1，负责打印 A 
+        Thread thread1 = new Thread(printer::printA);
+        // 创建线程2，负责打印 B 
+        Thread thread2 = new Thread(printer::printB);
+        // 创建线程3，负责打印 C 
+        Thread thread3 = new Thread(printer::printC);
+
+        threadA.start();
+        threadB.start();
+        threadC.start();
+    }
+
+}
+```
+
+### 三个线程交替打印1-100
+
+```java
+// 三个线程交替打印1-100
+    
+class ThreeThreadsPrinter {
+    
+    // count计数器，用于表示 当前要打印的数字
+    private int count = 1;
+    
+ //number 表示当前编号，用于控制三个线程的 执行顺序。1代表 线程1，2代表 线程2，3代表 线程3
+    private int number = 1;
+    
+    // lock对象锁，用于线程间的同步
+    private final Object lock = new Object();
+
+    // 线程 1 的打印方法
+    public void printByThread1() {
+        while (count <= 100) {
+            synchronized (lock) {
+                // 如果当前编号1，是线程 1 执行
+                if (number == 1) {
+                    System.out.println("线程 1：" + count);
+                    count++;
+                    // 将当前线程编号设置为线程 2
+                    number = 2;
+                    // 唤醒所有等待的线程
+                    lock.notifyAll();
+                } else {
+                    try {
+                        // 当前不是线程 1 执行，等待
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+
+    // 线程 2 的打印方法
+    public void printByThread2() {
+        while (count <= 100) {
+            synchronized (lock) {
+                //如果当前编号2，线程 2 执行
+                if (number == 2) {
+                    System.out.println("线程 2：" + count);
+                    count++;
+                    // 将当前线程编号设置为线程 3
+                    number = 3;
+                    // 唤醒所有等待的线程
+                    lock.notifyAll();
+                } else {
+                    try {
+                        // 当前不是线程 2 执行，等待
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+
+    // 线程 3 的打印方法
+    public void printByThread3() {
+        while (count <= 100) {
+            synchronized (lock) {
+                // 如果当前编号3，线程 3 执行
+                if (number == 3) {
+                    System.out.println("线程 3：" + count);
+                    count++;
+                    // 将当前线程编号设置为线程 1，开始下一轮循环
+                    number = 1;
+                    // 唤醒所有等待的线程
+                    lock.notifyAll();
+                } else {
+                    try {
+                        // 当前不是线程 3 执行，等待
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
+    }
+    
+     public static void main(String[] args) {
+        ThreeThreadsPrinter printer = new ThreeThreadsPrinter();
+        // 创建线程 1
+        Thread thread1 = new Thread(printer::printByThread1);
+        // 创建线程 2
+        Thread thread2 = new Thread(printer::printByThread2);
+        // 创建线程 3
+        Thread thread3 = new Thread(printer::printByThread3);
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+    
+}
+
+
+   
+```
+
+
+
+
+
+## 实现⼀个线程安全的计数器
+
+```java
+
+class AtomicCounter {
+
+    // 采用原子类 AtomicInteger ，来保证线程安全。
+    private AtomicInteger count = new AtomicInteger(0);
+
+
+    public void increment() {
+        for (int i = 0; i < 1000; i++) {
+            // 调用 AtomicInteger 的 incrementAndGet()方法，是原子性的 ++
+            count.incrementAndGet();
+        }
+
+    }
+
+    public int getCount() {
+        return count.get();
+    }
+
+
+    public static void main(String[] args) throws InterruptedException {
+
+        AtomicCounter counter = new AtomicCounter();
+		
+        // 创建3个线程，每个线程都 自增++ 1000次，所以 最终 count的值是 3000 
+
+        // 创建线程 1
+        Thread thread1 = new Thread(counter::increment);
+        // 创建线程 2
+        Thread thread2 = new Thread(counter::increment);
+        // 创建线程 3
+        Thread thread3 = new Thread(counter::increment);
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+
+        thread1.join();
+        thread2.join();
+        thread3.join();
+// 为什么对 这3个线程 要加 join()？？
+        
+// 因为 join()方法的作用是，确保 主线程main 等到子线程1，2，3 全部都执行完毕后吗，再继续执行下面  这段代码，打印最终的计数器的值。。。
+ //  如果不使用join()方法，主线程main 可能会在 三个子线程 还未完成 1000次自增++，就输出计数器的值，导致结果不准确。   
+        
+        System.out.println("最终计数器的值：" + counter.getCount());
+    }
+
+
+}
+
+```
+
+## 实现一段死锁的代码
+
+```java
+class DeadlockExample {
+    
+    // 创建两个对象，用于模拟资源竞争
+    private  Object resource1 = new Object();
+    private  Object resource2 = new Object();
+
+    public void method1() {
+        
+        synchronized (resource1) {
+            System.out.println("线程A 持有资源 1");
+            // 暂停一下，增加死锁发生的可能性
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            // 尝试获取资源 2 的锁
+            synchronized (resource2) {
+                System.out.println("线程A 持有资源 2");
+            }
+        }
+    }
+
+    public void method2() {
+        
+        synchronized (resource2) {
+            System.out.println("线程B 持有资源 2");
+            // 暂停一下，增加死锁发生的可能性
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            // 尝试获取资源 1 的锁
+            synchronized (resource1) {
+                System.out.println("线程B 持有资源 1");
+            }
+        }
+    }
+}
+
+public class Main {
+    
+    public static void main(String[] args) {
+        
+        DeadlockExample example = new DeadlockExample();
+        
+        // 创建两个线程，一个执行 method1，一个执行 method2
+        Thread thread1 = new Thread(example::method1);
+        Thread thread2 = new Thread(example::method2);
+
+        thread1.start();
+        thread2.start();
+        
+    }
+}
+
+/** 
+        线程 A 通过 synchronized (resource1) 获得 resource1 的监视器锁，然后通过Thread.sleep(1000); 让线程 A 休眠 1s 为的是让线程 B 得到执⾏然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了，都开始企图请求获取对⽅的资源，然后这两个线程就会陷⼊互相等待的状态，这也就产⽣了死锁。
+   满足了 4个 必要条件：
+        1. 互斥条件：该资源任意⼀个时刻只由⼀个线程占⽤。
+        2. 请求与保持条件：⼀个线程因请求资源⽽阻塞时，对已获得的资源保持不放。
+        3. 不剥夺条件:线程已获得的资源在未使⽤完之前不能被其他线程强⾏剥夺，只有⾃⼰使⽤
+        完毕后才释放资源。
+        4. 循环等待条件:若⼲线程之间形成⼀种头尾相接的循环等待资源关系。
+**/
+```
+
+
+
+## 单例模式
+
+```java
+// 1.懒汉式（线程不安全）
+   
+public class Singleton {
+        
+     private static Singleton instance;
+
+     private Singleton() {
+
+    }
+
+    public static Singleton getUniqueInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+
+/**
+	先不创建实例，当第一次被调用时，再创建实例。
+
+优点： 延迟了实例化，如果不使用该类，就不会被实例化，节省了内存空间。
+
+缺点： 线程不安全，多线程环境下，如果多个线程同时进入了 if (instance == null) ，若此时还未实例化，也就是 instance == null，那么就会有多个线程执行 instance = new Singleton(); ，就会实例化多个实例；
+
+**/
+
+// 2.懒汉式（线程安全）
+   
+	public class Singleton {
+        
+    private static Singleton instance;
+
+    private  Singleton() {
+    }
+
+    private static synchronized Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+
+}
+
+
+/**
+	 在get()方法前面用 sychronized 修饰。当多个线程访问，每次只有拿到锁的的线程能够进入该方法，避免了多线程不安全问题的出现。
+
+优点： 是线程安全的。
+
+缺点： 虽然解决了线程安全问题，但是性能降低了。因为加了 sychronized锁，会使其他线程阻塞，上下文切换，等待时间过长。
+
+
+**/
+
+
+
+// 3.双重检查锁（线程安全）
+   
+public class Singleton {
+
+    private volatile static Singleton instance;
+
+    private Singleton() {
+    }
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }  
+}
+
+
+/**
+	
+	双重检查锁 ，相当于是改进了的 "懒汉式"。
+主要就是 两次if判断是否 null，加上中间的 synchronized锁。
+	第1次判断null，主要就是是如果当前实例已经存在，那么就直接返回，如果不存在，再进行接下来的操作
+	然后就是 来到了 synchronized 代码块。因为会有多个线程进来，来创建 实例，所以只能有 1个线程获取到锁，去创建实例，防止多个线程 去创建多个实例。。。
+	第2次判断null，因为 已经有线程 创建好实例，就会释放锁，然后 其他线程会获取到synchronized锁，会发现实例 已经被创建，那么就直接return 返回它。
+	
+	
+  为什么使用 volatile 关键字修饰 instance 实例？？？？
+		instance = new Singleton(); 这段代码执行时分为三步：
+                    1 在堆上开辟内存空间
+                    2 创建instance 实例对象
+                    3 将 对象引用 指向 堆内存
+   使用 volatile 关键字修饰，可以插入内存屏障 禁止 JVM 的指令重排，从而保证代码的 有序性。
+	
+优点： 延迟加载，节省了内存空间；线程安全，并且相对于 线程安全的懒汉式，性能也提高了。
+
+**/
+
+
+
+
+
+
+// 4.饿汉式（线程安全）
+   
+public class Singleton {
+
+    private static Singleton instance = new Singleton();
+
+    private Singleton() {
+    }
+
+    public static Singleton getUniqueInstance() {
+        return instance;
+    }
+
+}
+
+
+/**
+	类加载的时候，就已经 先实例化好了 实例。
+
+优点： 是线程安全的。
+
+缺点： 因为直接实例化好了实例，不再延迟实例化；如果 很久之后才需要使用这个实例，这样就会浪费内存空间
+
+
+
+**/
+
+
+// 5.静态内部类（线程安全）
+   
+	public class Singleton {
+
+    private Singleton() {
+    }
+
+    private static class SingletonInner {
+        
+        private static final Singleton INSTANCE = new Singleton();
+        
+    }
+
+    public static Singleton getInstance() {
+        return SingletonInner.INSTANCE;
+    }
+
+}
+
+
+
+
+/**
+	首先，当外部类 Singleton 被加载时，静态内部类 SingletonInner 并没有被加载进内存。当调用 get() 方法时，触发了 SingletonInner.INSTANCE，此时静态内部类 SingletonInner才会被加载内存，并且初始化 INSTANCE 实例，而且 JVM 会确保 INSTANCE 只被实例化一次。
+	
+优点： 延迟加载，节省了内存空间；而且线程安全，性能也提高了。
+
+
+
+**/
+
+// 6.枚举类实现（线程安全）
+   
+	public enum Singleton {
+
+    INSTANCE;
+
+    //添加自己需要的操作
+    public void fun() {
+
+    }
+
+}
+
+
+
+
+/**
+	默认枚举实例的创建就是线程安全的，且在任何情况下都是单例。
+
+优点： 写法简单，线程安全，可以避免通过反射破坏枚举单例
+
+
+
+**/
+
+
+    
+    
+```
+
+
+
+## 快速排序
+
+题解：https://www.bilibili.com/video/BV1j841197rQ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+// 快速排序的主要函数 quickSort()，对 nums[left...right]进行排序 
+// 用到了 次函数 partition()，每次找到一个mid下标。
+// 并且用到了 递归 
+
+
+    public  void quickSort(int[] nums, int left, int right) {
+        if (left < right) {
+            // 找到分区的索引
+            int mid = partition(nums, left, right);
+
+            // 对左分区进行快速排序，递归
+            quickSort(nums, left, mid - 1);
+
+            // 对右分区进行快速排序，递归
+            quickSort(nums, mid + 1, right);
+        }
+    }
+
+    // 进行数组分区操作
+    private  int partition(int[] nums, int left, int right) {
+
+        int pivot = nums[left];  // 选第一个元素作为基准值
+
+
+        while (left < right) {
+            // 从右向左找小于midValue的值
+            while (left < right && nums[right] >= pivot) 
+                right--;
+            
+            nums[left] = nums[right];
+
+            // 从左向右找大于等于midValue的值
+            while (left < right && nums[left] <= pivot) 
+                left++;
+            
+            nums[right] = nums[left];
+        }
+        
+        
+        nums[left] = pivot;
+
+        return left; // 返回基准值的索引 下标
+    }
+
+
+
+```
+
+## 归并排序
+
+题解：https://www.bilibili.com/video/BV1Pt4y197VZ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+private void mergeSort(int[] arr, int left, int right) {
+
+    // 如果区间还有多个元素（非单个元素），则进行递归排序和合并 。如果只剩一个 元素，那么就是有序的
+    if (left < right) {
+
+        // 计算中间索引
+        int mid = left + (right - left) / 2;
+        
+        // 对左半区间进行递归，归并排序
+        mergeSort(arr, left, mid);
+        // 对右半区间进行递归排序，归并排序
+        mergeSort(arr, mid + 1, right);
+        
+        // 合并已排序的左半区间和右半区间
+        merge(arr, left, mid, right);
+
+    }
+}
+
+
+private void merge(int[] arr, int left, int mid, int right) {
+
+    // 创建临时数组来存储合并后的结果，长度要指定的 
+    int[] temp = new int[right - left + 1];
+    int p = 0;  // 临时数组的指针，p每次都是从0开始
+    
+    int i = left;  // 左子数组的指针
+    int j = mid + 1;  // 右子数组的指针
+    
+
+    // 比较左子数组和右子数组的元素，将较小的元素放入临时数组
+    while (i <= mid && j <= right) {
+        if (arr[i] < arr[j])
+            temp[p++] = arr[i++];
+        else
+            temp[p++] = arr[j++];
+    }
+
+    // 如果左子数组还有剩余元素，将其放入临时数组
+    while (i <= mid) {
+        temp[p++] = arr[i++];
+    }
+
+    // 如果右子数组还有剩余元素，将其放入临时数组
+    while (j <= right) {
+        temp[p++] = arr[j++];
+    }
+
+    // 将临时数组中的元素复制回原始数组。。切记是！！ arr数组的left++ 
+    for (i = 0; i < temp.length; i++) {
+        arr[left++] = temp[i];
+    }
+}
+```
+
+
+
+## 二叉树的非递归遍历
+
+### 前序  迭代 
+
+题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+// 就是 要配合 “栈” 来实现，迭代遍历！！！
+//   入栈顺序：中-右-左 ，那么出栈顺序 才是 中-左-右，符合 前序遍历 的结果 
+class Solution {
+    
+    public List<Integer> preorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+        
+        if (root == null){
+            return result;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        		
+        // "栈" 不为空的话， 就一直遍历，控制循环的结束 
+        while (!stack.isEmpty()){
+            	
+            // 这里的话和层序遍历不太一样，这里不需要 记录 每层的节点数count
+            TreeNode node = stack.pop();
+            result.add(node.val);
+            
+            
+      // 这点其实和 层序遍历的“迭代” 挺像的，先判断左、右孩子 是否为空，非空的话 入栈
+            // 前序迭代的话 ，入栈顺序是 右-左 ，这样出栈才是 左-右
+            if (node.right != null){
+                stack.push(node.right);
+            }
+            
+            if (node.left != null){
+                stack.push(node.left);
+            }
+            
+        }
+        return result;
+    }
+}
+
+
+```
+
+### 后序 迭代 
+
+题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+//  入栈顺序：中-左-右 出栈顺序：中-右-左， 最后 Collections.reverse()翻转结果的话，左-右-中，就是 后序遍历 的结果
+
+// 所以 在 前序“迭代”的代码中，改动的就只有  下面判断 左、右节点为空的地方调换一下顺序，变成左-右，
+// 以及 最后 对 result集合进行翻转，就是用  Collections.reverse() 方法！
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+        
+        if (root == null){
+            return result;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        
+        while (!stack.isEmpty()){
+            TreeNode node = stack.pop();
+            result.add(node.val);
+            if (node.left != null){
+                stack.push(node.left);
+            }
+            if (node.right != null){
+                stack.push(node.right);
+            }
+        }
+        Collections.reverse(result);
+        return result;
+    }
+}
+```
+
+### 中序 迭代
+
+题解：https://www.bilibili.com/video/BV1Zf4y1a77g/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+// “中序”的 迭代 , 和 前序 、后序 的代码实现 不太一样。。。。略微 复杂！！！
+class Solution {
+    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+        
+        if (root == null){
+            return result;
+        }
+        	
+        Stack<TreeNode> stack = new Stack<>();
+        // 本来下面应该要有 stack.push(root)这行代码，但是这里没写，很特殊！！因为换成了 cur 移动指针
+        
+        
+        // 这里要定义一个 cur 的树节点指针，用于 访问 树中的每一个节点 ！！
+        // 这里是 “特殊”的地方 ！！！ !!!!!!!
+        TreeNode cur = root;
+        			
+        		// 这个 判断条件 是两个，而且中间是  或 ||
+        while (cur != null || !stack.isEmpty()){
+            
+            	// 先 一路向 左 ，入栈 ！！ 
+           if (cur != null){
+               
+               stack.push(cur);
+               cur = cur.left;
+               
+           }
+            		// 遇到空节点的话，就要开始 出栈了  ！！
+            		// 以及 要往 右节点 遍历了。。。
+            else{	
+                	// 记得要让 cur 接收重新指向 ！！！
+               cur = stack.pop();
+               result.add(cur.val);
+               cur = cur.right;
+           }
+        }
+        
+        return result;
+    }
+}
+```
+
+## 二叉树的层序遍历
+
+题解：https://www.bilibili.com/video/BV1GY4y1u7b2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+
+class Solution {
+    
+    public List<List<Integer>> levelOrder(TreeNode root) {
+
+        // 一般来说  返回值 是 一个 二维的“数组”。所以 以 List< List<...> >嵌套，来模拟表示  
+                      /***  就是这样子
+                            1
+                            2 3 	
+                            4 5 6 7 
+                       ***/
+        List<List<Integer>> res = new ArrayList<>();
+
+        // 声明 一个 双端队列 Deque。
+        Deque<TreeNode> queue = new ArrayDeque<>();
+
+        // 因为如果传入的节点为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
+    // 二叉树的话 肯定要有这行语句 if判断，因为 测试数据很可能传入的就是一个 null 根节点，空树
+        if (root == null)
+            return res;
+
+	
+        // 先把 树的 根节点 入队列 
+        queue.offerLast(root);
+
+        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
+        while (!queue.isEmpty()) {
+
+  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
+            int size = queue.size();
+            // list集合 保存  每一层的 节点，按顺序添加。
+            List<Integer> level = new ArrayList<>();
+
+            // 内循环 循环的次数， 也就是 该层 出队 几个 节点元素，通过 size 控制！！
+            for (int i = 0; i < size; i++) {
+
+      // 符合 每层节点的 “先进先出” ！！！从队列 弹出 该节点 ，并且 把他加入到 level 集合，
+                TreeNode node = queue.pollFirst();
+                level.add(node.val);
+
+                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+
+            // 每次  内层循环 执行完，也就是 该层的节点全部装入 level 集合里了，那么 接下来的操作 就是要把 保存该层的，所有节点的 level 集合 作为嵌套，插入到最终 要返回的 res 集合里。
+            res.add(level);
+
+        }
+            // 返回 这个res 集合，外层集合，它里面 有一个个 level 集合而已 
+        return res;
+    }
+ 
+}
+```
+
+
+
+
+
 # 方法整理
 
 ## 暴力
@@ -9468,6 +10549,18 @@ class Solution {
 
 ⑥ 有时候很复杂的时候，也可以定义一个**全局变量**，比如 int count =0，作为累加次数，它也可以在次函数里面不断 ++，最后 在主函数里面 return count 即可。
 
+## 二分查找
+
+### 适用范围
+
+当 int 整型数组  **<u>有序</u>** 的时候，或者  **<u>非递减</u>**  的时候，可以考虑用这个方法
+
+### 方法详解
+
+就是定义两个 边界指针，left 和 right ，在while循环里面，每次都先计算 mid下标= (left+right)/2 ，对应的元素 nums[mid] 和 target 比大小，如果 target 小于 mid对应的元素，那么 就去左半边 区域查找，记得 给  right = right -1 。。。否则就是去 右半边，那么 left = left +1 。。。
+
+直到找到 nums[mid]== target ，就 return 返回  
+
 
 
 ## 双指针
@@ -9478,11 +10571,11 @@ class Solution {
 
 一般适用于 **数组、链表、字符串**  
 
-双指针法使用的 大部分情况↑， 前提就是 **数组 或 链表** 已经是 **有序** 的状态。若数组 并非有序，可以在先使**Arrays**.**sort**( )方法换成**有序数组** 。如果 链表无序，那么就只能用 原始的方法，比如xx排序。 对于字符串 ，其实没啥要求 ； 较少↓情况下的话，其实 **不**需要 **排序** 的。
+双指针法使用的 大部分情况↑， 前提就是 **数组 或 链表** 已经是 **<u>有序</u>** 的状态！！！若数组 并非有序，可以 先使用 **Arrays**.**sort**( )方法 转为  **<u>有序</u>数组** 。如果 链表无序，那么就只能用 原始的方法，比如xx排序。 对于字符串 ，其实没啥要求 ； 较少↓情况下的话，其实 **不**需要 **排序** 的。
 
 
 
-比如 会定义两个指针 ，比如慢指针slow，以及快指针fast，有可能它们每次都是移动1步，也有可能 fast移动2步，slow移动一步。也有可能是 相向指针，一个是 low指针，一个是high 指针。题目用 哪种 指针，要根据具体情况  ，具体分析 ！！
+比如 会定义两个指针 ，比如慢指针slow，以及快指针fast，有可能它们每次都是移动1步，也有可能 fast移动2步，slow移动一步。也有可能是 相向指针，一个是 leftr左指针，一个是right 右指针。题目用 哪种 指针，要根据具体情况  ，具体分析 ！！
 
 ### 方法详解
 
@@ -9498,7 +10591,7 @@ https://www.bilibili.com/video/BV1iG411W7Wm/?p=3&spm_id_from=pageDriver  labulad
 
 ### 相向指针
 
-就是都在同一个数组里面，一个 **low** 指针在 **左端 0处**  ， 一个指针 **high** 在最 **右端 length-1处**
+就是都在同一个数组里面，一个 **left** 指针在 **左端 0处**  ， 一个指针 **right** 在最 **右端 length-1处**
 
 
 
@@ -9552,7 +10645,7 @@ https://www.bilibili.com/video/BV1AV4y1n7Zt/?spm_id_from=333.788&vd_source=5fe50
 
 ### 数组
 
-如果 题目的要求 ,可以确定 数组的  "**固定" 长度**是多少 ，那么就 考虑用这种方法
+如果 题目的要求 ,可以确定 数组的  "**固定" 长度**是多少 。。。。那么就 考虑用这种方法
 
 ### set
 
@@ -9562,7 +10655,7 @@ https://www.bilibili.com/video/BV1AV4y1n7Zt/?spm_id_from=333.788&vd_source=5fe50
 
 ### map
 
-常用于  要“映射”的时候！！！
+常用于  要  “**<u>映射</u>**”  的时候 ~~~~
 
 比如 对于每个数组 元素值，还要 返回对应的 **它的下标**，你就可以 用map 集合。你就可以用key 存储 元素值 nums[i]，value存储 下标 i 。
 
@@ -9865,959 +10958,6 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 
 
-# 非常规leetcode题型
-
-## 线程交替打印
-
-```java
-// 1.线程交替打印 奇数偶数
-   
-class OddEvenPrinter { 
-    
-    // count计数器，用于表示当前要打印的数字
-    private int count = 1;
-    // lock对象锁，用于线程间的同步
-    private final Object lock = new Object();
-
-    // 打印奇数的方法
-    public void printOdd() {
-        while (count < 100) {
-            // 进入同步块，确保线程安全
-            synchronized (lock) {
-                // 如果当前数字是奇数
-                if (count % 2 == 1) {
-                    System.out.println("奇数线程：" + count);
-                    count++;
-                    // 通知等待的线程
-                    lock.notify();
-                } else {
-                    try {
-                        // 当前数字不是奇数，等待
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-    }
-
-    // 打印偶数的方法
-    public void printEven() {
-        while (count <= 100) {
-            synchronized (lock) {
-                // 如果当前数字是偶数
-                if (count % 2 == 0) {
-                    System.out.println("偶数线程：" + count);
-                    count++;
-                    // 通知等待的线程
-                    lock.notify();
-                } else {
-                    try {
-                        // 当前数字不是偶数，等待
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-    }
-
-
-    public static void main(String[] args) {
-        
-        OddEvenPrinter printer = new OddEvenPrinter();
-        
-        // 创建打印奇数的线程
-        Thread oddThread = new Thread(printer::printOdd);
-        // 创建打印偶数的线程
-        Thread evenThread = new Thread(printer::printEven);
-
-        oddThread.start();
-        evenThread.start();
-    }
-
-
-}
-
-
-// 2.三个线程交替打印ABC，10轮 
-
-class PrintABC {
-
-    // 表示当前编号，用于控制三个线程的 执行顺序。A线程编号是1，B线程编号是2，C线程编号是3
-    private  int number = 1;
-    // lock对象锁，用于线程间的同步
-    private  Object lock = new Object();
-
-    // 打印 A 的方法
-    public void printA() {
-        for (int i = 0; i < 10; i++) {
-            synchronized (lock) {
-                 // 如果number 是1，应该是线程 1 执行
-                if(number==1){
-                    // 打印 A
-                    System.out.println("线程 1：A" );
-                    // 更新状态，为下一个线程 2 的执行做准备
-                    number=2;
-                    // 唤醒 其他两个等待的线程
-                    lock.notifyAll();
-                }
-                    // 如果不是 线程 1 执行，就等待
-                else{
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-
-                }
-
-            }
-        }
-    }
-
-    // 打印 B 的方法
-    public void printB() {
-        for (int i = 0; i < 10; i++) {
-            synchronized (lock) {
-                // 如果number 是2，应该是线程 2 执行
-                if(number==2){
-                    // 打印 B
-                    System.out.println("线程 2：B" );
-                    // 更新状态，为下一个线程3 的执行做准备
-                    number=3;
-                    // 唤醒 其他两个等待的线程
-                    lock.notifyAll();
-                }
-                 // 如果number 不是 2，那么就等待
-                else{
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-
-                }
-
-
-            }
-        }
-    }
-
-    // 打印 C 的方法
-    public void printC() {
-        for (int i = 0; i < 10; i++) {
-            synchronized (lock) {
-                // 如果number 是3，应该是线程 3 执行
-                if(number==3){
-                    // 打印 C
-                    System.out.println("线程 3：C" );
-                    // 更新状态，为下一个线程的执行做准备
-                    number=1;
-                    // 唤醒 其他两个等待的线程
-                    lock.notifyAll();
-                }
-              // 如果number 不是3 ，那么就等待
-                else{
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        PrintABC printer = new PrintABC();
-        // 创建打印 A 的线程
-        Thread threadA = new Thread(printer::printA);
-        // 创建打印 B 的线程
-        Thread threadB = new Thread(printer::printB);
-        // 创建打印 C 的线程
-        Thread threadC = new Thread(printer::printC);
-
-        threadA.start();
-        threadB.start();
-        threadC.start();
-    }
-
-}
-
-// 3.三个线程交替打印 1-100
-    
-class ThreeThreadsPrinter {
-    
-    // 计数器，用于表示当前要打印的数字
-    private int count = 1;
-    
-  // 表示当前编号，用于控制三个线程的 执行顺序。A线程编号是1，B线程编号是2，C线程编号是3
-    private int number = 1;
-    
-    // lock对象锁，用于线程间的同步
-    private  Object lock = new Object();
-
-    // 线程 1 的打印方法
-    public void printByThread1() {
-        while (count <= 100) {
-            synchronized (lock) {
-                // 如果当前编号1，是线程 1 执行
-                if (number == 1) {
-                    System.out.println("线程 1：" + count);
-                    count++;
-                    // 将当前线程编号设置为线程 2
-                    number = 2;
-                    // 唤醒所有等待的线程
-                    lock.notifyAll();
-                } else {
-                    try {
-                        // 当前不是线程 1 执行，等待
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-    }
-
-    // 线程 2 的打印方法
-    public void printByThread2() {
-        while (count <= 100) {
-            synchronized (lock) {
-                //如果当前编号2，线程 2 执行
-                if (number == 2) {
-                    System.out.println("线程 2：" + count);
-                    count++;
-                    // 将当前线程编号设置为线程 3
-                    number = 3;
-                    // 唤醒所有等待的线程
-                    lock.notifyAll();
-                } else {
-                    try {
-                        // 当前不是线程 2 执行，等待
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-    }
-
-    // 线程 3 的打印方法
-    public void printByThread3() {
-        while (count <= 100) {
-            synchronized (lock) {
-                // 如果当前编号3，线程 3 执行
-                if (number == 3) {
-                    System.out.println("线程 3：" + count);
-                    count++;
-                    // 将当前线程编号设置为线程 1，开始下一轮循环
-                    number = 1;
-                    // 唤醒所有等待的线程
-                    lock.notifyAll();
-                } else {
-                    try {
-                        // 当前不是线程 3 执行，等待
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-    }
-    
-     public static void main(String[] args) {
-        ThreeThreadsPrinter printer = new ThreeThreadsPrinter();
-        // 创建线程 1
-        Thread thread1 = new Thread(printer::printByThread1);
-        // 创建线程 2
-        Thread thread2 = new Thread(printer::printByThread2);
-        // 创建线程 3
-        Thread thread3 = new Thread(printer::printByThread3);
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-    }
-    
-}
-
-
-   
-
-
-```
-
-## 实现⼀个线程安全的计数器
-
-```java
-class AtomicCounter {
-
-    private AtomicInteger count = new AtomicInteger(0);
-
-    public void increment() {
-
-
-        for (int i = 0; i < 1000; i++) {
-             count.incrementAndGet();
-        }
-
-    }
-
-    public int getCount() {
-        return count.get();
-    }
-}
-
-
-
-public class Main {
-    public static void main(String[] args) throws InterruptedException {
-
-        AtomicCounter counter = new AtomicCounter();
-       
-
-        // 创建线程 1
-        Thread thread1 = new Thread(counter::increment);
-        // 创建线程 2
-        Thread thread2 = new Thread(counter::increment);
-        // 创建线程 3
-        Thread thread3 = new Thread(counter::increment);
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-
-        thread1.join();
-        thread2.join();
-        thread3.join();
-
-        System.out.println("最终计数器的值：" + counter.getCount());
-    }
-    
-}
-```
-
-## 实现一段死锁的代码
-
-```java
-class DeadlockExample {
-    
-    // 创建两个对象，用于模拟资源竞争
-    private  Object resource1 = new Object();
-    private  Object resource2 = new Object();
-
-    public void method1() {
-        
-        synchronized (resource1) {
-            System.out.println("线程A 持有资源 1");
-            // 暂停一下，增加死锁发生的可能性
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            // 尝试获取资源 2 的锁
-            synchronized (resource2) {
-                System.out.println("线程A 持有资源 2");
-            }
-        }
-    }
-
-    public void method2() {
-        
-        synchronized (resource2) {
-            System.out.println("线程B 持有资源 2");
-            // 暂停一下，增加死锁发生的可能性
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            // 尝试获取资源 1 的锁
-            synchronized (resource1) {
-                System.out.println("线程B 持有资源 1");
-            }
-        }
-    }
-}
-
-public class Main {
-    
-    public static void main(String[] args) {
-        
-        DeadlockExample example = new DeadlockExample();
-        
-        // 创建两个线程，一个执行 method1，一个执行 method2
-        Thread thread1 = new Thread(example::method1);
-        Thread thread2 = new Thread(example::method2);
-
-        thread1.start();
-        thread2.start();
-        
-    }
-}
-
-/** 
-        线程 A 通过 synchronized (resource1) 获得 resource1 的监视器锁，然后通过Thread.sleep(1000); 让线程 A 休眠 1s 为的是让线程 B 得到执⾏然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了，都开始企图请求获取对⽅的资源，然后这两个线程就会陷⼊互相等待的状态，这也就产⽣了死锁。
-   满足了 4个 必要条件：
-        1. 互斥条件：该资源任意⼀个时刻只由⼀个线程占⽤。
-        2. 请求与保持条件：⼀个线程因请求资源⽽阻塞时，对已获得的资源保持不放。
-        3. 不剥夺条件:线程已获得的资源在未使⽤完之前不能被其他线程强⾏剥夺，只有⾃⼰使⽤
-        完毕后才释放资源。
-        4. 循环等待条件:若⼲线程之间形成⼀种头尾相接的循环等待资源关系。
-**/
-```
-
-
-
-## 单例模式
-
-```java
-// 1.懒汉式（线程不安全）
-   
-	public class Singleton {
-        
-     private static Singleton instance;
-
-     private Singleton() {
-
-    }
-
-    public static Singleton getUniqueInstance() {
-        if (instance == null) {
-            instance = new Singleton();
-        }
-        return instance;
-    }
-}
-
-/**
-	先不创建实例，当第一次被调用时，再创建实例。
-
-优点： 延迟了实例化，如果不使用该类，就不会被实例化，节省了内存空间。
-
-缺点： 线程不安全，多线程环境下，如果多个线程同时进入了 if (instance == null) ，若此时还未实例化，也就是 instance == null，那么就会有多个线程执行 instance = new Singleton(); ，就会实例化多个实例；
-
-**/
-
-// 2.懒汉式（线程安全）
-   
-	public class Singleton {
-        
-    private static Singleton instance;
-
-    private  Singleton() {
-    }
-
-    private static synchronized Singleton getInstance() {
-        if (instance == null) {
-            instance = new Singleton();
-        }
-        return instance;
-    }
-
-}
-
-
-/**
-	 实现和 线程不安全的懒汉式 几乎一样，唯一不同的点是，在get()方法前面用 sychronized 修饰。如此一来，多个线程访问，每次只有拿到锁的的线程能够进入该方法，避免了多线程不安全问题的出现。
-
-优点： 是线程安全的。
-
-缺点： 虽然解决了线程安全问题，但是性能降低了。因为 即使实例 已经实例化了，既后续不会再出现线程安全问题了，但是 sychronized锁 还在，每次还是只能只有一个线程能拿到这个锁，去访问实例，会使其他线程阻塞，上下文切换，等待时间过长。
-
-
-**/
-
-
-
-// 3.双重检查锁（线程安全）
-   
-	public class Singleton {
-
-    private volatile static Singleton instance;
-
-    private Singleton() {
-    }
-
-    public static Singleton getInstance() {
-        if (instance == null) {
-            synchronized (Singleton.class) {
-                if (instance == null) {
-                    instance = new Singleton();
-                }
-            }
-        }
-        return instance;
-    }  
-}
-
-
-/**
-	
-	双重检查锁，相当于是改进了的懒汉式。之前的线程安全的懒汉式，即使实例已经实例化，依然每次都会有锁，每次使用get()获取实例的时候还是会一直加锁，线程阻塞，导致性能降低了。我们将锁的位置变了，放在里面了，而且多加了一个检查。 也就是第一个判断 instance == null，先判断实例是否已经存在，如果已经存在了，则不会执行 获取锁的操作了，直接return instance。 
-	如果还没有实例化的时候，多个线程进去了，也没事，因为里面有 synchronized 锁，只会让一个线程进入最内层方法 并实例化实例。如此一来，最多也就是第一次实例化的时候，会有线程阻塞的情况，后续不会再有线程阻塞的问题。
-	
-	
-	为什么使用 volatile 关键字修饰 instance 实例变量？？？？
-
-		instance = new Singleton(); 这段代码执行时分为三步：
-                    1 为 instance 分配内存空间
-                    2 初始化 instance
-                    3 将 instance 指向分配的内存地址
-		正常的执行顺序当然是 1>2>3 ，但是由于 JVM 具有指令重排的特性，执行顺序有可能变成 1>3>2。
-		加个 volatile 关键字修饰 uniqueInstance ，volatile 会禁止 JVM 的指令重排，就可以保证多线程环境下的安全运行。
-	
-优点： 延迟加载，节省了内存空间；线程安全，并且相对于 线程安全的懒汉式，性能也提高了。
-
-**/
-
-
-
-
-
-
-// 4.饿汉式（线程安全）
-   
-	public class Singleton {
-
-    private static Singleton instance = new Singleton();
-
-    private Singleton() {
-    }
-
-    public static Singleton getUniqueInstance() {
-        return instance;
-    }
-
-}
-
-
-/**
-	类加载的时候，就已经 先实例化好了 实例。
-
-优点： 是线程安全的。
-
-缺点： 因为直接实例化好了实例，不再延迟实例化；如果 很久之后才需要使用这个实例，这样就会浪费内存空间
-
-
-
-**/
-
-
-// 5.静态内部类（线程安全）
-   
-	public class Singleton {
-
-    private Singleton() {
-    }
-
-    private static class SingletonInner {
-        
-        private static final Singleton INSTANCE = new Singleton();
-        
-    }
-
-    public static Singleton getInstance() {
-        return SingletonInner.INSTANCE;
-    }
-
-}
-
-
-
-
-/**
-	首先，当外部类 Singleton 被加载时，静态内部类 SingletonInner 并没有被加载进内存。当调用 get() 方法时，触发了 SingletonInner.INSTANCE，此时静态内部类 SingletonInner才会被加载内存，并且初始化 INSTANCE 实例，而且 JVM 会确保 INSTANCE 只被实例化一次。
-	
-优点： 延迟加载，节省了内存空间；而且线程安全，性能也提高了。
-
-
-
-**/
-
-// 6.枚举类实现（线程安全）
-   
-	public enum Singleton {
-
-    INSTANCE;
-
-    //添加自己需要的操作
-    public void fun() {
-
-    }
-
-}
-
-
-
-
-/**
-	默认枚举实例的创建就是线程安全的，且在任何情况下都是单例。
-
-优点： 写法简单，线程安全，可以避免通过反射破坏枚举单例
-
-
-
-**/
-
-
-    
-    
-```
-
-
-
-## 快速排序
-
-题解：https://www.bilibili.com/video/BV1j841197rQ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-// 快速排序的主要函数 quickSort()，对 nums[left...right]进行排序 
-// 用到了 次函数 partition()，每次找到一个mid下标。
-// 并且用到了 递归 
-
-
-    public  void quickSort(int[] nums, int left, int right) {
-        if (left < right) {
-            // 找到分区的索引
-            int mid = partition(nums, left, right);
-
-            // 对左分区进行快速排序，递归
-            quickSort(nums, left, mid - 1);
-
-            // 对右分区进行快速排序，递归
-            quickSort(nums, mid + 1, right);
-        }
-    }
-
-    // 进行数组分区操作
-    private  int partition(int[] nums, int left, int right) {
-
-        int pivot = nums[left];  // 选第一个元素作为基准值
-
-
-        while (left < right) {
-            // 从右向左找小于midValue的值
-            while (left < right && nums[right] >= pivot) 
-                right--;
-            
-            nums[left] = nums[right];
-
-            // 从左向右找大于等于midValue的值
-            while (left < right && nums[left] <= pivot) 
-                left++;
-            
-            nums[right] = nums[left];
-        }
-        
-        
-        nums[left] = pivot;
-
-        return left; // 返回基准值的索引 下标
-    }
-
-
-
-```
-
-## 归并排序
-
-题解：https://www.bilibili.com/video/BV1Pt4y197VZ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-private void mergeSort(int[] arr, int left, int right) {
-
-    // 如果区间还有多个元素（非单个元素），则进行递归排序和合并 。如果只剩一个 元素，那么就是有序的
-    if (left < right) {
-
-        // 计算中间索引
-        int mid = left + (right - left) / 2;
-        
-        // 对左半区间进行递归，归并排序
-        mergeSort(arr, left, mid);
-        // 对右半区间进行递归排序，归并排序
-        mergeSort(arr, mid + 1, right);
-        
-        // 合并已排序的左半区间和右半区间
-        merge(arr, left, mid, right);
-
-    }
-}
-
-
-private void merge(int[] arr, int left, int mid, int right) {
-
-    // 创建临时数组来存储合并后的结果，长度要指定的 
-    int[] temp = new int[right - left + 1];
-    int p = 0;  // 临时数组的指针，p每次都是从0开始
-    
-    int i = left;  // 左子数组的指针
-    int j = mid + 1;  // 右子数组的指针
-    
-
-    // 比较左子数组和右子数组的元素，将较小的元素放入临时数组
-    while (i <= mid && j <= right) {
-        if (arr[i] < arr[j])
-            temp[p++] = arr[i++];
-        else
-            temp[p++] = arr[j++];
-    }
-
-    // 如果左子数组还有剩余元素，将其放入临时数组
-    while (i <= mid) {
-        temp[p++] = arr[i++];
-    }
-
-    // 如果右子数组还有剩余元素，将其放入临时数组
-    while (j <= right) {
-        temp[p++] = arr[j++];
-    }
-
-    // 将临时数组中的元素复制回原始数组。。切记是！！ arr数组的left++ 
-    for (i = 0; i < temp.length; i++) {
-        arr[left++] = temp[i];
-    }
-}
-```
-
-
-
-## 二叉树的非递归遍历
-
-### 前序  后序 迭代 
-
-题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-// 就是 要配合 “栈” 来实现，迭代遍历！！！
-//   入栈顺序：中-右-左 ，那么出栈顺序 才是 中-左-右，符合 前序遍历 的结果 
-class Solution {
-    
-    public List<Integer> preorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        		
-        // "栈" 不为空的话， 就一直遍历，控制循环的结束 
-        while (!stack.isEmpty()){
-            	
-            // 这里的话和层序遍历不太一样，这里不需要 记录 每层的节点数count
-            TreeNode node = stack.pop();
-            result.add(node.val);
-            
-            
-      // 这点其实和 层序遍历的“迭代” 挺像的，先判断左、右孩子 是否为空，非空的话 入栈
-            // 前序迭代的话 ，入栈顺序是 右-左 ，这样出栈才是 左-右
-            if (node.right != null){
-                stack.push(node.right);
-            }
-            
-            if (node.left != null){
-                stack.push(node.left);
-            }
-            
-        }
-        return result;
-    }
-}
-
-
-//  入栈顺序：中-左-右 出栈顺序：中-右-左， 最后 Collections.reverse()翻转结果的话，左-右-中，就是 后序遍历 的结果
-
-// 所以 在 前序“迭代”的代码中，改动的就只有  下面判断 左、右节点为空的地方调换一下顺序，变成左-右，
-// 以及 最后 对 result集合进行翻转，就是用  Collections.reverse() 方法！
-class Solution {
-    public List<Integer> postorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        
-        while (!stack.isEmpty()){
-            TreeNode node = stack.pop();
-            result.add(node.val);
-            if (node.left != null){
-                stack.push(node.left);
-            }
-            if (node.right != null){
-                stack.push(node.right);
-            }
-        }
-        Collections.reverse(result);
-        return result;
-    }
-}
-
-```
-
-
-
-### 中序 迭代
-
-题解：https://www.bilibili.com/video/BV1Zf4y1a77g/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-// “中序”的 迭代 , 和 前序 、后序 的代码实现 不太一样。。。。略微 复杂！！！
-class Solution {
-    
-    public List<Integer> inorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        	
-        Stack<TreeNode> stack = new Stack<>();
-        // 本来下面应该要有 stack.push(root)这行代码，但是这里没写，很特殊！！因为换成了 cur 移动指针
-        
-        
-        // 这里要定义一个 cur 的树节点指针，用于 访问 树中的每一个节点 ！！
-        // 这里是 “特殊”的地方 ！！！ !!!!!!!
-        TreeNode cur = root;
-        			
-        		// 这个 判断条件 是两个，而且中间是  或 ||
-        while (cur != null || !stack.isEmpty()){
-            
-            	// 先 一路向 左 ，入栈 ！！ 
-           if (cur != null){
-               
-               stack.push(cur);
-               cur = cur.left;
-               
-           }
-            		// 遇到空节点的话，就要开始 出栈了  ！！
-            		// 以及 要往 右节点 遍历了。。。
-            else{	
-                	// 记得要让 cur 接收重新指向 ！！！
-               cur = stack.pop();
-               result.add(cur.val);
-               cur = cur.right;
-           }
-        }
-        
-        return result;
-    }
-}
-```
-
-## 二叉树的层序遍历
-
-题解：https://www.bilibili.com/video/BV1GY4y1u7b2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-
-class Solution {
-    
-    public List<List<Integer>> levelOrder(TreeNode root) {
-
-        // 一般来说  返回值 是 一个 二维的“数组”。所以 以 List< List<...> >嵌套，来模拟表示  
-                      /***  就是这样子
-                            1
-                            2 3 	
-                            4 5 6 7 
-                       ***/
-        List<List<Integer>> res = new ArrayList<>();
-
-        // 声明 一个 双端队列 Deque。
-        Deque<TreeNode> queue = new ArrayDeque<>();
-
-        // 因为如果传入的节点为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
-    // 二叉树的话 肯定要有这行语句 if判断，因为 测试数据很可能传入的就是一个 null 根节点，空树
-        if (root == null)
-            return res;
-
-	
-        // 先把 树的 根节点 入队列 
-        queue.offerLast(root);
-
-        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
-        while (!queue.isEmpty()) {
-
-  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
-            int size = queue.size();
-            // list集合 保存  每一层的 节点，按顺序添加。
-            List<Integer> level = new ArrayList<>();
-
-            // 内循环 循环的次数， 也就是 该层 出队 几个 节点元素，通过 size 控制！！
-            for (int i = 0; i < size; i++) {
-
-      // 符合 每层节点的 “先进先出” ！！！从队列 弹出 该节点 ，并且 把他加入到 level 集合，
-                TreeNode node = queue.pollFirst();
-                level.add(node.val);
-
-                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
-                if (node.left != null) {
-                    queue.add(node.left);
-                }
-                if (node.right != null) {
-                    queue.add(node.right);
-                }
-            }
-
-            // 每次  内层循环 执行完，也就是 该层的节点全部装入 level 集合里了，那么 接下来的操作 就是要把 保存该层的，所有节点的 level 集合 作为嵌套，插入到最终 要返回的 res 集合里。
-            res.add(level);
-
-        }
-            // 返回 这个res 集合，外层集合，它里面 有一个个 level 集合而已 
-        return res;
-    }
- 
-}
-```
-
 # SQL语句
 
 
@@ -11070,25 +11210,6 @@ FROM
 WHERE
 	b.c_id IN (SELECT c_id FROM score WHERE s_id = '01') 
 	AND a.s_id != '01'
-
-#13. 查询和  ‘01’号学生学习课程 完全相同 的其他学生的信息....太难了。。。先放过。。。
-
-select 
-	s2.s_id,
-	student.s_name
-from 
-	score  s1 
-left join score  s2 
-	on s1.c_id = s2.c_id
-left join student 
-	on student.s_id = s2.s_id
-where 
-	s1.s_id = '01'
-	and s2.s_id != '01'
-group by 
-	s2.s_id,student.s_id
-having 
-	count(s2.c_id) = (select count(*) from score where s_id = '01')
 
 
 
