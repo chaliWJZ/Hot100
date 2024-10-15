@@ -2592,6 +2592,12 @@ class Solution {
 
 #### 栈
 
+题目描述：
+
+```
+
+```
+
 题解 ：[https://leetcode.cn/problems/implement-queue-using-stacks/solutions/1724489/by-carlsun-2-kxer/](https://leetcode.cn/problems/implement-queue-using-stacks/solutions/1724489/by-carlsun-2-kxer/)
 
 ```java
@@ -2667,6 +2673,12 @@ class MyQueue {
 
 #### 队列
 
+题目描述：
+
+```
+
+```
+
 题解：[https://leetcode.cn/problems/implement-stack-using-queues/](https://leetcode.cn/problems/implement-stack-using-queues/)
 
 ```java
@@ -2720,6 +2732,12 @@ class MyStack {
 ### 155 最小栈
 
 #### 栈
+
+题目描述：
+
+```
+
+```
 
 题解：https://leetcode.cn/problems/min-stack/solutions/42521/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-38/?envType=study-plan-v2&envId=top-100-liked  解法一
 
@@ -2796,6 +2814,12 @@ class MinStack {
 ### 150 逆波兰表达式求值
 
 #### 栈
+
+题目描述：
+
+```
+
+```
 
 题解 ：[https://leetcode.cn/problems/evaluate-reverse-polish-notation/solutions/21167/java-yi-dong-yi-jie-xiao-lu-gao-by-spirit-9-19/](https://leetcode.cn/problems/evaluate-reverse-polish-notation/solutions/21167/java-yi-dong-yi-jie-xiao-lu-gao-by-spirit-9-19/)
 
@@ -4906,11 +4930,7 @@ class Solution {
        
         }
         
-        
-       
-        
-          
-        					
+       			
          
         // 3. 为什么还要 删除尾部空格？因为 添加 最后一个单词 的时候 它还会多 添加一个 空格  
         return new String(res).trim();
@@ -5212,6 +5232,12 @@ class Solution {
 
 #### 栈
 
+题目描述：
+
+```
+
+```
+
 题解 ：[https://leetcode.cn/problems/valid-parentheses/solutions/1737575/by-carlsun-2-ij1t/](https://leetcode.cn/problems/valid-parentheses/solutions/1737575/by-carlsun-2-ij1t/)
 
 [https://leetcode.cn/problems/valid-parentheses/solutions/420031/yi-ci-bian-li-si-lu-chao-ji-jian-dan-bu-dian-zan-b/](https://leetcode.cn/problems/valid-parentheses/solutions/420031/yi-ci-bian-li-si-lu-chao-ji-jian-dan-bu-dian-zan-b/)
@@ -5276,6 +5302,12 @@ class Solution {
 
 #### 栈
 
+题目描述：
+
+```
+
+```
+
 题解 ：[https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/solutions/1743118/by-carlsun-2-srfq/](https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/solutions/1743118/by-carlsun-2-srfq/)
 
 ```java
@@ -5330,6 +5362,12 @@ public String removeDuplicates(String S) {
 ### 394 字符串解码
 
 #### 栈
+
+题目描述:
+
+```
+
+```
 
 题解：https://leetcode.cn/problems/decode-string/solutions/6274/ti-jie-czhan-by-youlookdeliciousc/?envType=study-plan-v2&envId=top-100-liked
 
@@ -9942,9 +9980,10 @@ public class Main {
 
 ## 单例模式
 
+### 懒汉式（线程不安全）
+
 ```java
-// 1.懒汉式（线程不安全）
-   
+
 public class Singleton {
         
      private static Singleton instance;
@@ -9953,7 +9992,7 @@ public class Singleton {
 
     }
 
-    public static Singleton getUniqueInstance() {
+    public static Singleton getInstance() {
         if (instance == null) {
             instance = new Singleton();
         }
@@ -9970,9 +10009,14 @@ public class Singleton {
 
 **/
 
-// 2.懒汉式（线程安全）
-   
-	public class Singleton {
+
+    
+```
+
+### 懒汉式（线程安全）
+
+```java
+public class Singleton {
         
     private static Singleton instance;
 
@@ -9999,10 +10043,13 @@ public class Singleton {
 
 **/
 
+```
 
 
-// 3.双重检查锁（线程安全）
-   
+
+### 双重检查锁（线程安全）
+
+```java
 public class Singleton {
 
     private volatile static Singleton instance;
@@ -10046,9 +10093,14 @@ public class Singleton {
 
 
 
+```
 
 
-// 4.饿汉式（线程安全）
+
+### 饿汉式（线程安全）
+
+```java
+
    
 public class Singleton {
 
@@ -10057,7 +10109,7 @@ public class Singleton {
     private Singleton() {
     }
 
-    public static Singleton getUniqueInstance() {
+    public static Singleton getInstance() {
         return instance;
     }
 
@@ -10074,11 +10126,14 @@ public class Singleton {
 
 
 **/
+```
 
+### 静态内部类（线程安全）
 
-// 5.静态内部类（线程安全）
+```java
+
    
-	public class Singleton {
+public class Singleton {
 
     private Singleton() {
     }
@@ -10094,28 +10149,18 @@ public class Singleton {
     }
 
 }
+```
 
+### 枚举类实现（线程安全）
 
-
-
-/**
-	首先，当外部类 Singleton 被加载时，静态内部类 SingletonInner 并没有被加载进内存。当调用 get() 方法时，触发了 SingletonInner.INSTANCE，此时静态内部类 SingletonInner才会被加载内存，并且初始化 INSTANCE 实例，而且 JVM 会确保 INSTANCE 只被实例化一次。
-	
-优点： 延迟加载，节省了内存空间；而且线程安全，性能也提高了。
-
-
-
-**/
-
-// 6.枚举类实现（线程安全）
-   
-	public enum Singleton {
+```java
+public enum Singleton {
 
     INSTANCE;
 
     //添加自己需要的操作
     public void fun() {
-
+			
     }
 
 }
@@ -10124,7 +10169,7 @@ public class Singleton {
 
 
 /**
-	默认枚举实例的创建就是线程安全的，且在任何情况下都是单例。
+	枚举类型 在类加载时就会 被初始化，并且只有一个实例。是线程安全的
 
 优点： 写法简单，线程安全，可以避免通过反射破坏枚举单例
 
@@ -10132,26 +10177,23 @@ public class Singleton {
 
 **/
 
-
-    
-    
 ```
 
+## 排序算法
 
-
-## 快速排序
+### 快速排序
 
 题解：https://www.bilibili.com/video/BV1j841197rQ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-// 快速排序的主要函数 quickSort()，对 nums[left...right]进行排序 
-// 用到了 次函数 partition()，每次找到一个mid下标。
-// 并且用到了 递归 
+// 快速排序的主要函数 quickSort()，对 nums[left...right]进行排序 ，不断递归调用
+// 下面还定义了 次函数 partition()，用于每次找到一个 mid分区下标。
+ 
+public class Sort {
 
-
-    public  void quickSort(int[] nums, int left, int right) {
+    public  static void quickSort(int[] nums, int left, int right) {
         if (left < right) {
-            // 找到分区的索引
+            // 调用 partition()方法， 找到分区的 mid索引
             int mid = partition(nums, left, right);
 
             // 对左分区进行快速排序，递归
@@ -10162,72 +10204,82 @@ public class Singleton {
         }
     }
 
-    // 进行数组分区操作
-    private  int partition(int[] nums, int left, int right) {
+    // 进行数组分区操作，然后返回 mid 下标 
+    private  static int partition(int[] nums, int left, int right) {
 
-        int pivot = nums[left];  // 选第一个元素作为基准值
+        int pivot = nums[left];  // 选第一个元素作为 基准值
 
 
         while (left < right) {
-            // 从右向左找小于midValue的值
+      // right 指针 从右向左←，找小于midValue的值，找到之后，记得把它放到 left指针下标位置
             while (left < right && nums[right] >= pivot) 
                 right--;
             
             nums[left] = nums[right];
 
-            // 从左向右找大于等于midValue的值
+  // left 指针 从左向→，找大于midValue的值，找到之后，记得把它放到 right 指针下标位置
             while (left < right && nums[left] <= pivot) 
                 left++;
             
             nums[right] = nums[left];
         }
         
-        
+        			// 此时把 基准元素 放在 两个指针相遇的下标位置
         nums[left] = pivot;
 
-        return left; // 返回基准值的索引 下标
+        return left; // 返回基准值的 索引下标
     }
 
+    public static void main(String[] args) {
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        quickSort(arr,0,arr.length-1);
+        System.out.println("排序后的数组：");
+        for (int num : arr){
+            System.out.print(num + " ");
+        }
+    }
 
-
+}
 ```
 
-## 归并排序
+### 归并排序
 
 题解：https://www.bilibili.com/video/BV1Pt4y197VZ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-private void mergeSort(int[] arr, int left, int right) {
+public class Sort {
+    
+private static void mergeSort(int[] arr, int left, int right) {
 
-    // 如果区间还有多个元素（非单个元素），则进行递归排序和合并 。如果只剩一个 元素，那么就是有序的
+    // 如果区间还有多个元素（非单个元素），就一直向下递归排序和合并 。如果只剩一个 元素，那么就是有序的
     if (left < right) {
 
-        // 计算中间索引
+        // 计算中间索引 mid 
         int mid = left + (right - left) / 2;
         
-        // 对左半区间进行递归，归并排序
+        // 对 左半区间 进行递归，归并排序
         mergeSort(arr, left, mid);
-        // 对右半区间进行递归排序，归并排序
+        // 对 右半区间 进行递归排序，归并排序
         mergeSort(arr, mid + 1, right);
         
-        // 合并已排序的左半区间和右半区间
+        //递归的处理逻辑，每次都是要调用下面的merge()方法，合并 已排序的左半区间和右半区间
         merge(arr, left, mid, right);
 
     }
 }
 
+	// 这个merge()方法，主要作用其实就是 合并两个有序数组
+private static void merge(int[] arr, int left, int mid, int right) {
 
-private void merge(int[] arr, int left, int mid, int right) {
-
-    // 创建临时数组来存储合并后的结果，长度要指定的 
+    // 创建临时数组temp 来存储合并后的结果，长度要指定的 
     int[] temp = new int[right - left + 1];
-    int p = 0;  // 临时数组的指针，p每次都是从0开始
+    int p = 0;  // 临时数组temp 的指针p，不断后移 添加元素
     
-    int i = left;  // 左子数组的指针
-    int j = mid + 1;  // 右子数组的指针
+    int i = left;  // 左子数组 的指针i
+    int j = mid + 1;  // 右子数组 的指针j
     
 
-    // 比较左子数组和右子数组的元素，将较小的元素放入临时数组
+    // 比较 左子数组 和 右子数组的元素，将较小的元素 放入 临时数组temp
     while (i <= mid && j <= right) {
         if (arr[i] < arr[j])
             temp[p++] = arr[i++];
@@ -10235,22 +10287,149 @@ private void merge(int[] arr, int left, int mid, int right) {
             temp[p++] = arr[j++];
     }
 
-    // 如果左子数组还有剩余元素，将其放入临时数组
+    // 如果 左子数组 还有剩余元素，将其 放入 临时数组temp
     while (i <= mid) {
         temp[p++] = arr[i++];
     }
 
-    // 如果右子数组还有剩余元素，将其放入临时数组
+    // 如果 右子数组 还有剩余元素，将其放入临时数组
     while (j <= right) {
         temp[p++] = arr[j++];
     }
 
-    // 将临时数组中的元素复制回原始数组。。切记是！！ arr数组的left++ 
+ // 切记！！每次都还要将 temp临时数组中的元素 复制回 原始数组。。注意是 往原始数组的 left下标++
     for (i = 0; i < temp.length; i++) {
         arr[left++] = temp[i];
     }
 }
+    
+    public static void main(String[] args) {
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        mergeSort(arr,0,arr.length-1);
+        System.out.println("排序后的数组：");
+        for (int num : arr){
+            System.out.print(num + " ");
+        }
+    }
+    
+}
+    
+    
 ```
+
+### 冒泡排序
+
+```java
+public class BubbleSort {
+    
+    public static void bubbleSort(int[] arr) {
+        
+            int n = arr.length;
+// 外层for循环，只需要 遍历 n-1次就行了，因为每次确立一个元素的最终位置，确立 n-1个元素之后，那么最后一个元素，它不需要再进行比较就已经有序了。        
+        for (int i = 0; i < n - 1; i++) {  
+// 内层for循环，每次都是 n-1-i 比较次数，因为每次确立一个元素之后，那么之后的元素 比较的次数会依次 -1，
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+           // 这里是要求升序，如果前面的元素比后面元素大，就交换 arr[j] 和 arr[j + 1]
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        bubbleSort(arr);
+        System.out.println("排序后的数组：");
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+
+
+
+## 二叉树的层序遍历
+
+题解：https://www.bilibili.com/video/BV1GY4y1u7b2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+     TreeNode(int val, TreeNode left, TreeNode right) {
+        	this.val = val;
+            this.left = left;
+           this.right = right;
+      }
+}
+
+
+class Solution {
+    
+    public List<List<Integer>> levelOrder(TreeNode root) {
+
+        // 一般来说  返回值 是 一个 二维的“数组”。所以用 List< List<...> >嵌套，来模拟表示  
+                      /***  就是这样子
+                            1
+                            2 3 	
+                            4 5 6 7 
+                       ***/
+        List<List<Integer>> res = new ArrayList<>();
+
+        // 声明 一个 双端队列 Deque。  "先进先出" 原则
+        Deque<TreeNode> queue = new ArrayDeque<>();
+
+        // 因为如果传入的 根节点 为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
+        if (root == null)
+            return res;
+
+	
+        // 首先把 树的 根节点 入队列 
+        queue.offerLast(root);
+
+        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
+        while (!queue.isEmpty()) {
+
+  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
+            int size = queue.size();
+            // level 集合 保存  每一层的 节点，按顺序添加。
+            List<Integer> level = new ArrayList<>();
+
+            // 内循环 循环的次数， 也就是 该层 出队 几个 节点元素，通过 size 控制！！
+            for (int i = 0; i < size; i++) {
+
+      // 符合 每层节点的 “先进先出” ！！！从队列 弹出 该节点 ，并且 把他加入到 level 集合，
+                TreeNode node = queue.pollFirst();
+                level.add(node.val);
+
+                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+
+           // 每次  内层循环 执行完，也就是 该层的节点全部装入 level 集合里了，那么 接下来的操作 就是要把 保存该层的，所有节点的 level 集合 作为嵌套，插入到最终 要返回的 res 集合里。
+            res.add(level);
+
+        }
+            // 返回 这个res 集合，外层集合，它里面 有一个个 level 集合而已 
+        return res;
+    }
+ 
+}
+```
+
+
 
 
 
@@ -10261,46 +10440,47 @@ private void merge(int[] arr, int left, int mid, int right) {
 题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+     TreeNode(int val, TreeNode left, TreeNode right) {
+        	this.val = val;
+            this.left = left;
+           this.right = right;
+      }
+  }
 
-// 就是 要配合 “栈” 来实现，迭代遍历！！！
+
+// 就是 要配合 “栈” 来实现，迭代遍历！！！   "先进后出"原则
 //   入栈顺序：中-右-左 ，那么出栈顺序 才是 中-左-右，符合 前序遍历 的结果 
 class Solution {
     
     public List<Integer> preorderTraversal(TreeNode root) {
         
-        List<Integer> result = new ArrayList<>();
+        // 保存最终的 遍历结果的 res 集合 
+        List<Integer> res = new ArrayList<>();
         
-        if (root == null){
-            return result;
-        }
+        if (root == null)
+            return res;
+        
         
         Stack<TreeNode> stack = new Stack<>();
+        // 首先把 树的 根节点 入栈 
         stack.push(root);
         		
-        // "栈" 不为空的话， 就一直遍历，控制循环的结束 
+        // "栈" 不为空的话， 就一直遍历，控制 while循环的结束。。
+        // 相比于 “层序”遍历，它只需要一个外层的 while 循环就行了
         while (!stack.isEmpty()){
             	
-            // 这里的话和层序遍历不太一样，这里不需要 记录 每层的节点数count
+                 // 先 出“栈”
             TreeNode node = stack.pop();
             result.add(node.val);
             
             
-      // 这点其实和 层序遍历的“迭代” 挺像的，先判断左、右孩子 是否为空，非空的话 入栈
+      //  先判断左、右孩子 是否为空，非空的话 入栈
             // 前序迭代的话 ，入栈顺序是 右-左 ，这样出栈才是 左-右
             if (node.right != null){
                 stack.push(node.right);
@@ -10311,7 +10491,7 @@ class Solution {
             }
             
         }
-        return result;
+        return res;
     }
 }
 
@@ -10323,13 +10503,30 @@ class Solution {
 题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-//  入栈顺序：中-左-右 出栈顺序：中-右-左， 最后 Collections.reverse()翻转结果的话，左-右-中，就是 后序遍历 的结果
 
-// 所以 在 前序“迭代”的代码中，改动的就只有  下面判断 左、右节点为空的地方调换一下顺序，变成左-右，
+
+public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+     TreeNode(int val, TreeNode left, TreeNode right) {
+        	this.val = val;
+            this.left = left;
+           this.right = right;
+      }
+}
+
+// 就是 要配合 “栈” 来实现，迭代遍历！！！   "先进后出"原则
+//  入栈顺序：中-左-右 ， 出栈顺序：中-右-左， 最后 Collections.reverse()翻转结果的话，左-右-中，就是 后序遍历 的结果
+
+//！所以在 “前序”迭代的代码中，改动的就只有  下面判断 左、右节点为空的地方调换一下顺序，变成 左-右
 // 以及 最后 对 result集合进行翻转，就是用  Collections.reverse() 方法！
 class Solution {
     public List<Integer> postorderTraversal(TreeNode root) {
         
+        // 保存最终的 遍历结果的 res 集合 
         List<Integer> result = new ArrayList<>();
         
         if (root == null){
@@ -10337,11 +10534,18 @@ class Solution {
         }
         
         Stack<TreeNode> stack = new Stack<>();
+         // 首先把 树的 根节点 入栈 
         stack.push(root);
         
+        
+// "栈" 不为空的话， 就一直遍历，控制 while循环的结束。。
+        // 相比于 “层序”遍历，它只需要一个外层的 while 循环就行了
         while (!stack.isEmpty()){
+            
             TreeNode node = stack.pop();
             result.add(node.val);
+            
+            // 先插入 左节点，再插入 右节点
             if (node.left != null){
                 stack.push(node.left);
             }
@@ -10349,6 +10553,8 @@ class Solution {
                 stack.push(node.right);
             }
         }
+        
+    // 以及 最后 对 result集合进行翻转，就是用  Collections.reverse() 方法！
         Collections.reverse(result);
         return result;
     }
@@ -10360,6 +10566,20 @@ class Solution {
 题解：https://www.bilibili.com/video/BV1Zf4y1a77g/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
+public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode() {}
+      TreeNode(int val) { this.val = val; }
+     TreeNode(int val, TreeNode left, TreeNode right) {
+        	this.val = val;
+            this.left = left;
+           this.right = right;
+      }
+}
+
+
 // “中序”的 迭代 , 和 前序 、后序 的代码实现 不太一样。。。。略微 复杂！！！
 class Solution {
     
@@ -10367,19 +10587,17 @@ class Solution {
         
         List<Integer> result = new ArrayList<>();
         
-        if (root == null){
+        if (root == null)
             return result;
-        }
+        
         	
         Stack<TreeNode> stack = new Stack<>();
-        // 本来下面应该要有 stack.push(root)这行代码，但是这里没写，很特殊！！因为换成了 cur 移动指针
-        
-        
-        // 这里要定义一个 cur 的树节点指针，用于 访问 树中的每一个节点 ！！
+        // 本来下面应该要有 stack.push(root)这行代码，插入根节点，，但是这里没写，很特殊！！！因为换成了 cur 移动指针 
+        // 这里要定义一个 cur 节点指针，用于 访问 树中的每一个节点 ！！
         // 这里是 “特殊”的地方 ！！！ !!!!!!!
         TreeNode cur = root;
         			
-        		// 这个 判断条件 是两个，而且中间是  或 ||
+  // 只有一个外层 while循环，当 cur节点指针 不指向空节点  或  栈不为空的时候，继续遍历执行
         while (cur != null || !stack.isEmpty()){
             
             	// 先 一路向 左 ，入栈 ！！ 
@@ -10401,87 +10619,6 @@ class Solution {
         
         return result;
     }
-}
-```
-
-## 二叉树的层序遍历
-
-题解：https://www.bilibili.com/video/BV1GY4y1u7b2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-
-class Solution {
-    
-    public List<List<Integer>> levelOrder(TreeNode root) {
-
-        // 一般来说  返回值 是 一个 二维的“数组”。所以 以 List< List<...> >嵌套，来模拟表示  
-                      /***  就是这样子
-                            1
-                            2 3 	
-                            4 5 6 7 
-                       ***/
-        List<List<Integer>> res = new ArrayList<>();
-
-        // 声明 一个 双端队列 Deque。
-        Deque<TreeNode> queue = new ArrayDeque<>();
-
-        // 因为如果传入的节点为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
-    // 二叉树的话 肯定要有这行语句 if判断，因为 测试数据很可能传入的就是一个 null 根节点，空树
-        if (root == null)
-            return res;
-
-	
-        // 先把 树的 根节点 入队列 
-        queue.offerLast(root);
-
-        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
-        while (!queue.isEmpty()) {
-
-  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
-            int size = queue.size();
-            // list集合 保存  每一层的 节点，按顺序添加。
-            List<Integer> level = new ArrayList<>();
-
-            // 内循环 循环的次数， 也就是 该层 出队 几个 节点元素，通过 size 控制！！
-            for (int i = 0; i < size; i++) {
-
-      // 符合 每层节点的 “先进先出” ！！！从队列 弹出 该节点 ，并且 把他加入到 level 集合，
-                TreeNode node = queue.pollFirst();
-                level.add(node.val);
-
-                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
-                if (node.left != null) {
-                    queue.add(node.left);
-                }
-                if (node.right != null) {
-                    queue.add(node.right);
-                }
-            }
-
-            // 每次  内层循环 执行完，也就是 该层的节点全部装入 level 集合里了，那么 接下来的操作 就是要把 保存该层的，所有节点的 level 集合 作为嵌套，插入到最终 要返回的 res 集合里。
-            res.add(level);
-
-        }
-            // 返回 这个res 集合，外层集合，它里面 有一个个 level 集合而已 
-        return res;
-    }
- 
 }
 ```
 
