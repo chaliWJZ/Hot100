@@ -6052,20 +6052,20 @@ public class Solution {
 
 ## 链表
 
-一般来说， 链表使用1个移动指针cur 就够了。也可以是2个 快慢移动指针 slow 和 fast，然后它们对链表进行操作 。
+① 一般来说， 链表使用1个移动指针cur 就够了；有时候需要 2个 快慢移动指针 slow 和 fast，然后它们 对   链表进行操作 。
 
-一般来说，cur.next = ...，就是拉链的意思，有点 "删除" 某个节点的味道。如果是cur = cur.next，那么就是移动到下一个 节点 的意思
+② 一般来说，cur.next = ...，就是拉链的意思，有点 "删除" 某个节点的味道；如果是cur = cur.next，那么就是移动到下一个 节点 的意思
 
-一般的话，特殊情况下的边界条件，不需要判断，比如先判断 传入的是空链表 null 什么的。
+③一般的话，特殊情况下的边界条件，不需要判断，比如先判断 传入的是空链表 null 什么的。 
 
-​       如果这道链表题目，需要用到虚拟头节点dummyHead，一般都是要在 while循环 里面用cur.next进行判断空！！然后最后的话要返回dummyHead.next 因为这个才是 真正的 头节点！！如果这道题用到了fast指针，每次要移动2 步，那么结果就会和 节点的个数，奇数还是偶数，有关系的时候，或是 cur.next不为null && cur.next.next 不为null，必须是 少的next在前面，也必须用  &&！！
+④	 如果这道链表题目，需要用到虚拟头节点dummyHead，一般都是要在 while循环 里面用  cur.next  进行判断空！！然后最后的话要返回dummyHead.next 因为这个才是 真正的 头节点！！如果这道题用到了fast指针，每次要移动2 步，那么结果就会和 节点的个数，奇数还是偶数，有关系的时候，或是 cur.next不为null && cur.next.next 不为null，必须是 少的next在前面，也必须用  &&！！
 
 ​		如果这道题没用到 虚拟头节点，那么 while循环里面的话，有可能是判断cur.next为空，也可能是判断cur不为空，具体看题目，不能定向思维！！最后返回的话就是 head可以了！！如果这道题用到了fast指针，每次要移动2 步，那么结果就会和节点的个数，奇数还是偶数，有关系的时候，while循环里面 必须是cur不为null && cur.next ，必须是少next的在前面，也必须用 且&&，
 
 ### 虚拟头节点
 
-​       一般涉及 **删除**某个节点 、**两两交换 **链表中的节点、**两个链表合并**为第三个链表 的时候 的操作，我们要引入 ”**<u>虚假</u>**“头节点  ！！  引入的作用就是  -----> 方便对 头节点的操作 ！ 
-​       其他情况的话， 不需要 引入 ”虚假“头节点 。。。。
+​       一般来说，涉及 **删除**某个节点 、**两两交换 **链表中的节点、**两个链表合并**为第三个链表 的时候 的操作，我们要引入 ”**<u>虚假</u>**“头节点  ！！  引入的作用就是  -----> 方便对 头节点的操作 ！ 
+​       
 
 #### 203 移除链表元素
 
@@ -6177,8 +6177,6 @@ class Solution {
 
 题解：[https://leetcode.cn/problems/remove-nth-node-from-end-of-list/solutions/598026/dong-hua-yan-shi-kuai-man-zhi-zhen-19-sh-n9ih/](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/solutions/598026/dong-hua-yan-shi-kuai-man-zhi-zhen-19-sh-n9ih/)
 
-
-
 ##### 双指针快慢指针
 
 ```java
@@ -6237,15 +6235,27 @@ class Solution {
 
 ##### 暴力
 
+题目描述：
+
+```
+将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+示例 1：
+
+输入：l1 = [1,2,4], l2 = [1,3,4]
+输出：[1,1,2,3,4,4]
+```
+
 题解：https://leetcode.cn/problems/merge-two-sorted-lists/solutions/2361535/21-he-bing-liang-ge-you-xu-lian-biao-shu-aisw/
 
 ```java
-// 因为涉及到了 两个链表合并为第三个链表，所以引入  “虚拟”头节点，方便第三个链接的 不断插入新节点。
+// 因为涉及到了 两个链表合并为第三个链表，所以引入  “虚拟”头节点，方便第三个链表的 不断插入新节点。
+// 其实大体思想和  合并两个有序数组 差不多，这里就是需要改一下 指针指向。。。
 class Solution {
     
      public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
          
-		//如果是合并两个链表 到 第三个链表，，，一般都是这样子定义，第三个链表
+		
          // 这个是 第三个链表，用于不断拉链，接上新的 节点 。。
         ListNode dummyHead = new ListNode(0);
 		ListNode cur  = dummyHead;
@@ -6257,8 +6267,8 @@ class Solution {
         while (a != null && b != null) {
 			
    
-			// 如果a 移动指针 指向的 list1链表的节点元素 小于 b移动指针指向的 list2链表节点，那么就 cur指向 a
-            // 还要记得 cur 和 a 一起都向后移动一位 哦！！ 
+			// 如果a 移动指针 指向的 list1链表的节点元素 小于 b移动指针指向的 list2链表节点，那么就 cur的next 就指向 a
+            // 然后记得 cur 和 a 一起都向后移动一位 
             if (a.val < b.val) {
                 cur.next = a;
                 cur = cur.next;
@@ -6292,17 +6302,41 @@ class Solution {
 
 ##### 暴力
 
+题目描述：
+
+```
+给你一个链表数组，每个链表都已经按升序排列。
+
+请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+ 
+
+示例 1：
+
+输入：lists = [[1,4,5],[1,3,4],[2,6]]
+输出：[1,1,2,3,4,4,5,6]
+解释：链表数组如下：
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+将它们合并到一个有序链表中得到。
+1->1->2->3->4->4->5->6
+```
+
 题解：https://leetcode.cn/problems/merge-k-sorted-lists/solutions/574324/shua-chuan-lc-you-xian-dui-lie-jie-fa-sh-3flb/
 
 https://www.bilibili.com/video/BV1vv4y1S7vu/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-// 因为涉及到了 两个链表合并为第三个链表，所以引入  “虚拟”头节点，方便第三个链接的 不断插入新节点。
+// 因为  多个链表合并到 一个链表中，所以引入  “虚拟”头节点，方便第三个链接的 不断插入新节点。
+// 这里用到了 PriorityQueue 优先级队列 ，内置方便排序 比较。
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {
         
         
-         // 这个是 第三个链表，用于不断拉链，接上新的 节点 。。
+         // 这个是 合并出来的 结果链表，用于不断拉链，接上新的 节点 。。
         ListNode dummyHead = new ListNode(0);
         ListNode cur = dummyHead;
         
@@ -6313,16 +6347,16 @@ class Solution {
         PriorityQueue<ListNode>  queue = new PriorityQueue<>((a,b)->a.val-b.val);
         						
         
-        	  // 因为 数组存放的是 引用类型数据，所以用 增强for循环遍历 ， ListNode 数组。  
+        	   
              // 实际上只是 先把k个链表的每个 头节点都放入了 堆中而已，里面会进行 升序排序 。 
         for (ListNode node : lists) { 
-               // 这里有个前提，就是  PriorityQueue 优先级队列 不能存入 null值。
+   // 这里有个前提，就是  PriorityQueue 优先级队列 不能存入 null值。所以要判断if
             if (node != null) queue.offer(node);
         }
         
         	
         
-     //  将k个链表 的头结点，放入「堆」。然后每次都从「堆」中挑出最小值，并将最小值的头节点的 下一个节点添加进「堆」。 这样一直循环添加，比较。。。
+     //  将k个链表 的头结点，放入「堆」。然后每次都从「堆」中挑出最小值，并将 最小值的头节点的   下一个节点 添加进「堆」。 这样一直循环添加，比较。。。
         while (!queue.isEmpty()) {
             
             ListNode head = queue.poll();
@@ -6330,10 +6364,10 @@ class Solution {
             cur = cur.next;
             
       			   // 记得要用 if ！！！！！ 而不是 while 
-                // 因为如果是 while的话，每一次 选择一个最小值的头节点之后，会把该链表的剩余所有节点都放入 「堆」，这样子 会让 「堆」 越来越大。而 每次 poll的时候只是 poll 出去一个。。。。
-            
+                // 因为如果是 while的话，每一次 选择一个最小值的头节点之后，会把该链表的剩余所有节点都放入 「堆」，这样子 会让 「堆」 越来越大。而 每次 poll的时候只是 poll 出去一个。。。。         
             if(head.next != null) 
                 queue.offer(head.next);
+            
         }
         
         // 本道题 引入了 “虚拟” 头节点 。 所以最后返回的就是 dummyHead的next
@@ -6505,11 +6539,22 @@ class Solution {
 
 ##### 双指针快慢指针
 
+题解：
+
+```
+给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
+
+示例 1：
+
+输入：head = [1,2,3,4,5], left = 2, right = 4
+输出：[1,4,3,2,5]
+```
+
 题解：https://leetcode.cn/problems/reverse-linked-list-ii/solutions/1992226/you-xie-cuo-liao-yi-ge-shi-pin-jiang-tou-teqq/
 
 ```java
-  //  这道题，也是有两两反转的感觉。但和 最原本的 反转链表 题目，不一样，那个只需要反转整个 链表就行了，所以不需要考虑 "头节点"的特殊性质。。。
-// 但是这道题 是   反转某个区间，，需要 知道反转区间的 前一个节点是什么，才能方便连接，所以为了统一方便操作，用了 "虚拟头节点" ！！
+  //  这道题，也是有两两反转的感觉。但和 最原本的 反转链表 题目，不一样，那个只需要反转 整个链表  就行了，所以不需要考虑 "头节点"的特殊性质。。。
+// 但是这道题 是   反转某个"区间" ！！需要 知道反转"区间"的 前一个节点是什么，才能方便连接，所以 为了统一方便操作，用了 "虚拟头节点" ！！
 class Solution {
     
     public ListNode reverseBetween(ListNode head, int left, int right) {
@@ -6527,7 +6572,7 @@ class Solution {
             p0 = p0.next;
 		
         
-        //这里的话，就和 之前的 原本的反转链表的代码一样了。。
+        //这里的话，就和 之前的 原本的反转链表的代码一样了。。。
         ListNode slow = null, fast = p0.next;
         
         // 对指定区间的节点进行反转操作，只不过限定反转的节点个数了。。
@@ -6539,8 +6584,9 @@ class Solution {
             fast = temp;
             
         }
-		
-        	//要先对 p0的next进行拉链，然后才对p0进行拉链！！
+		      //  因为 这个"区间" 反转完毕之后，要对它 重新加入 链表中 。。
+       // 那么 p0的next 这个节点 其实 就是 这个"区间"的 首节点， p0的next的next要指向 快指针 fast ，fast 其实已经指向了 这个区间末尾的 下一个节点了。
+        	//最后才是对 p0的next 去指向  这个"区间"的 第一个 尾节点， 完成 反转了。
         p0.next.next = fast;
         p0.next = slow;
         
@@ -6556,12 +6602,32 @@ class Solution {
 
 ##### 双指针快慢指针
 
+题目描述：
+
+```
+给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
+
+k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+ 
+
+示例 1：
+
+
+输入：head = [1,2,3,4,5], k = 2
+输出：[2,1,4,3,5]
+```
+
 题解：https://leetcode.cn/problems/reverse-nodes-in-k-group/solutions/1992228/you-xie-cuo-liao-yi-ge-shi-pin-jiang-tou-plfs/
 
 ```java
-// 这道题 其实和 反转链表II 很像，它是只对 其中的一个区间反转 ，这道题是对每个 k长度的 区间，一直 反转
-// 而且如果最后的剩余节点不足 k个，那么就不反转。所以要先统计出 链表的总长度，然后每次k个反转的时候记得减去，算出剩余节点个数 
-// 需要用到 “虚拟” 头节点的
+// 这道题 其实和  反转链表II 很像，它是只对  其中的一个"区间" 反转 ，这道题是 每个"k长度"的区间，一直 反转
+// 而且如果最后的剩余节点不足 k个，那么就不反转。。。。
+// 所以要先统计出 链表的总长度，然后每次k个反转之后，总长度记得减去 k ，算出剩余节点个数 
+
+// 但是这道题 是   反转"区间" ！！需要 知道反转"区间"的 前一个节点是什么，才能方便连接，所以 为了统一方便操作，用了 "虚拟头节点" ！！
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
         
@@ -6588,7 +6654,7 @@ class Solution {
         // 就是在这里多了个外层的的while循环，每次要判断一下 剩余的节点个数 大于等于k吗，是的话才会反转这段区间的链表。。。
         while (n >= k) {
             
-                n -= k;  // 所以每次反转的时候，要减去这段链表的 k个节点数。
+                n -= k;  // 所以每次反转的时候，链表总长度n 要减去这段链表的 k个节点数 ！！
             				
                 // 内层for循环就是最最平常的 反转链表的代码。
             for (int i = 0; i < k; i++) {  
@@ -6598,13 +6664,18 @@ class Solution {
                 fast = temp;
             }
 
-          	// 因为 这里的话，每次反转完，p0又要指向下一个区间的前一个节点，其实画图可知，就是p0.next，所以要先用临时指针保存一下，因为 p0.next之后要拉链了。
+          	// 因为每次 反转完，p0又要指向 下一个"区间" 的前一个节点，其实就是p0.next，所以要先用临时指针保存一下，因为 p0.next之后要拉链了。
             ListNode temp2 = p0.next;
             
+            
+            
+             //  因为 这个"区间" 反转完毕之后，要对它 重新加入 链表中 。。
+       // 那么 p0的next 这个节点 其实 就是 这个"区间"的 首节点， p0的next的next要指向 快指针 fast ，fast 其实已经指向了 这个区间末尾的 下一个节点了。
+      //最后才是对 p0的next 去指向  这个"区间"的  尾节点,其实现在是 慢指针 slow 指向着。完成 反转了。
             p0.next.next = fast;
             p0.next = slow;
             
-            p0 = temp;  //  移动p0！！
+            p0 = temp;  //  记得移动p0！！ 因为 还要 给 下一个 k长度的区间 继续反转。。。
             
         }
 
@@ -6614,11 +6685,15 @@ class Solution {
 
 ```
 
+### 不用虚拟头节点
 
+​     其他情况的话， 一般。。。不需要 引入 ”虚假“头节点 。。。。
 
-### 83 删除排序链表中的重复元素
+​    除了个别的 很 "特殊" 例子。。。。
 
-#### 双指针快慢指针
+#### 83 删除排序链表中的重复元素
+
+##### 双指针快慢指针
 
 题解 ：https://leetcode.cn/problems/remove-duplicates-from-sorted-list/solutions/2656499/shuang-zhi-zhen-shan-chu-lian-biao-zhong-z143/
 
@@ -6678,11 +6753,11 @@ class Solution {
 
 
 
-### 206 反转链表
+#### 206 反转链表
 
 题解：[https://leetcode.cn/problems/reverse-linked-list/solutions/2361282/206-fan-zhuan-lian-biao-shuang-zhi-zhen-r1jel/](https://leetcode.cn/problems/reverse-linked-list/solutions/2361282/206-fan-zhuan-lian-biao-shuang-zhi-zhen-r1jel/)
 
-#### 双指针快慢指针
+##### 双指针快慢指针
 
 ```java
 
@@ -6722,9 +6797,9 @@ class Solution {
 
 ```
 
-### 234 回文链表
+#### 234 回文链表
 
-#### 双指针快慢指针
+##### 双指针快慢指针
 
 题解：https://leetcode.cn/problems/palindrome-linked-list/solutions/37367/dong-hua-yan-shi-234-hui-wen-lian-biao-by-user7439/?envType=study-plan-v2&envId=top-100-liked
 
@@ -6787,13 +6862,13 @@ class Solution {
 
 
 
-### 160 相交链表
+#### 160 相交链表
 
 题解 ： [https://leetcode.cn/problems/intersection-of-two-linked-lists/solutions/12624/intersection-of-two-linked-lists-shuang-zhi-zhen-l/](https://leetcode.cn/problems/intersection-of-two-linked-lists/solutions/12624/intersection-of-two-linked-lists-shuang-zhi-zhen-l/)
 
 [https://www.bilibili.com/video/BV17D4y1z7pk?p=68&vd_source=5fe50b1b35a25689fb0988c454fec5e0](https://www.bilibili.com/video/BV17D4y1z7pk?p=68&vd_source=5fe50b1b35a25689fb0988c454fec5e0)
 
-#### 双指针分离指针
+##### 双指针分离指针
 
 ```java
 // 本题 虽然是 两个链表,,,.....但是这里没有用到 “虚拟”头节点  ！！！！ 而且也不是必须要用它的！！ 
@@ -6836,11 +6911,11 @@ public class Solution {
 }
 ```
 
-### 141 环形链表
+#### 141 环形链表
 
 题解 ：   https://leetcode.cn/problems/linked-list-cycle/solutions/1033149/kuai-man-zhi-zhen-fa-dai-ma-zhong-zhu-sh-cdst/
 
-#### 双指针快慢指针
+##### 双指针快慢指针
 
 ```java
 	// 这里没有涉及 删除 节点， 并没有用 “虚假”头节点 
@@ -6878,11 +6953,11 @@ public class Solution {
 }
 ```
 
-### 142 环形链表 II
+#### 142 环形链表 II
 
 题解 ：[https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/](https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/)
 
-#### 双指针快慢指针
+##### 双指针快慢指针
 
 ```java
 
@@ -6930,9 +7005,9 @@ public class Solution {
 
 
 
-### 138 随机链表的复制
+#### 138 随机链表的复制
 
-#### 哈希表map
+##### 哈希表map
 
 题解：https://leetcode.cn/problems/copy-list-with-random-pointer/solutions/2361362/138-fu-zhi-dai-sui-ji-zhi-zhen-de-lian-b-6jeo
 
@@ -6973,9 +7048,9 @@ class Solution {
 
 ```
 
-### 146 LRU 缓存
+#### 146 LRU 缓存
 
-#### 暴力
+##### 暴力
 
 题解：https://leetcode.cn/problems/lru-cache/solutions/2456294/tu-jie-yi-zhang-tu-miao-dong-lrupythonja-czgt
 
@@ -7134,185 +7209,11 @@ class LRUCache {
 
 ​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入**递归函数自己去**一层层的想**！！因为这样思路会很乱！！所以你应该做的是，就比如 **后序**，那么你就当 上面的左子树递归函数 和 右子树递归函数   **已经执行完**，你脑子里就想象下 ，整颗二叉树中的**带有3个节点**的 **子树**， 然后进行比较然后向上  return 返回，能弄明白子树的逻辑，其他就是一层层向上返回罢了。
 
-#### 前序 递归
-
-题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-// 前序遍历, 中  左右
-class Solution {
-    
-    
-    public List<Integer> preorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-      // 这里的话 就只需要 调用 1次 外面定义的 "次"递归函数即可。传入 root 根节点和 result 集合
-        // result 集合 在 递归过程中 是不断变化的 
-        preorder(root,result);
-        
-        // 所以等 外面的 递归函数 执行完后 ，直接返回list 集合就行 
-        return result;
-    }
-		
-   // 这里 只是 举一个 前序递归 的例子，先 在外面 定义一个递归函数，因为是传入 result引用对象，
-   // 所以  随着 递归的深入，result 是不断变化的 。
-    // 之后 还要把 preorder( , ) 方法 在 放到上面的  preorderTraversal() 方法内部 进行 调用！
-    public void preorder(TreeNode root,List<Integer> result) {
-        
-        if (root == null) {
-            return;
-        }
-        
-        result.add(root.val);		 // 注意这一句，放最前面 
-        preorder(root.left, result);
-        preorder(root.right, result);
-        
-    }
-}
-
-
-// 中序遍历  左 中 右
-class Solution {
-    
-    
-    public List<Integer> inorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-       
-        inorder(root,result);
-        return res;
-    }
-
-    public void inorder(TreeNode root,List<Integer> result) {
-        if (root == null) {
-            return;
-        }
-        
-        inorder(root.left,result);
-        result.add(root.val,result);             // 注意这一句，放中间 
-        inorder(root.right,result);
-        
-    }
-}
-
-
-```
-
-#### 中序 递归
-
-题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-
-// 中序遍历  左 中 右
-class Solution {
-    
-    
-    public List<Integer> inorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-       
-        inorder(root,result);
-        return res;
-    }
-
-    public void inorder(TreeNode root,List<Integer> result) {
-        if (root == null) {
-            return;
-        }
-        
-        inorder(root.left,result);
-        result.add(root.val,result);             // 注意这一句，放中间 
-        inorder(root.right,result);
-        
-    }
-}
-
-```
-
-#### 后序 递归
-
-题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-
-// 后序遍历 左右 中 
-class Solution {
-    
-    public List<Integer> postorderTraversal(TreeNode root) {
-       
-        List<Integer> result = new ArrayList<>();
-        postorder(root,result);
-        return res;
-    }
-
-    public void postorder(TreeNode root, List<Integer> list) {
-        if (root == null) {
-            return;
-        }
-        
-        postorder(root.left);
-        postorder(root.right);
-        
-        result.add(root.val);             // 注意这一句，放最后
-    }
-}
-```
 
 
 
-#### 相关题目
 
-##### 226 翻转二叉树
+#### 226 翻转二叉树
 
 题解 ： https://leetcode.cn/problems/invert-binary-tree/solutions/73159/dong-hua-yan-shi-liang-chong-shi-xian-226-fan-zhua/https://leetcode.cn/problems/invert-binary-tree/)
 
@@ -7359,7 +7260,7 @@ class Solution {
     }
 ```
 
-##### 101 对称二叉树
+#### 101 对称二叉树
 
 题解:  [https://leetcode.cn/problems/symmetric-tree/solutions/862694/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-hnjo/](https://leetcode.cn/problems/symmetric-tree/solutions/862694/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-hnjo/)
 
@@ -7425,7 +7326,7 @@ class Solution {
 }
 ```
 
-##### 100 相同的树
+#### 100 相同的树
 
 题解：https://leetcode.cn/problems/same-tree/solutions/12686/hua-jie-suan-fa-100-xiang-tong-de-shu-by-guanpengc/
 
@@ -7486,7 +7387,7 @@ class Solution {
 
 ```
 
-##### 572 另一个树的子树
+#### 572 另一个树的子树
 
 题解：https://leetcode.cn/problems/subtree-of-another-tree/solutions/235760/java-di-gui-ban-by-kelly2018/
 
@@ -7537,7 +7438,7 @@ class Solution {
 }
 ```
 
-##### 104 二叉树的最大深度
+104 二叉树的最大深度
 
 题解：https://leetcode.cn/problems/maximum-depth-of-binary-tree/solutions/10740/hua-jie-suan-fa-104-er-cha-shu-de-zui-da-shen-du-b/  
 
@@ -7571,7 +7472,7 @@ class Solution {
 
 ```
 
-##### 110 平衡二叉树
+#### 110 平衡二叉树
 
 题解： [https://leetcode.cn/problems/balanced-binary-tree/solutions/16112/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-25/](https://leetcode.cn/problems/balanced-binary-tree/solutions/746538/shu-ju-jie-gou-he-suan-fa-ping-heng-er-c-ckkm/)
 
@@ -7648,7 +7549,7 @@ class Solution {
 
 
 
-##### 257  二叉树的所有路径
+#### 257  二叉树的所有路径
 
 题解 ：[https://leetcode.cn/problems/binary-tree-paths/solutions/400434/257-er-cha-shu-de-suo-you-lu-jing-tu-wen-jie-xi-by/](https://leetcode.cn/problems/binary-tree-paths/solutions/400434/257-er-cha-shu-de-suo-you-lu-jing-tu-wen-jie-xi-by/)
 
@@ -7702,7 +7603,7 @@ class Solution {
 }
 ```
 
-##### 112 路径总和
+#### 112 路径总和
 
 题解：https://leetcode.cn/problems/path-sum/description/
 
@@ -7759,7 +7660,7 @@ class Solution {
 }
 ```
 
-##### 113 路径总和 II 
+#### 113 路径总和 II 
 
 题解：https://leetcode.cn/problems/path-sum-ii/solutions/867902/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-sbm3/ 
 
@@ -7809,7 +7710,7 @@ class Solution {
 
 
 
-##### 106 从中序与后序序列构造二叉树
+#### 106 从中序与后序序列构造二叉树
 
 题解： [https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
 
@@ -7880,7 +7781,7 @@ class Solution {
 }
 ```
 
-##### 105 从前序与中序遍历序列构造二叉树
+#### 105 从前序与中序遍历序列构造二叉树
 
 题解：https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
 
@@ -7952,7 +7853,7 @@ class Solution {
 }
 ```
 
-##### 654 最大二叉树
+#### 654 最大二叉树
 
 题解：[https://leetcode.cn/problems/maximum-binary-tree/solutions/604651/654-zui-da-er-cha-shu-gen-ju-shu-zu-gou-q0hp9/](https://leetcode.cn/problems/maximum-binary-tree/solutions/604651/654-zui-da-er-cha-shu-gen-ju-shu-zu-gou-q0hp9/)
 
@@ -8035,7 +7936,7 @@ class Solution {
 }
 ```
 
-##### 617 合并二叉树
+#### 617 合并二叉树
 
 题解 ：[https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/](https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/)
 
@@ -8084,7 +7985,7 @@ class Solution {
 
 
 
-##### 543 二叉树的直径
+#### 543 二叉树的直径
 
 题解:https://leetcode.cn/problems/diameter-of-binary-tree/solutions/37205/hot-100-9er-cha-shu-de-zhi-jing-python3-di-gui-ye-/?envType=study-plan-v2&envId=top-100-liked
 
@@ -8121,7 +8022,7 @@ class Solution {
 }
 ```
 
-##### 700 二叉搜索树中的搜索
+#### 700 二叉搜索树中的搜索
 
 题解：https://leetcode.cn/problems/search-in-a-binary-search-tree/solutions/867987/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-3ww7/
 
@@ -8158,7 +8059,7 @@ class Solution {
 
 ```
 
-##### 701 二叉搜索树中的插入操作
+#### 701 二叉搜索树中的插入操作
 
 题解：https://leetcode.cn/problems/insert-into-a-binary-search-tree/submissions/546173957/
 
@@ -8195,7 +8096,7 @@ class Solution {
 
 
 
-##### 450 删除二叉搜索树中的节点
+#### 450 删除二叉搜索树中的节点
 
 题解：https://leetcode.cn/problems/delete-node-in-a-bst/solutions/582561/miao-dong-jiu-wan-shi-liao-by-terry2020-tc0o/
 
@@ -8254,7 +8155,7 @@ class Solution {
 
 
 
-##### 669 修剪二叉搜索树
+#### 669 修剪二叉搜索树
 
 题解：https://leetcode.cn/problems/trim-a-binary-search-tree/solutions/1814532/by-ac_oier-help/
 
@@ -8294,7 +8195,7 @@ class Solution {
 
 
 
-##### 98 验证二叉搜索树
+#### 98 验证二叉搜索树
 
 题解：https://leetcode.cn/problems/validate-binary-search-tree/solutions/84032/er-cha-sou-suo-shu-yu-zhong-xu-bian-li-by-wisemove/
 
@@ -8332,7 +8233,7 @@ class Solution {
     }
 ```
 
-##### 108 将有序数组转换为二叉搜索树
+#### 108 将有序数组转换为二叉搜索树
 
 题解：https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/solutions/313508/jian-dan-di-gui-bi-xu-miao-dong-by-sweetiee/?envType=study-plan-v2&envId=top-100-liked
 
@@ -8380,7 +8281,7 @@ class Solution {
 }
 ```
 
-##### 230 二叉搜索树中第K小的元素
+#### 230 二叉搜索树中第K小的元素
 
 题解：https://leetcode.cn/problems/kth-smallest-element-in-a-bst/solutions/409487/di-kxiao-yuan-su-de-san-chong-zhao-fa-by-lan-se-2/?envType=study-plan-v2&envId=top-100-liked 
 
@@ -8425,7 +8326,7 @@ class Solution {
 
 
 
-##### 235 二叉树的最近公共祖先
+#### 235 二叉树的最近公共祖先
 
 题解：https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/solutions/240096/236-er-cha-shu-de-zui-jin-gong-gong-zu-xian-hou-xu/?envType=study-plan-v2&envId=top-100-liked
 
@@ -8464,7 +8365,7 @@ class Solution {
 
 
 
-##### 114 二叉树展开为链表
+#### 114 二叉树展开为链表
 
 题解：https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/solutions/17274/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--26/?envType=study-plan-v2&envId=top-100-liked
 
@@ -8513,7 +8414,7 @@ public void flatten(TreeNode root) {
 
 
 
-##### 124 二叉树中的最大路径和
+#### 124 二叉树中的最大路径和
 
 题解：
 
@@ -8579,90 +8480,9 @@ class Solution {
 
    基本上就是这套模板了，如果 某道题目你要用 **层序**遍历的话，就按照 **双层while循环**的 写法。**外层 while 循环**  控制 遍历是否结束，只要 队列Deque 不为空，遍历就没结束；**内层 for循环** 控制 入队的元素个数 ，然后配合一个 队列 Deque和  定义的一个 **队列长度 size**的 变量，代表 二叉树 **每一层的节点数**。不过  根据 题目的不同，   代码 **有些地方 是需要改  **，比如  返回值 return 的地方，或者 其他地方。。
 
-#### 层序 迭代
-
-题解：https://www.bilibili.com/video/BV1GY4y1u7b2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 
 
-class Solution {
-    
-    public List<List<Integer>> levelOrder(TreeNode root) {
-
-        // 一般来说  返回值 是 一个 二维的“数组”。所以 以 List< List<...> >嵌套，来模拟表示  
-                      /***  就是这样子
-                            1
-                            2 3 	
-                            4 5 6 7 
-                       ***/
-        List<List<Integer>> res = new ArrayList<>();
-
-        // 声明 一个 双端队列 Deque。
-        Deque<TreeNode> queue = new ArrayDeque<>();
-
-        // 因为如果传入的节点为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
-    // 二叉树的话 肯定要有这行语句 if判断，因为 测试数据很可能传入的就是一个 null 根节点，空树
-        if (root == null)
-            return res;
-
-	
-        // 先把 树的 根节点 入队列 
-        queue.offerLast(root);
-
-        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
-        while (!queue.isEmpty()) {
-
-  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
-            int size = queue.size();
-            // list集合 保存  每一层的 节点，按顺序添加。
-            List<Integer> level = new ArrayList<>();
-
-            // 内循环 循环的次数， 也就是 该层 出队 几个 节点元素，通过 size 控制！！
-            for (int i = 0; i < size; i++) {
-
-      // 符合 每层节点的 “先进先出” ！！！从队列 弹出 该节点 ，并且 把他加入到 level 集合，
-                TreeNode node = queue.pollFirst();
-                level.add(node.val);
-
-                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
-                if (node.left != null) {
-                    queue.add(node.left);
-                }
-                if (node.right != null) {
-                    queue.add(node.right);
-                }
-            }
-
-            // 每次  内层循环 执行完，也就是 该层的节点全部装入 level 集合里了，那么 接下来的操作 就是要把 保存该层的，所有节点的 level 集合 作为嵌套，插入到最终 要返回的 res 集合里。
-            res.add(level);
-
-        }
-            // 返回 这个res 集合，外层集合，它里面 有一个个 level 集合而已 
-        return res;
-    }
- 
-}
-```
-
-#### 相关题目
-
-##### 107 二叉树的层次遍历 II
+#### 107 二叉树的层次遍历 II
 
 题解：https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/description/
 
@@ -8729,7 +8549,7 @@ class Solution {
 }
 ```
 
-##### 199 二叉树的右视图
+#### 199 二叉树的右视图
 
 题解 ：https://leetcode.cn/problems/binary-tree-right-side-view/
 
@@ -8775,7 +8595,7 @@ class Solution {
 }
 ```
 
-##### 637 二叉树的层平均值
+#### 637 二叉树的层平均值
 
 题解 ：https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/
 
@@ -8854,7 +8674,7 @@ class Solution {
 }
 ```
 
-##### 429 N叉树的层序遍历
+#### 429 N叉树的层序遍历
 
 题解：https://leetcode.cn/problems/n-ary-tree-level-order-traversal/description/
 
@@ -8923,7 +8743,7 @@ class Solution {
 }
 ```
 
-##### 515 在每个树行中找最大值
+#### 515 在每个树行中找最大值
 
 题解：https://leetcode.cn/problems/find-largest-value-in-each-tree-row/description/
 
@@ -9000,7 +8820,7 @@ class Solution {
 }
 ```
 
-##### 116 填充每个节点的下一个右侧节点指针
+#### 116 填充每个节点的下一个右侧节点指针
 
 题解：https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/
 
@@ -9085,7 +8905,7 @@ class Solution {
 }
 ```
 
-##### 117 填充每个节点的下一个右侧节点指针II
+#### 117 填充每个节点的下一个右侧节点指针II
 
 题解：https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/description/
 
@@ -9170,7 +8990,7 @@ class Solution {
 }
 ```
 
-##### 111 二叉树的最小深度
+#### 111 二叉树的最小深度
 
 题解：https://leetcode.cn/problems/minimum-depth-of-binary-tree/description/
 
@@ -9242,7 +9062,7 @@ class Solution {
 }
 ```
 
-##### 222 完全二叉树的节点个数
+#### 222 完全二叉树的节点个数
 
 题解：
 
@@ -9338,7 +9158,7 @@ class Solution {
 
 ```
 
-##### 404 左叶子节点之和
+#### 404 左叶子节点之和
 
 题解 ： [https://leetcode.cn/problems/sum-of-left-leaves/solutions/866969/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-j6f9/](https://leetcode.cn/problems/sum-of-left-leaves/solutions/866969/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-j6f9/)
 
@@ -9398,7 +9218,7 @@ class Solution {
 }
 ```
 
-##### 513 找左下角的值
+#### 513 找左下角的值
 
 题解：[https://leetcode.cn/problems/find-bottom-left-tree-value/solutions/1616928/by-ac_oier-sv59/](https://leetcode.cn/problems/find-bottom-left-tree-value/solutions/1616928/by-ac_oier-sv59/)
 
@@ -10353,8 +10173,6 @@ class Solution {
 
 
 
-
-
 ## 二叉树的非递归遍历
 
 ### 前序  迭代 
@@ -10540,6 +10358,184 @@ class Solution {
         }
         
         return result;
+    }
+}
+```
+
+
+
+## 二叉树的递归遍历
+
+### 前序 递归
+
+题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+// 前序遍历, 中  左右
+class Solution {
+    
+    
+    public List<Integer> preorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+        
+      // 这里的话 就只需要 调用 1次 外面定义的 "次"递归函数即可。传入 root 根节点和 result 集合
+        // result 集合 在 递归过程中 是不断变化的 
+        preorder(root,result);
+        
+        // 所以等 外面的 递归函数 执行完后 ，直接返回list 集合就行 
+        return result;
+    }
+		
+   // 这里 只是 举一个 前序递归 的例子，先 在外面 定义一个递归函数，因为是传入 result引用对象，
+   // 所以  随着 递归的深入，result 是不断变化的 。
+    // 之后 还要把 preorder( , ) 方法 在 放到上面的  preorderTraversal() 方法内部 进行 调用！
+    public void preorder(TreeNode root,List<Integer> result) {
+        
+        if (root == null) {
+            return;
+        }
+        
+        result.add(root.val);		 // 注意这一句，放最前面 
+        preorder(root.left, result);
+        preorder(root.right, result);
+        
+    }
+}
+
+
+// 中序遍历  左 中 右
+class Solution {
+    
+    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+       
+        inorder(root,result);
+        return res;
+    }
+
+    public void inorder(TreeNode root,List<Integer> result) {
+        if (root == null) {
+            return;
+        }
+        
+        inorder(root.left,result);
+        result.add(root.val,result);             // 注意这一句，放中间 
+        inorder(root.right,result);
+        
+    }
+}
+
+
+```
+
+### 中序 递归
+
+题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+
+// 中序遍历  左 中 右
+class Solution {
+    
+    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+       
+        inorder(root,result);
+        return res;
+    }
+
+    public void inorder(TreeNode root,List<Integer> result) {
+        if (root == null) {
+            return;
+        }
+        
+        inorder(root.left,result);
+        result.add(root.val,result);             // 注意这一句，放中间 
+        inorder(root.right,result);
+        
+    }
+}
+
+```
+
+### 后序 递归
+
+题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+
+// 后序遍历 左右 中 
+class Solution {
+    
+    public List<Integer> postorderTraversal(TreeNode root) {
+       
+        List<Integer> result = new ArrayList<>();
+        postorder(root,result);
+        return res;
+    }
+
+    public void postorder(TreeNode root, List<Integer> list) {
+        if (root == null) {
+            return;
+        }
+        
+        postorder(root.left);
+        postorder(root.right);
+        
+        result.add(root.val);             // 注意这一句，放最后
     }
 }
 ```
@@ -10979,7 +10975,7 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 ⑤ 打印dp数组。这个就是你写完代码，看看和 定义的dp含义是否一致，但是没有跑通的情况下，你才需要这么做 。。。。
 
-
+​     但是 ！！！上面的是  dp题目的思考过程。。。实际上 写代码的时候，顺序是 ①-->③-->
 
 ### 背包
 
