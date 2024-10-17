@@ -6064,6 +6064,9 @@ public class Solution {
 
 ### 虚拟头节点
 
+​       一般涉及 **删除**某个节点 、**两两交换 **链表中的节点、**两个链表合并**为第三个链表 的时候 的操作，我们要引入 ”**<u>虚假</u>**“头节点  ！！  引入的作用就是  -----> 方便对 头节点的操作 ！ 
+​       其他情况的话， 不需要 引入 ”虚假“头节点 。。。。
+
 #### 203 移除链表元素
 
 ##### 暴力
@@ -6071,10 +6074,8 @@ public class Solution {
 题解：[https://leetcode.cn/problems/remove-linked-list-elements/solutions/554354/dong-hua-yan-shi-die-dai-fa-203-yi-chu-l-vfr9/](https://leetcode.cn/problems/remove-linked-list-elements/solutions/554354/dong-hua-yan-shi-die-dai-fa-203-yi-chu-l-vfr9/)
 
 ```java
-// 一般涉及 删除某个节点 、两两交换链表中的节点、两个链表合并为第三个链表 的时候 的操作，我们要引入 ”虚假“头节点  ！！
- // 其他情况的话， 不需要 引入 ”虚假“头节点 
 
-// 本道题 引入 虚拟头节点的最主要目的就是 ，方便对 头节点的操作 ！
+// 因为涉及到 “移除”节点，所以引入 "虚拟头节点”，主要目的就是，方便对 头节点的操作 ！
 class Solution {
     public ListNode removeElements(ListNode head, int val) {
         
@@ -6113,16 +6114,14 @@ class Solution {
 
 题解 ：[https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/1720490/by-carlsun-2-mav4/](https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/1720490/by-carlsun-2-mav4/)
 
-
-
 ##### 暴力
 
 ```java
-// 这里搞一个 “虚拟”头节点 这里是为了 获取 某个节点的  前一个 节点，方便 改指向。
+//因为涉及到 两两交换节点，所以引入 “虚拟”头节点 这里是为了 获取某个节点的 前一个节点，方便改指向。
 class Solution {
     public ListNode swapPairs(ListNode head) {
           
-          // 声明一个 "虚拟"头节点，这个是通用写法，2行代码
+         
         ListNode dummyHead = new ListNode(0);
         dummyHead.next = head;
 
@@ -6183,12 +6182,12 @@ class Solution {
 ##### 双指针快慢指针
 
 ```java
-
+  //  本题目 也是因为考虑到要  "删除" 真实的头节点 比较麻烦。。所以为了方便起见，我们引入 ”虚拟“头节点 这个概念
 class Solution {
     public ListNode removeNthFromEnd(ListNode head, int n) {
         
         
-        //  本题目 也是因为考虑到要  删除 真实 头节点 比较麻烦。。所以为了方便起见，我们再次引入 ”虚拟“头节点 这个概念，这个是通用写法，2行 代码  ！！
+     
         ListNode dummyHead = new ListNode(0);
         dummyHead.next = head;
 
@@ -6241,11 +6240,10 @@ class Solution {
 题解：https://leetcode.cn/problems/merge-two-sorted-lists/solutions/2361535/21-he-bing-liang-ge-you-xu-lian-biao-shu-aisw/
 
 ```java
-//纯自己，写的哦~~~！！！ 
-// 这道题需要定义一个 “虚拟”头节点，因为涉及到了 两个链表合并为第三个链表~~~
+// 因为涉及到了 两个链表合并为第三个链表，所以引入  “虚拟”头节点，方便第三个链接的 不断插入新节点。
 class Solution {
     
-     public  ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
          
 		//如果是合并两个链表 到 第三个链表，，，一般都是这样子定义，第三个链表
          // 这个是 第三个链表，用于不断拉链，接上新的 节点 。。
@@ -6299,7 +6297,7 @@ class Solution {
 https://www.bilibili.com/video/BV1vv4y1S7vu/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-        // 本道题 引入了 “虚拟” 头节点 。，因为涉及到了 两个链表合并为第三个链表~~~
+// 因为涉及到了 两个链表合并为第三个链表，所以引入  “虚拟”头节点，方便第三个链接的 不断插入新节点。
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {
         
@@ -6443,7 +6441,7 @@ class Solution {
 题解：https://leetcode.cn/problems/add-two-numbers/solutions/446483/liang-ge-shu-xiang-jia-zui-rong-yi-li-jie-de-jie-f/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 本道题 引入了 “虚拟” 头节点 。，因为涉及到了 两个链表合并为第三个链表~~~
+// 因为涉及到了 两个链表合并为第三个链表，所以 引入了 “虚拟” 头节点 。，
 
 // 这道题，好好分析题干，以及 给的实例，其实能得出规律，其实就是分别 顺序遍历，两个链表的对应节点，每次要求和，记得如果 和 大于等于10，最终保留的节点值是 个位数，也就是对10取模的结果。
 // 进位 如果 和 大于等于10，还要考虑 进位问题
@@ -6510,7 +6508,8 @@ class Solution {
 题解：https://leetcode.cn/problems/reverse-linked-list-ii/solutions/1992226/you-xie-cuo-liao-yi-ge-shi-pin-jiang-tou-teqq/
 
 ```java
-  //  这道题，也是有两两反转的感觉。但和 最原本的 反转链表 题目，不一样，那个只需要反转整个 链表就行了，所以不需要考虑头节点的特殊性质。。。但是这道题 是反转某个区间，，需要 知道反转区间的 前一个节点是什么，才能方便连接，所以为了统一方便操作，用了 "虚拟头节点" ！！
+  //  这道题，也是有两两反转的感觉。但和 最原本的 反转链表 题目，不一样，那个只需要反转整个 链表就行了，所以不需要考虑 "头节点"的特殊性质。。。
+// 但是这道题 是   反转某个区间，，需要 知道反转区间的 前一个节点是什么，才能方便连接，所以为了统一方便操作，用了 "虚拟头节点" ！！
 class Solution {
     
     public ListNode reverseBetween(ListNode head, int left, int right) {
@@ -7135,7 +7134,7 @@ class LRUCache {
 
 ​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入**递归函数自己去**一层层的想**！！因为这样思路会很乱！！所以你应该做的是，就比如 **后序**，那么你就当 上面的左子树递归函数 和 右子树递归函数   **已经执行完**，你脑子里就想象下 ，整颗二叉树中的**带有3个节点**的 **子树**， 然后进行比较然后向上  return 返回，能弄明白子树的逻辑，其他就是一层层向上返回罢了。
 
-#### 前序 中序 后序 递归
+#### 前序 递归
 
 题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
@@ -7156,7 +7155,7 @@ class LRUCache {
  * }
  */
 
-// 前序遍历	,	    	中  左右
+// 前序遍历, 中  左右
 class Solution {
     
     
@@ -7214,6 +7213,78 @@ class Solution {
 }
 
 
+```
+
+#### 中序 递归
+
+题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+
+// 中序遍历  左 中 右
+class Solution {
+    
+    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+       
+        inorder(root,result);
+        return res;
+    }
+
+    public void inorder(TreeNode root,List<Integer> result) {
+        if (root == null) {
+            return;
+        }
+        
+        inorder(root.left,result);
+        result.add(root.val,result);             // 注意这一句，放中间 
+        inorder(root.right,result);
+        
+    }
+}
+
+```
+
+#### 后序 递归
+
+题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+
 // 后序遍历 左右 中 
 class Solution {
     
@@ -7236,6 +7307,8 @@ class Solution {
     }
 }
 ```
+
+
 
 #### 相关题目
 
@@ -8500,157 +8573,6 @@ class Solution {
     
 }
 
-```
-
-
-
-#### 前序  后序 迭代 
-
-题解：https://www.bilibili.com/video/BV15f4y1W7i2/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-
-// 就是 要配合 “栈” 来实现，迭代遍历！！！
-//   入栈顺序：中-右-左 ，那么出栈顺序 才是 中-左-右，符合 前序遍历 的结果 
-class Solution {
-    
-    public List<Integer> preorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        		
-        // "栈" 不为空的话， 就一直遍历，控制循环的结束 
-        while (!stack.isEmpty()){
-            	
-            // 这里的话和层序遍历不太一样，这里不需要 记录 每层的节点数count
-            TreeNode node = stack.pop();
-            result.add(node.val);
-            
-            
-      // 这点其实和 层序遍历的“迭代” 挺像的，先判断左、右孩子 是否为空，非空的话 入栈
-            // 前序迭代的话 ，入栈顺序是 右-左 ，这样出栈才是 左-右
-            if (node.right != null){
-                stack.push(node.right);
-            }
-            
-            if (node.left != null){
-                stack.push(node.left);
-            }
-            
-        }
-        return result;
-    }
-}
-
-
-//  入栈顺序：中-左-右 出栈顺序：中-右-左， 最后 Collections.reverse()翻转结果的话，左-右-中，就是 后序遍历 的结果
-
-// 所以 在 前序“迭代”的代码中，改动的就只有  下面判断 左、右节点为空的地方调换一下顺序，变成左-右，
-// 以及 最后 对 result集合进行翻转，就是用  Collections.reverse() 方法！
-class Solution {
-    public List<Integer> postorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
-        
-        while (!stack.isEmpty()){
-            TreeNode node = stack.pop();
-            result.add(node.val);
-            if (node.left != null){
-                stack.push(node.left);
-            }
-            if (node.right != null){
-                stack.push(node.right);
-            }
-        }
-        Collections.reverse(result);
-        return result;
-    }
-}
-
-```
-
-
-
-
-
-
-
-#### 中序 迭代
-
-题解：https://www.bilibili.com/video/BV1Zf4y1a77g/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
-
-```java
-
-// “中序”的 迭代 , 和 前序 、后序 的代码实现 不太一样。。。。略微 复杂！！！
-class Solution {
-    
-    public List<Integer> inorderTraversal(TreeNode root) {
-        
-        List<Integer> result = new ArrayList<>();
-        
-        if (root == null){
-            return result;
-        }
-        	
-        Stack<TreeNode> stack = new Stack<>();
-        // 本来下面应该要有 stack.push(root)这行代码，但是这里没写，很特殊！！因为换成了 cur 移动指针
-        
-        
-        // 这里要定义一个 cur 的树节点指针，用于 访问 树中的每一个节点 ！！
-        // 这里是 “特殊”的地方 ！！！ !!!!!!!
-        TreeNode cur = root;
-        			
-        		// 这个 判断条件 是两个，而且中间是  或 ||
-        while (cur != null || !stack.isEmpty()){
-            
-            	// 先 一路向 左 ，入栈 ！！ 
-           if (cur != null){
-               
-               stack.push(cur);
-               cur = cur.left;
-               
-           }
-            		// 遇到空节点的话，就要开始 出栈了  ！！
-            		// 以及 要往 右节点 遍历了。。。
-            else{	
-                	// 记得要让 cur 接收重新指向 ！！！
-               cur = stack.pop();
-               result.add(cur.val);
-               cur = cur.right;
-           }
-        }
-        
-        return result;
-    }
-}
 ```
 
 ### BFS 广度优先遍历

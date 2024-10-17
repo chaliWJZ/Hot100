@@ -90,13 +90,21 @@ public class A  {
 
 
         // 链表的 测试用例。。。
-        ListNode list1 = new ListNode(1);
-        list1.next = new ListNode(2);
-        list1.next.next = new ListNode(4);
+        ListNode head = new ListNode(1);
+        head.next = new ListNode(2);
+        head.next.next = new ListNode(4);
 
-        ListNode list2 = new ListNode(1);
-        list1.next = new ListNode(3);
-        list1.next.next = new ListNode(4);
+
+        // 以及它的 打印遍历
+        ListNode current = head;
+        while (current!= null) {
+            System.out.println(current.val);
+            current = current.next;
+        }
+
+
+
+
 
 
         // 二叉树的 测试用例。。。
