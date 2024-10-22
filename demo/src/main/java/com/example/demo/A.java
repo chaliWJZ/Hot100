@@ -162,7 +162,7 @@ public class A  {
         int num=0;
         num ='2'-'0';
         System.out.println(num);
-
+```````
         searchInsert(new int[]{1,3,5,6},2);
 
     }

@@ -5235,19 +5235,39 @@ class Solution {
 题目描述：
 
 ```
+给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
 
+有效字符串需满足：
+
+左括号必须用相同类型的右括号闭合。
+左括号必须以正确的顺序闭合。
+每个右括号都有一个对应的相同类型的左括号。
+ 
+
+示例 1：
+
+输入：s = "()"
+
+输出：true
+
+示例 2：
+
+输入：s = "()[]{}"
+
+输出：true
 ```
 
 题解 ：[https://leetcode.cn/problems/valid-parentheses/solutions/1737575/by-carlsun-2-ij1t/](https://leetcode.cn/problems/valid-parentheses/solutions/1737575/by-carlsun-2-ij1t/)
 
-[https://leetcode.cn/problems/valid-parentheses/solutions/420031/yi-ci-bian-li-si-lu-chao-ji-jian-dan-bu-dian-zan-b/](https://leetcode.cn/problems/valid-parentheses/solutions/420031/yi-ci-bian-li-si-lu-chao-ji-jian-dan-bu-dian-zan-b/)
-
 ```java
-// 首先！ 明确本题  正确 的 字符串是怎么样的 ----> 比如 ()()(){}[]()[]  或 [({})]
+// 首先！ 明确本题  正确 的 字符串是怎么样的 ----> 比如 ()(){}[]()  或 [({})] 
+//  比如常见的错误  ----> (] 或 (( 或者 ))
 
-				//  比如常见的错误 ((} 或 ([{}](  
-	//  哪怕 连 这样的 ([)] 或  ))((  都是 错误的 ！！ 因为题目说了要 按左括号的 “顺序” 匹配
-				
+			
+//这道题 用 “栈” 的思想 ！！！
+/**
+   主要思想，在匹配左括号{的时候，我们是把 它的右括号}先入栈。如果 当遇到 字符串中的右括号的时候， 比如 } ，看看它和 栈顶的元素是否相等，相等就说明匹配，那么就把栈顶元素出栈，一直这样循环比较，出栈入栈
+**/
 class Solution {
     public boolean isValid(String s) {
        	
@@ -5273,27 +5293,29 @@ class Solution {
                 stack.push(']');
 
             
-            // 是 || 或 的逻辑，只要 满足 这 两种情况的话，就直接返回 false了 
-            //  第三种情况：遍历字符串匹配的过程中，栈已经 为空了，说明右括号没有找到对应的左括号 比如 )} 的情况， 其实 也是题目中  条件3 ，要找出 右括号 是否有对应的 左括号匹配 	
+           
+      //第一种情况：遍历字符串匹配的过程中，栈已经 为空了，说明只剩下右括号 之类的，它没有找到对应的左括号 再去匹配了,所以return false 。比如 ([])) ，最后的 )匹配不了了 
             
-       // 第二种情况：遍历字符串匹配的过程中，发现栈里没有我们要匹配的字符。所以return false
-        // 比如 ([)] 这种特殊错误。其实 就是题目中的 条件2 ，左括号必须以正确的“顺序”闭合。
+      //第二种情况：遍历字符串匹配的过程中，栈不为空，发现栈里没有我们要匹配的字符,所以return false 。比如 ([]}, (和 } 匹配不了
             
-           // !! 一个很小的 细节 ，就是 判断空必须 在 || 的前面。如果把peek()放在前面的话，如果是空栈，就会报 空指针异常
-            else if (stack.isEmpty()||stack.peek() != ch)
+           
+            else if (stack.isEmpty())
+                return false;
+            
+            else if(stack.peek() != ch)
                 return false;
                 
-  // 其余的情况就是，右括号 判断 是否和 "栈顶"元素 匹配，因为"栈顶"元素 存的是 左括号的对应 右括号 
-      //  匹配的话  就要 弹出pop() ！！
+  // 其余的情况就是，右括号 和 "栈顶"元素 匹配相等，因为"栈顶"元素 存的是 左括号的对应 右括号，那么就要 出栈 ~~~
+ 
             else 
                 stack.pop();
             
         }
         
- //for循环遍历完了字符串后。还要检查 栈是否为空 如果栈不为空，说明有相应的左括号 没有右括号来匹配，所以return false，否则就return true。。
-        // 就是对应第一种情况  ： 左括号 没有匹配的 情况有这些： ({})((  或者 (( 
-         // 其实 就是检查 题目中  的 条件 一 
+     //for循环 遍历完 字符串后。还要检查 栈是否为空 如果栈不为空，说明有相应的左括号 没有 右括号来匹配，返回 false。。。 如果是 空的话，说明匹配完毕了，那么返回 true  ！！
+       // 就是第三种情况  ： 左括号 没有匹配的 情况有这些： 比如 (( 
         return stack.isEmpty();
+        
     }
 }
 ```
@@ -5305,35 +5327,48 @@ class Solution {
 题目描述：
 
 ```
+给出由小写字母组成的字符串 s，重复项删除操作会选择两个相邻且相同的字母，并删除它们。
 
+在 s 上反复执行重复项删除操作，直到无法继续删除。
+
+在完成所有重复项删除操作后返回最终的字符串。答案保证唯一。
+
+ 
+
+示例：
+
+输入："abbaca"
+输出："ca"
 ```
 
 题解 ：[https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/solutions/1743118/by-carlsun-2-srfq/](https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/solutions/1743118/by-carlsun-2-srfq/)
 
 ```java
+//  用“栈”
+// 一直往里面添加元素，但是每次添加的时候，都要判断，如果 和 栈顶元素不相等的话，那么 该字符才入栈，如果  相等，那么就 把栈顶元素 弹出去。
+
 class Solution {
 public String removeDuplicates(String S) {
 
     Stack<Character> stack = new Stack<>();
     
     for (int i = 0; i < S.length(); i++) {
+        
         char ch = S.charAt(i);
         
-
             // 如果栈为空的话，那么也就是说第一次开始判断字符串，那么就要用isEmpty()判空，入栈
         if (stack.isEmpty()) {
             stack.push(ch);
         } 
         
-// 如果栈不为空，那么就要对 里面的 "栈顶" 的元素进行判断，peek()函数就行
+// 如果栈不为空，那么就要对 里面的 "栈顶" 的元素进行判断,只是判断 不需要 弹出栈，所以调用peek()
         else
         {   
 
- // 如果 peek()的 "栈顶" 元素和 要添加的相邻字符不重复，也就是不相等，那么就要把这个 字符 入栈。 
+ // 如果 "栈顶" 元素和 要添加的相邻字符不重复，也就是不相等，那么就要把这个 字符 入栈。 
             if(stack.peek()!=ch)
                 stack.push(ch);
 // 否则的话，就是 字符 相等 的情况，就只需要 pop()出栈即可。
-
             else
                 stack.pop();
         }
@@ -5344,14 +5379,14 @@ public String removeDuplicates(String S) {
     StringBuffer res = new StringBuffer();
 
 //因为 最后的栈中 剩余的元素，即为 不重复的元素,通过 一个while循环依次 出栈，加入res 中 
-        
+       
     while (!stack.isEmpty()) {
         // 调用 StringBuffer 的append()方法，不断加入
        res.append(stack.pop());
         
     }
-         // 只不过 添加之后的 字符串 与想要的 结果 是相反的，所以调用reverse()方法 倒序一下就行。
-         // 还要记得最后 返回的是 String 类型！！通过new String()，把  StringBuffer 类型 转为  String 类型
+     
+    // 只不过 添加之后的 字符串 与想要的 结果 是相反的，所以调用reverse()方法 倒序一下就行。 
     return new String(res.reverse());
 }
 }
@@ -5366,15 +5401,37 @@ public String removeDuplicates(String S) {
 题目描述:
 
 ```
+给定一个经过编码的字符串，返回它解码后的字符串。
 
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+
+ 
+
+示例 1：
+
+输入：s = "3[a]2[bc]"
+输出："aaabcbc"
 ```
 
 题解：https://leetcode.cn/problems/decode-string/solutions/6274/ti-jie-czhan-by-youlookdeliciousc/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 因为这道题带了 括号，所以很大概率要使用 栈 来解决这道题了
-// 用的是 两个栈来解决问题。
-// 一个数字栈nums，用来 保存字符串s 中出现的数字字符，用于 倍数拼接字符串;另一个是 字符串栈strs，每次遇到 [ 的时候，就要把之前的 res结果字符串入栈，然后进行拼接
+// 因为这道题带了 括号，所以很大概率要使用 “栈” 来解决
+// 用的是 两个“栈”来解决问题。
+
+
+/** 
+   一个是数字栈nums。用来 保存字符串s 中出现的数字字符 numStr，用于 倍数拼接字符串多少次。
+
+   另一个是 字符串栈strs。用于保存 res 的结果字符串 
+   
+   当我们循环遍历 字符串s 的时候，每次遇到 '[' 的时候，就要把之前的 res结果字符串 入栈，以及 之前的数字 numStr 放入  数字栈，同时记得 给他们清零，因为 内部括号还会继续遇到 数字 和字符，嵌套！！！ 
+    当 遇到 ']'，那么就是需要 for 循环 不断 append()拼接字符串了，然后 一直 更新 res结果字符串 
+**/
 
 public class Solution {
     
@@ -5384,31 +5441,31 @@ public class Solution {
         Stack<Integer> nums = new Stack<>();
         Stack<String> strs = new Stack<>();
         
-        	// 和题解的不一样。我这里保存 int类型的 num数字，采用的是对 字符串中 数字字符拼接的方式，还要配合	Integer.parseInt(numStr)方法转成 int类型的数字
-        								
+        	
+  // 因为  字符串中有多个数字字符 比如'1'、'2'，我们要采用拼接的方式，把它们拼接成 12。还要配合	Integer.parseInt(numStr)方法转成 int类型的数字 								
         String numStr = "";   
+        
         String res = "";
        
-        int len = s.length();
         
         
-        for (int i = 0; i < len; i++) {
+        
+        for (int i = 0; i < s.length(); i++) {
             
             char ch = s.charAt(i);
             	
-            
        // 对于 字符串中的 数字字符判断 就应该这么 写。
             if (ch >= '0' && ch <= '9') {
               	// 对于这样的 "123[ab]" 我是这样子把123取出来的，先保存在numStr字符串中
                  numStr+=ch;
             } 
             
-       // 	如果是 小写字母的话，判断是这样写的，这时候的话就是普通的 结果字符串res 的一直拼接字符
+       //如果是 小写字母的话，判断是这样写的。。这时候的话就是普通的 结果字符串res 的一直拼接字符
             else if (ch >= 'a' && ch <= 'z') {
                 res += ch;
             }
             
- // 当遇到'[' 时，就要把'['的之前的数字 num 压入nums栈内， 结果字符串 res 压入strs栈内  
+ // 当遇到'[' 时！！就要把'['的之前的数字 num 压入nums栈内， 结果字符串 res 压入strs栈内  
             
  	// 记得要为 numStr 重置！！因为 每遇到一次'['的话，就要把'['的之前的数字 num 压入nums栈内。 有可能 '[' 内部还有 数字字符,又是新的了，所以必须重置numStr =""  。比如"abc100[20[a]]"
             
@@ -5428,7 +5485,7 @@ public class Solution {
                 int times = nums.pop();
                 StringBuilder temp = new StringBuilder(strs.pop());
                 
-                for (int j = 0; j < times; j++) {
+                for (int j	 = 0; j < times; j++) {
                     
          // 因为 在遇到'[' 之后，还会遇到括号里面的小写字符，它们都是保存在res中。所以要 用 之前的保存在strs栈里面的 字符串 temp，再拼接上 倍数的 res
                     temp.append(res);
@@ -5437,7 +5494,7 @@ public class Solution {
                 res = new String(temp); 
             }
         }
-        
+                        // 最周返回结果字符串 
         return res;
     }
     
@@ -5462,29 +5519,32 @@ public class Solution {
 题解：https://leetcode.cn/problems/find-all-anagrams-in-a-string/solutions/1125936/gong-shui-san-xie-shuang-zhi-zhen-shi-xi-t5hc/
 
 ```java
+//这道题 先用map 集合，记录 字符串p各个字符出现的次数。
+//  然后用 “滑动窗口”的思想，去 遍历整个 字符串 s ，记得是固定长度，也就是 字符串p的长度作为 滑动窗口的定长。   
+//   去统计 当前字符串 s 中的子串 的各个字符出现的次数 。
+ 
 class Solution {
    public   List<Integer> findAnagrams(String s, String p) {
 
         List<Integer> ans = new ArrayList<>();
-
+							// 这里的 m作为 下面 “滑动窗口”的 定长长度 ！！！！
         int n = s.length(), m = p.length();
 
+   
 
-
-        // 先存储 p字符串中的每个字符 出现的频次。把它放入 map2 哈希表中
-        HashMap<Character, Integer> map1 = new HashMap<>();
+        // 先存储 p字符串中的每个字符 出现的次数。把它放入 map2 哈希表中     
         HashMap<Character, Integer> map2 = new HashMap<>();
 
         for (int i = 0; i < m; i++)
         {
             char ch = p.charAt(i);
-            map2.put(ch, map1.getOrDefault(ch, 0) + 1);
-
-
+            map2.put(ch, map2.getOrDefault(ch, 0) + 1);
         }
-
-
-        // map1 哈希表的话，是对于  “滑动”窗口的时候来进行保存的，然后 和 map2已有的 进行比较
+       
+      
+     // map1 哈希表的话，是对于  “滑动”窗口的时候要用的，用来统计「滑动窗口」内的 s 的子串词频 ，然后 和 map2已有的 进行比较。。。当两个map 所统计词频相等，说明找到了一个异位组，将窗口的左边界left 加入答案。
+        HashMap<Character, Integer> map1 = new HashMap<>();
+        
         int left = 0, right = 0;
 
         // 有点 “滑动窗口” 的 最长或者 最短的 代码模板的样子
@@ -5500,16 +5560,16 @@ class Solution {
                 // 移除 左边界对应的 元素 ，并且 左边界要 右移！！
                 char ch_l = s.charAt(left);
                 map1.put(ch_l,map1.get(ch_l)-1);
+                left++;
 
-                // 这个 肯定是要有的，因为如果 这个字符 出现的 次数 为0了，但是这个key还是存在的
-                  //  到时候 下面 两个map比较的时候 仍然会出问题
+          //   这行肯定要加的！！因为如果 这个字符 出现的 次数 为0了，但是这个key还是存在的
+                  // 如果不删除它，那么 之后 两个map比较的时候会出问题，会误识别 异位词。。
                 if(map1.get(ch_l)==0)
                     map1.remove(ch_l);
-                left++;
+               
             }
 
-            //  当华东窗口 等于定长的 时候，就要比较 map1和map2，如果相等的话 ，就添加left 作为结果
-
+     //  当滑动窗口 等于定长的 时候，就要比较 map1和map2，如果相等的话 ，就添加left 作为结果
             if(right-left+1==m){
 
                 if(map1.equals(map2))
@@ -5517,7 +5577,7 @@ class Solution {
             }
 
 
-            // 老样子，right 右边界 在最下面的地方要 继续往右移动。
+            // right 右边界 在最下面的地方要 继续往右移动。
             right++;
 
         }
