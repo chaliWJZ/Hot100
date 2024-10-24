@@ -1,4 +1,4 @@
-# 					常用内置方法和属性
+# 						常用内置方法和属性
 
 ## 数组 [ ] 的方法
 
@@ -3874,13 +3874,40 @@ class Solution {
 
 #### 回溯组合
 
+题目描述：
+
+```
+给定两个整数 n 和 k，返回范围 [1, n] 中所有可能的 k 个数的组合。
+
+你可以按 任何顺序 返回答案。
+
+ 
+
+示例 1：
+
+输入：n = 4, k = 2
+输出：
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+```
+
 题解：https://leetcode.cn/problems/combinations/solutions/2071017/hui-su-bu-hui-xie-tao-lu-zai-ci-pythonja-65lh
 
 ```java
+// 组合的思路。。。回溯递归。。。一直向下递归 ↓ ，接着选择下一个元素
+//  然后配合 for循环，就是 横向的，每次选择 起始的开始元素是哪个，
 class Solution {
 	
              // 基本上这两个都是这样定义好，在最外面。。。
-            // 设置全局列表存储最后的所有结果
+    
+            // 设置 全局列表List<List<...>> res 存储最后的所有结果
+             // List<...> temp，代表每一个 到叶子节点的 临时路径答案 
     List<List<Integer>> res= new ArrayList<>();
     List<Integer> temp = new ArrayList<>();
 	
@@ -3894,23 +3921,29 @@ class Solution {
     }
 
     public void backtracking(int n,int k,int startIndex){
-
+				
+        // 当到了  要找答案的长度的时候，也就是遇到了叶子节点，就要 保存到 最终结果 res 里面
         if(temp.size() == k){
             		
-      // 因为如果只是res.add(temp)，那么就是传入了个引用，指向同一个对象，而 temp 在递归的时候是一直在变化的，会导致之前res 结果集合里面添加的最后变成了[] [][][] 
-		// 这里的话，有个小细节，所以必须是 new ArrayList<>(temp)传入temp，开辟一个新对象
+    
+		// 这里的话，有个小细节，所以必须是 new ArrayList<>(temp)传入temp，开辟一个新对象，
+            //  如果是 直接res.add(temp), 那么 里面的 temp 临时答案就会一直变化。。。
             res.add(new ArrayList<>(temp));
             return;
 
         }
-					// 选择列表，因为这里只有一个选择列表，那么i就是 = startIndex
+        
+	// 选择列表，因为这里只有一个选择列表，其实就是 1,2,3,4 里面慢慢选，是横向的 → 
+        // 那么就要用到startIndex， i = startIndex，每次 都向后选一个元素 。。
         for (int i =startIndex;i<=n;i++){ 
             
-            // 单个答案，不断添加元素 
+            // 单个 临时路径答案，不断添加元素，比如这里先选上 第一个元素，1
             temp.add(i);
-            			// 递归，记得 i+1 ！！
+            
+     // 向下递归，纵向的 ↓，记得 i+1，也就是选择 第二个元素，2，那么此时的临时路径答案是 1，2 了
             backtracking(n,k,i+1);
-            			// 撤销，移除末尾的元素
+            
+         	// 撤销，移除临时路径 末尾的元素，比如 撤销 2，那么临时路径答案又只剩下1 了
             temp.remove(temp.size()-1);
         }
     }
@@ -3923,18 +3956,46 @@ class Solution {
 
 #### 回溯组合
 
+题目描述：
+
+```
+给你一个 无重复元素 的整数数组 candidates 和一个目标整数 target ，找出 candidates 中可以使数字和为目标数 target 的 所有 不同组合 ，并以列表形式返回。你可以按 任意顺序 返回这些组合。
+
+candidates 中的 同一个 数字可以 无限制重复被选取 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 target 的不同组合数少于 150 个。
+
+ 
+
+示例 1：
+
+输入：candidates = [2,3,6,7], target = 7
+输出：[[2,2,3],[7]]
+解释：
+2 和 3 可以形成一组候选，2 + 2 + 3 = 7 。注意 2 可以使用多次。
+7 也是一个候选， 7 = 7 。
+仅有这两种组合。
+示例 2：
+
+输入: candidates = [2,3,5], target = 8
+输出: [[2,2,2,2],[2,3,3],[3,5]]
+```
+
 题解：https://leetcode.cn/problems/combination-sum/solutions/857543/dai-ma-sui-xiang-lu-dai-ni-xue-tou-hui-s-7tum
 
 ```java
+// 组合的思路。。。回溯递归。。。一直向下递归 ↓ ，接着选择下一个元素
+//  然后配合 for循环，就是 横向的，每次选择 起始的开始元素是哪个，
+// 但是这道题有点特殊，，， 每个元素 都可以 "重复用" ！！！	
 
 // 这道题是 给你的初始选择列表，里面的元素都是唯一的 。。所以不需要去重 ！！
-// 而且每个元素都可以重复用 ！！！
-class Solution {
+
+class Solution {	
     
     
-	// 依旧的 两个全局变量，，，
-     private List<List<Integer>> res = new ArrayList<>();// 存放最终结果集
-    private List<Integer> temp = new ArrayList<>();// 用来存放单个符合答案
+	// 依旧的 两个全局变量 
+     private List<List<Integer>> res = new ArrayList<>();// 存放最终结果集 res
+    private List<Integer> temp = new ArrayList<>();// 用来存放 符合的单个路径答案
 
 
 
@@ -3947,24 +4008,25 @@ class Solution {
 
 
     public void backtracking(int[] candidates, int target, int sum, int startIndex) {
-		// 递归结束出口，这里的话是有2个了。。。。都必须写出来哦！！！其实也蛮容易想到的
-        if (sum > target) 
-            return;
-        
-
-        if (sum == target) {	
-            		// 依旧是小细节，要new 出来，把temp放进去。。否则是传入引用
+		// 递归结束出口，这里的话是有2个了。。。。都必须写出来哦！！！
+       
+        if (sum == target) {		
             res.add(new ArrayList<>(temp));
             return;
         }
         
-					// 因为只在一个选择列表里面取，那么就是 i= startIndex
+         if (sum > target) 
+            return;
+        
+        
+// 因为只在 一个 选择列表里面取，其实就是 []数组 candidates 里面的元素，里面慢慢选，是横向的 → 
+        // 那么 就要用到startIndex, i = startIndex，每次 都向后选一个元素 。。
         for (int i = startIndex; i < candidates.length; i++) {
 
             sum += candidates[i];
             temp.add(candidates[i]);
             
-     // 不用 i + 1 了，和之前的题目不一样。本题，表示可以重复读取当前的数，所以递归函数传入的是 i ，然后去下一层递归 。
+     // 不用 传入i + 1 了。。。本题 和之前的题目不一样，表示可以 "重复"读取 当前的数，所以递归函数传入的是 i !!! 然后去下一层递归 ↓ 
             backtracking(candidates, target, sum, i);  
 
             // 撤销 操作
@@ -3979,11 +4041,41 @@ class Solution {
 
 #### 回溯组合
 
-题解：https://leetcode.cn/problems/combination-sum/solutions/857543/dai-ma-sui-xiang-lu-dai-ni-xue-tou-hui-s-7tum
+题目描述：
+
+```
+给定一个候选人编号的集合 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的每个数字在每个组合中只能使用 一次 。
+
+注意：解集不能包含重复的组合。 
+
+ 
+
+示例 1:
+
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+输出:
+[
+[1,1,6],
+[1,2,5],
+[1,7],
+[2,6]
+]
+```
+
+题解：https://leetcode.cn/problems/combination-sum-ii/solutions/857552/dai-ma-sui-xiang-lu-dai-ni-xue-tou-hui-s-ig29/
 
 ```java
-// 这道题是 给你的初始选择列表，里面的元素有可能重复的。。所以需要去重 ！！这里引入used[]数组来去重
-// 而且每个元素只能用1次  ！！！
+// 组合的思路。。。回溯递归。。。一直向下递归 ↓ ，接着选择下一个元素
+//  然后配合 for循环，就是 横向的，每次选择 起始的开始元素是哪个，
+
+// 这道题的要求 和 之前的 组合总和的原始题目不一样。。。有两点不太一样！！！
+/**
+1. 这道题，要求，求出来的最终答案 res ，也就是那么多个 单个路径答案，必须不重复！！！ 但是 给你的初始选择列表，里面的元素有可能"重复"的。。比如 1,2,3,7,-1,2,1 。。所以需要去重 ！！这里引入used[]数组来去重。。。我没采用 最终 转为 hash set的方式 把结果集 去重。。。。
+
+2. 而且 单个路径答案里面，每个元素只能用1次  ！！！
+**/
 class Solution {
     
     	// 依旧的 两个全局变量，，，
@@ -3993,13 +4085,13 @@ class Solution {
     
     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
         
-        // 首先对 candidates 数组进行排序。方便后面去重
+        // 首先对 candidates 数组[]进行排序！！！方便后面 使用 used[] "去重" ！！！
         Arrays.sort(candidates);
         
         boolean[] used = new boolean[candidates.length];
         
             	// 这里还要额外对sum =0赋值 
-        			// 并且这里还额外传入了个 used[]数组，为了方便去重。哪些元素已经用，没用过 
+       // 并且这里还额外传入了个 used[]数组，为了方便“去重”。哪些元素已经用，没用过 
                //  最核心的当时是  startIndex =0，因为是第一个元素下标从0开始
         backtracking(candidates, target, 0, 0, used);
         return res;
@@ -4009,25 +4101,28 @@ class Solution {
     
     public void backtracking(int[] candidates, int target, int sum, int startIndex, boolean[] used) {
         
-        if (sum >target) 
-            
-            return;
        
-        
+       
+        // 多个 递归出口！！
         if (sum == target) {
             
-            // 依旧是小细节，要new 出来，把temp放进去。。否则是传入引用
+            
             res.add(new ArrayList<>(temp));
             return;
         }
         
-        		// 因为只在一个选择列表里面取，那么就是 i= startIndex
+         if (sum >target) 
+            return;
+        
+        		// 因为只在 一个选择列表里面取，那么就是要采用 startIndex。。i= startIndex
         for (int i = startIndex; i < candidates.length; i++) {
             	
-            // used[i - 1] == true，说明同一树枝 candidates[i - 1]使用过
-            // used[i - 1] == false，说明同一"树层" candidates[i - 1]使用过
+            // used[i - 1] == true，说明同一树枝(纵向↓)，前面相邻的相同元素 使用过
+            // used[i - 1] == false，说明同一"树层"(横向→)，前面相邻的相同元素 使用过
             
-                //  要对同一"树层" 去重！！使用过的元素进行跳过，所以是 选择 == false ！！
+    // 排序之后的话，在for循环 横向→取元素的时候， 当发现  candidates[]中的i 和 i-1下标的元素相等的时候。。就需要去重了。。。但是还需要配合 used[]数组!!!那么如何判断呢？？？     
+   // 要对同一"树层" 去重！！所以是 判断userd[i-1] == false！！说明 前面相邻的相同元素 使用过，
+// 所以代码里面是 continue 跳过 它！！
             if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) 
                       continue;   
             
@@ -4217,15 +4312,37 @@ class Solution {
 
 #### 动态规划基础
 
+题目描述：
+
+```
+斐波那契数 （通常用 F(n) 表示）形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。也就是：
+
+F(0) = 0，F(1) = 1
+F(n) = F(n - 1) + F(n - 2)，其中 n > 1
+给定 n ，请计算 F(n) 。
+
+ 
+
+示例 1：
+
+输入：n = 2
+输出：1
+解释：F(2) = F(1) + F(0) = 1 + 0 = 1
+```
+
 题解：https://leetcode.cn/problems/fibonacci-number/solutions/853411/dai-ma-sui-xiang-lu-509-fei-bo-na-qi-shu-n389
 
 ```java
+// 这道题 的话，可以使用 dp动态规划，只不过是少见的 。。。。题目中就直接给了 递归公式。。。。
+
 class Solution {
 public int fib(int n) {
 
     		   // 这个主要是为了防止传入 n =0的时候，数组越界。。。
           if (n == 0) return 0;  
+    		
     
+    			// 采用一维的 dp[]就行
     		 // 因为是 F(0)....到 F(n)，所以是求 n+1 个数，所以数组长度也是 n+1
         int[] dp = new int[n + 1];    // dp[i] 代表的是，第i个数的斐波那契数是 dp[i]
     
@@ -4234,7 +4351,7 @@ public int fib(int n) {
     					//   初始化 dp数组。 
         dp[0] = 0;
         dp[1] = 1;
-    					//   遍历dp数组。  for循环一般都是 i 从 2开始。
+    					//   遍历计算 dp数组。  for循环一般都是 i 从 2开始。
         for (int i = 2; i <= n; i++){ 
             dp[i] = dp[i-1] + dp[i-2];  // 递推公式 ，状态转移公式，dp[i]依赖前两个数
         }
@@ -4251,21 +4368,54 @@ public int fib(int n) {
 
 #### 动态规划基础
 
+题目描述：
+
+```
+假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+ 
+
+示例 1：
+
+输入：n = 2
+输出：2
+解释：有两种方法可以爬到楼顶。
+1. 1 阶 + 1 阶
+2. 2 阶
+示例 2：
+
+输入：n = 3
+输出：3
+解释：有三种方法可以爬到楼顶。
+1. 1 阶 + 1 阶 + 1 阶
+2. 1 阶 + 2 阶
+3. 2 阶 + 1 阶
+```
+
 题解：https://leetcode.cn/problems/climbing-stairs/solutions/854668/dai-ma-sui-xiang-lu-dong-tai-gui-hua-jin-y1hw
 
 ```java
+//  采用动态规划来做，当前的 楼梯阶数 i的走法，依赖于 前面阶数楼梯i-1的走法个数。。。。 
+
 class Solution {
 
     public int climbStairs(int n) {
-
+        
+			 // 采用 一维dp[] 就行
+        // 因为是 第0阶,,,,到 第 n 阶 ，所以是求 n+1 个楼梯台阶，所以 dp[]数组长度是 n+1
             int[] dp = new int[n+1]; // dp[i] 代表的是，爬到第i阶 楼梯 有 dp[i]种 走法
-          			//和509 斐波那契数， 就是 初始化dp不一样。。。
+          			
+        // 初始化 dp数组，dp[0], 代表的是 第0层楼梯的走法是 0种方法。
+        //   dp[1]代表的 第一层的台阶， 只有一种方法走上去，也就是 跨一次台阶 就行。。。
             dp[0]=1;
             dp[1]=1;
 				
-        		   
+        		   	// for循环遍历计算dp[]数组，i从2 开始 遍历就行。
             for(int i=2;i<=n;i++){
-
+							
+                // 递推公式，dp[i]的状态是 dp[i-1] ， dp[i-1]  两者相加的和
                 dp[i] = dp[i-1]+dp[i-2];  
 
             }
@@ -4279,32 +4429,64 @@ class Solution {
 
 #### 动态规划基础
 
+题目描述：
+
+```
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+
+问总共有多少条不同的路径？
+
+示例 1：
+
+输入：m = 3, n = 2
+输出：3
+解释：
+从左上角开始，总共有 3 条路径可以到达右下角。
+1. 向右 -> 向下 -> 向下
+2. 向下 -> 向下 -> 向右
+3. 向下 -> 向右 -> 向下
+```
+
 题解：https://leetcode.cn/problems/unique-paths/solutions/856968/dai-ma-sui-xiang-lu-dong-gui-wu-bu-qu-xi-1vkb
 
 ```java
+// 采用动态规划，很明显是需要 二维 dp[][]来解决‘
+// 对于 每一个 矩阵的 格子，比如 dp[i][j]只能依赖 它的左边的格子 dp[i][j-1] 以及 它顶上的格子dp[i-1][j] 这两者之间的关系 。。。找出递推关系 ！！
+// 然后的话，初始化dp[][]的时候，对于第一列 和第一行 要很容易想到 它们的每个格子 的 路径数只能是 1条路径！！！
+
 class Solution {
     	
    public int uniquePaths(int m, int n) {
        
-       
+         // 这道题很明显就是要采用 二维dp[][]
         // dp[i][j]，代表的是 从最左上角[0,0] 走到 [i,j]格子，一共有 dp[i][j]种路径 
 		int[][] dp = new int[m][n];  
        
-        // 初始化 dp二维数组的 第一行和第一列。每个值都是1 ，也就是 每个格子的，路径数目都是1 
+       	
+       // 初始化 dp二维数组。 第一行和第一列。每个值都是1 ，也就是 每个格子的，路径数目都是1 
+       // 首先dp[i][0] 代表第一列。。因为从(0, 0)的位置到 第一列(i, 0)的任意一个格子，路径只有一条，也就是 只能一路向下走。。。
+       // 那么dp[0][j]也同理。它就是 矩阵的 第一行，路径也只有一条 ，只能一路 向右走。。。
+        
         for (int i = 0; i < m; i++) 
             dp[i][0] = 1;
         
         for (int i = 0; i < n; i++)
             dp[0][i] = 1;
         
-			// 遍历dp 二维数组，从上到下，从左往右
+    // 遍历计算dp 二维数组，遍历顺序采用的是 ，从上到下 ↓，从左往右→
+       // 一般来说 初始化第一行，第一列之后，所以这里的 for循环 一般 都是 下标从 1 开始了。。。。
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {
-                	 //递推公式，dp[i][j] 依赖左边的格子和上边的格子的路径数
+              
+          //递推公式，很容易发现，，dp[i][j]，依赖左边的格子 dp[i][j-1] 和上边的格子的路径数 dp[i-1][j] 两者相加 ！！ 
+   // 你这么想，对于左边的格子的路径数 dp[i][j-1]已经求出来了，那么 要去右边的当前格子dp[i][j]，其实就是往右边前进一格，所以 路径的个数 仍然可以复用。。同理  对于顶上的格子，也可以复用 路径个数。综上所述，就是  等于 它们的 路径和 ！！
        			 dp[i][j] = dp[i-1][j]+dp[i][j-1]; 
             }
         }
-       						
+       					
+          
         return dp[m-1][n-1];
        
    }
@@ -4318,35 +4500,69 @@ class Solution {
 
 #### 动态规划基础
 
+题目描述：
+
+```
+给定一个 m x n 的整数数组 grid。一个机器人初始位于 左上角（即 grid[0][0]）。机器人尝试移动到 右下角（即 grid[m - 1][n - 1]）。机器人每次只能向下或者向右移动一步。
+
+网格中的障碍物和空位置分别用 1 和 0 来表示。机器人的移动路径中不能包含 任何 有障碍物的方格。
+
+返回机器人能够到达右下角的不同路径数量。
+
+示例 1：
+输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+输出：2
+解释：3x3 网格的正中间有一个障碍物。
+从左上角到右下角一共有 2 条不同的路径：
+1. 向右 -> 向右 -> 向下 -> 向下
+2. 向下 -> 向下 -> 向右 -> 向右
+
+
+```
+
 题解：https://leetcode.cn/problems/unique-paths-ii/solutions/545893/63-bu-tong-lu-jing-iidong-tai-gui-hua-ji-6h8h
 
 ```java
+// 也是要用 dp动态规划来做，很明显是 要用 二维dp来做的。！！！
+// 这道题和 63 不同路径，主要就是区别在了，初始化dp[][]数组 和 遍历dp上的一些细节差异。。。
+/** 
+     因为有障碍物，所以 在初始化dp[][] 的 第一行和 第一列 的时候，有些不一样。。。
+     而且 在for循环遍历dp[][]的时候，也要对 障碍物的格子进行判断 ！！
+**/
 class Solution {
     
-    		// 这道题和 63 不同路径，主要就是区别在了，初始化 和 遍历上的一些细节
+
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         
         int m = obstacleGrid.length; // 获取行数
         int n = obstacleGrid[0].length;  // 获取列数，对于二维数组，只能这么获取 
+        
+        // 定义dp数组，二维dp[][]
+        //   dp[i][j]，代表的是 从最左上角[0,0] 走到 [i,j]格子，一共有 dp[i][j]种路径
         int[][] dp = new int[m][n]; 
 
-        // 如果在起点或终点出现了障碍，直接返回 0，没有路径 可以走了。
+        // 如果在起点或终点出现了障碍，直接返回 0，没有路径 可以走了。。。 “剪枝”
         if (obstacleGrid[m - 1][n - 1] == 1 || obstacleGrid[0][0] == 1) 
             return 0;
         
- //初始化 dp数组。就是在中间的判断条件 加上且 &&，这样遇到障碍物格子，之后的格子都不需要再赋值 1	
+ //初始化dp数组。在for循环中间的判断 加上且 &&，这样遇到障碍物格子，在它之后的格子都不需要再赋值 1	
         for (int i = 0; i < m && obstacleGrid[i][0] == 0; i++) 
             dp[i][0] = 1;
         
         for (int j = 0; j < n && obstacleGrid[0][j]== 0; j++) 
             dp[0][j] = 1;
         
-								
+	// 遍历计算dp 二维数组，遍历顺序采用的是 ，从上到下 ↓，从左往右→
+       // 一般来说 初始化第一行，第一列之后，所以这里的 for循环 一般 都是 下标从 1 开始了。。	
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {	
-                			// 就是加上这一行 
+                
+       // 就是要多加上这一行，要采用 递推公式的前提！！！肯定 是当前格子不是 障碍物，才可以使用   
+              // 怎么思考递推公式  ！！？？ 
+            //很容易发现，，dp[i][j]，依赖左边的格子 dp[i][j-1] 和上边的格子的路径数 dp[i-1][j] 两者相加 ！！ 
+   // 你这么想，对于左边的格子的路径数 dp[i][j-1]已经求出来了，那么 要去右边的当前格子dp[i][j]，其实就是往右边前进一格，所以 路径的个数 仍然可以复用。。同理  对于顶上的格子，也可以复用 路径个数。综上所述，就是  等于 它们的 路径和 ！！   
                 if(obstacleGrid[i][j] == 0)
-          dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
             
             }
         }
@@ -4363,30 +4579,48 @@ class Solution {
 
 #### 动态规划基础
 
+题目描述：
+
+```
+给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+示例 1：
+输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+输出：7
+解释：因为路径 1→3→1→1→1 的总和最小。
+```
+
 题解：https://leetcode.cn/problems/minimum-path-sum/solutions/2728404/javapython3cdong-tai-gui-hua-kong-jian-y-a5sz/
 
 ```java
+// 采用 dp 动态规划，而且很明显的话，要用 二维dp数组[][]
+//  同样的，对于 每一个 矩阵的 格子，比如 dp[i][j]只能依赖 它的左边的格子 dp[i][j-1] 和 它顶上的格子dp[i-1][j] 这两者之间的关系 。。。找出递推关系 ！！
+
+
 class Solution {
     public int minPathSum(int[][] grid) {
    
 
-    int m = grid.length ; 
-    int n = grid[0].length;
+    int m = grid.length ;  // 获得矩阵的 行数
+    int n = grid[0].length; // 获得矩阵的 列数
     
     		// dp[i][j] 代表的是，从[0,0] 到 [i,j] 下标的格子，最小的路径之和是 dp[i][j]
     int[][] dp = new int[m][n];	
     
     dp[0][0] = grid[0][0];	//  特殊处理左上角元素[0,0]
     
-    		// 初始化 dp数组，第一列的每个格子，都是上面一个格子 + 自己格子的值
+    		// 初始化 dp数组，第一列的每个格子dp[i][0]，都是 它顶上一个格子 + 自己格子的值
     for (int i = 1;i < m;i++) 
         dp[i][0] = grid[i][0]+dp[i-1][0];
     
-				// 初始化 dp数组，第一行的每个格子，都是前面一个格子 + 自己格子的值
+				// 初始化 dp数组，第一行的每个格子，都是 左边一个格子 + 自己格子的值
     for ( int i = 1;i < n;i++) 
         dp[0][i] = grid[0][i] + dp[0][i-1];
     
-		// 开始遍历dp数组，从上到下，从左往右
+		// 开始for循环遍历计算 dp数组，从上到下↓，从左往右→
+      // 一般来说 初始化第一行，第一列之后，所以这里的 for循环 一般 都是 下标从 1 开始了。。。 
     for ( int i = 1 ; i < m ;i++) {
         for ( int j = 1;j < n;j++) {
             
@@ -4395,7 +4629,7 @@ class Solution {
         }
     }
     
-    return dp[m-1][n-1];
+   			 return dp[m-1][n-1];
     
 }
 }
@@ -4407,49 +4641,71 @@ class Solution {
 
 #### 动态规划子序列
 
+题目描述：
+
+```
+给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+
+子序列 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的
+子序列
+。
+
+ 
+示例 1：
+
+输入：nums = [10,9,2,5,3,7,101,18]
+输出：4
+解释：最长递增子序列是 [2,3,7,101]，因此长度为 4 。
+```
+
 题解：https://leetcode.cn/problems/longest-increasing-subsequence/solutions/2279668/dai-ma-sui-xiang-lu-leetcode300zui-chang-sh5m
 
 ```java
 // 这道题的话，子序列是指 "不连续"的 。。。
+// 所以在用动态规划dp ，有点特殊的地方！就是还要多定义一个 for内循环，因为它依赖和 前面多个dp[]，不断比较。。
+
+// 这里的答案不是 返回 dp数组的末尾下标[nums.length] ，而是定义一个 max第三者遍历，在遍历计算dp数组的时候，，需要不断更新比较的 ！！！
+
 
 class Solution {
     
     public int lengthOfLIS(int[] nums) {
         
-// dp[i]是指， 以下标i为结尾的  最长递增子序列的长度是 dp[i] 。。
-      //因为只有这么定义它的含义，才方便后面的 遍历时候，递增比较的时候，比较 nums[j] 和 nums[i] 的大小，边界很明确
+       // dp[i]是指， 以下标i为结尾的  最长递增子序列的长度是 dp[i]。。。
+      //因为只有这么定义 dp[i]的 "含义" ！！才方便后面的 for遍历dp[]数组时候，递增比较的时候， 可以比较 nums[j] 和 nums[i] 的大小，边界很明确
         int[] dp = new int[nums.length];
         
-        int max = Integer.MIN_VALUE;  // 因为是需要不断比较找到最大值的答案，所以定义 max
-        							// 特殊之处 1
+      // 因为在下面的 for循环遍历计算dp[]的时候，是需要不断比较找到最大值的答案，所以定义 max   
+        int max = Integer.MIN_VALUE;  // "子序列" 类型的dp，特殊之处 的地方
+        							
         
         // 初始化 dp数组，每一个以i下标结尾的，因为对应的dp[i] 最长递增子序列长度 至少都是 1
         for(int i =0;i<nums.length;i++){
             dp[i]=1;
-          	max =1; // 特殊之处 2
+          	max =1; // 初始化dp的时候，也是比较 特殊的地方，还需要给 max赋值。。
         }
             
         
-      //遍历顺序，当然是从前往后遍历。这里少有的一维dp数组，还要用 双层for循环来遍历。主要原因是，这里是 "不连续"的递增子序列，也就是中间可以 空开的。所以就必须再弄一个内层for循环，j每次都从0开始遍历到i-1，把前面的每一个下标 都和 当前的下标i对应的dp数组  比较一下，求最大值。
+      //遍历顺序，当然是从前往后遍历→。这里少有的一维dp数组，还要用 双层for循环来遍历。主要原因是，这里是 "不连续"的递增子序列，也就是 挑选的两个元素中间，可以 空开的。所以就必须再弄一个内层for 循环，j每次都从0开始遍历到i-1，把前面的每一个下标 都和 当前的下标i对应的dp数组  比较一下，求最大值。
         for (int i = 1; i < dp.length; i++) {
             for (int j = 0; j < i; j++) {
                 		
-                // 必须在某个条件下，才需要用递推公式。
-// j是在前面，下标i是在j的后面，所以 只有 大于的情况 nums[i] > nums[j] ，是递增的，才用递推公式更新 dp[i] 。因为是 大于，所以 肯定可以 dp[j]+1 ，然后和 当前下标dp[i] 取最大值就可以了。
+                // 必须在某个if 条件下！！才需要用 递推公式。
+// j是在前面，下标i是在j的后面，所以 只有 大于的情况 nums[i] > nums[j] ，子序列才是递增的，才用递推公式更新 dp[i] 。因为是 大于，所以 肯定可以 dp[j]+1 ，再和 当前下标dp[i] 取最大值就可以了。
                 if (nums[i] > nums[j]) 
                     dp[i] = Math.max(dp[j] + 1,dp[i]);
-				max = Math.max(res,dp[i]); // 特殊之处 3
-        }
+              
+                // 记得 每次都要拿 当前的格子dp[i] 和 max 比较，然后更新最大值 ！！
+				max = Math.max(max,dp[i]);   // 也是特殊的地方。。。
+        } 
             
         }
         
-      // 为什么这里那么特殊，不是去直接返回 dp[nums.length-1] ,而是for循环比较大小 返回res
+      // 为什么这里那么特殊？？不是去直接返回 dp[nums.length-1] ,而是for循环比较大小 返回 max
             
-  //原因主要是我们定义 dp数组的时候，它的含义 ---> 决定我们这样返回 最终结果的。
-       // 因为dp[i]是指， 以下标i为结尾的  最长递增子序列的长度是 dp[i]，所以 其实并不是说        i=nums.length最后一个下标结尾的 最长递增子序列的长度 就是最大值，也可能是 前面某个下标结尾的  才是最大值  。。。。--->只需要看 特殊之处 1，2，3，4
+       // 因为dp[i]是指， 以下标i为结尾的  最长递增子序列的长度是 dp[i]，所以 其实并不是说        i=nums.length最后一个下标结尾的 最长递增子序列的长度 就是最大值，也可能是 前面某个下标结尾的  才是最大值  。。。。
             	
-
-        return max; // 特殊之处 4 
+        return max; 
         
     }
 }
@@ -4461,16 +4717,34 @@ class Solution {
 
 #### 动态规划子序列
 
+题目描述：
+
+```
+给定一个未经排序的整数数组，找到最长且 连续递增的子序列，并返回该序列的长度。
+
+连续递增的子序列 可以由两个下标 l 和 r（l < r）确定，如果对于每个 l <= i < r，都有 nums[i] < nums[i + 1] ，那么子序列 [nums[l], nums[l + 1], ..., nums[r - 1], nums[r]] 就是连续递增子序列。
+
+ 
+
+示例 1：
+
+输入：nums = [1,3,5,4,7]
+输出：3
+解释：最长连续递增序列是 [1,3,5], 长度为3。
+尽管 [1,3,5,7] 也是升序的子序列, 但它不是连续的，因为 5 和 7 在原数组里被 4 隔开。 
+```
+
 题解：https://leetcode.cn/problems/longest-continuous-increasing-subsequence/solutions/2279675/dai-ma-sui-xiang-lu-leetcode674zui-chang-3c7s
 
 ```java
-//这道题 是"连续"的子序列，，，比 300题 简单一些。。。
+//这道题 多加了条件，是"连续"的子序列，，，比 最长递增子序列(非连续) 简单一些。。。
+
+// 使用动态规划去做，。。。这里的话 ，只需要定义一个 for 循环！！去遍历计算就行了，因为 当前的dp[i]只是和 前一个 dp[i-1] 有关系。。。。！！！
 
 class Solution {
     public int findLengthOfLCIS(int[] nums) {
 
         // dp[i]是指， 以下标i为结尾的  最长递增子序列的长度是 dp[i] 。。
-   //因为只有这么定义它的含义，才方便后面的 遍历时候，递增比较的时候，比较 nums[i] 和 nums[i-1] 的大小，边界很明确
         int[] dp = new int[nums.length];
         
         
@@ -4484,15 +4758,19 @@ class Solution {
         }
             
         
-     //遍历顺序，当然是从前往后遍历。而且只需要一个for循环就行了，因为这道题是 “连续”的递增子序列，所以 dp[i] 只跟前一个状态dp[i-1]有关，只需要比较最大值就行了
+     //for遍历计算的 顺序，当然是从前往后遍历→ ！！而且只需要一个for循环就行了
+    //因为这道题是 “连续”  的递增子序列，所以 dp[i] 只跟前一个状态dp[i-1]有关，只需要比较最大值就行了。。。
+    // 之前的 那道题是 "非连续"的，所以还要定义一个 内循环，把 j= 0到 i-1的每一个dp[j] 和 当前的dp[i] 进行比较 。。。。。
         for (int i = 1; i < dp.length; i++) {
        			
         // 必须在某个条件下，才需要用递推公式。
 // 所以 只有 大于的情况 nums[i] > nums[i-1] ，是递增的，才用递推公式更新 dp[i] 。因为是 大于，所以 肯定可以 dp[i-1]+1 ，然后和 当前下标dp[i] 取最大值就可以了。
                 if (nums[i] > nums[i-1]) 
                     dp[i] = Math.max(dp[i-1]+1,dp[i]);
+             
             
-   				max = Math.max(res,dp[i]);  // 特殊之处 3 
+            //每次都记得 和 max 比较大小，然后要更新
+   				max = Math.max(max,dp[i]);  // 特殊之处 3 
         }
         
 
@@ -4508,10 +4786,27 @@ class Solution {
 
 #### 动态规划子序列
 
-题解：https://leetcode.cn/problems/maximum-length-of-repeated-subarray/  主要是看这个dp二维   数组怎么画出来的，对应格子的含义。
+题目描述：
+
+```
+给两个整数数组 nums1 和 nums2 ，返回 两个数组中 公共的 、长度最长的子数组的长度 。
+
+ 
+
+示例 1：
+
+输入：nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+输出：3
+解释：长度最长的公共子数组是 [3,2,1] 。
+```
+
+题解：https://leetcode.cn/problems/maximum-length-of-repeated-subarray/solutions/853065/dai-ma-sui-xiang-lu-718-zui-chang-zhong-rowbh/  主要是看这个dp二维数组 怎么画出来的，对应格子的含义。
+
+这里看的是 版本二
 
 ```java
-// “连续”的子数组 ，所以相对简单点
+// 子数组是 “连续”的 ，所以相对简单点~~~~
+// 采用动态规划来做。很明显是两个数组，要采用 二维dp[][]
 
 class Solution {
     
@@ -4529,33 +4824,38 @@ class Solution {
               for(int i=0;i<m;i++){
                   if(nums1[i]==nums2[0]){
                       dp[i][0]=1;
-                      max=1;
+                      max=1; //特殊之处
                   }
               }
         
-        		// 同理，初始化dp数组的第一行 
+      // 同理，初始化dp数组的第一行，也就是固定nums1 的下标为0 的那个子数组，然后遍历 nums2。
               for(int i=0;i<n;i++){
                   if(nums2[i]==nums1[0]){
                        dp[0][i]=1;
-                       max=1;
+                       max=1; //特殊之处
                   }
               }
         
-        	//遍历顺序，当然是从上到下，从左到右，因为已经对第一列和第一行遍历过了，所以i和j都是从下标1 开始遍历。。
+     // for循环遍历顺序，当然是从上到下↓，从左到右→，因为已经对第一列和第一行遍历过了，所以i和j都是从下标1 开始遍历。。 
+        		// 外层遍历的是 nums1中的元素 。。。
              for(int i=1;i<m;i++){
+                    // 内层遍历的是  nums2数组中的元素 。。
                  for(int j=1;j<n;j++){
                      
-          // 只有 如果两个元素相等，采用递推公式。dp[i][j] 当前遍历的两个元素，依赖前面的状态，所以就看它们的 前一个元素dp[i-1][j-1]的最长重复子数组的长度是多少，然后加 1 就行了。。。
+  // 只有 nums1的 i下标 和 nums2的j下标指向的 两个元素相等，才会采用递推公式，去更新计算dp！！
+      //dp[i][j] 当前格子，依赖前面的状态，所以就看 这两个数组nums的 分别的前一个元素也就是 nums1数组的 i-1和 nums2数组j-1，对应的 dp[i-1][j-1]值，最长重复子数组的长度是多少，然后加 1 就行了。。。就是 dp数组[][] 里面，2*2格子“斜着” 左上角那个值 。。。
                      if(nums1[i]==nums2[j])
                     	 dp[i][j]= dp[i-1][j-1]+1;
                      
-                     max=Math.max(dp[i][j],max);
+                     //每次都记得 和 max 比较大小，然后要更新
+                     max=Math.max(dp[i][j],max); //特殊之处
                      
                  }
              }
         
-        
-             return max;
+                 // 这里也是返回max，而不是 dp[][]二维数组的最末尾的下标
+      // 因为不一定以最末尾的 两个数组的 nums1 和 nums2的，它的dp格子值，才是最长的 
+             return max;  //特殊之处
     }
 }
 ```
@@ -4568,10 +4868,30 @@ class Solution {
 
 #### 动态规划子序列
 
+题目描述：
+
+```
+给定两个字符串 text1 和 text2，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 0 。
+
+一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+
+例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。
+两个字符串的 公共子序列 是这两个字符串所共同拥有的子序列。
+
+ 
+
+示例 1：
+
+输入：text1 = "abcde", text2 = "ace" 
+输出：3  
+解释：最长公共子序列是 "ace" ，它的长度为 3 。
+```
+
 题解：https://leetcode.cn/problems/longest-common-subsequence/solutions/276495/java-dong-tai-gui-hua-tu-wen-jie-xi-by-sdwwld/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// “非连续”的子序列 ，所以判断条件稍微复杂一点
+// “非连续”的子序列 ，也就是 选择两个元素之间可以空开。。。所以判断条件稍微复杂一点。。。
+//   采用dp动态规划来做。很明显是 两个 字符串，要采用 二维dp[][]
 
 class Solution {
     public int longestCommonSubsequence(String text1, String text2) {
@@ -4579,29 +4899,34 @@ class Solution {
         int m = text1.length();
         int n = text2.length();
         
-        //这里定义就是 按照两个数组的长度，定义 dp 二维数组 
-     //dp[i][j]是指，表示在nums1中以下标 i 为结尾，nums2中以下标 j 为结尾的最长重复子数组长度是dp[i][j] 
+        //这里定义就是 按照两个数组的长度，定义 dp 二维数组 [][]
+     //dp[i][j]是指，表示在nums1中以下标 i 为结尾，nums2中以下标 j 为结尾的最长公共子数组的长度是dp[i][j] 
         int[][] dp = new int[m][n];
         
-        int max = 0; 
+        
         //  这里同样是需要不断的比较最终答案的。。。所以定义max ..这里比较特殊， 所以要定义成 0，
-        //  因为如果不存在公共子序列，那么最大值就是 0 。。。而不是 Integer.MIN_VALUE，那么就是 -2738993234234.。。。了
+        //  因为如果不存在公共子序列，那么最大值就是 0 。。。而不是 Integer.MIN_VALUE，那么就是 -2738993234234。。。。。。了
+        int max = 0;   
 
 
-        // 初始化第一行
+     // 初始化dp[][]的 第一行，也就是 text1固定 第一个字符，然后去匹配 text2字符串的 各个字符 
         for (int i = 0; i < m; i++) {
             
             if (text1.charAt(i) == text2.charAt(0)) {
                 dp[i][0] = 1;
                 max = 1;
+       // 这里为什么要加上  内部的for循环。。。可以这么理解。。此时固定的只有一个 text1的 第一个字符，只有一个字符，也就是说 最长公共子序列最多就是1！！所以当我们找到 charAt(i) ==的时候， 对于 i 之后的 i+1,i+2....直到末尾字符，它对应的 dp[][] 格子值最多就是 1 。。
+                // 而且有因为这里是 "非连续"的子序列，也就是 后面的字符 哪怕是不连续的，也可以沿用前面的 已经存在的 最大公共序列长度
+             
                 for(int k=i;k<m;k++)
                     dp[k][0]=1;
+                
                 break;
             }
             
         }
 
-        // 同理，初始化第一列
+     // 初始化dp[][]的 第一列，也就是 text2固定 第一个字符，然后去匹配 text1字符串的 各个字符
         for (int j = 0; j < n; j++) {
             
             if (text2.charAt(j) == text1.charAt(0)) {
@@ -4616,22 +4941,32 @@ class Solution {
         }
 
         
-        // 遍历顺序，当然是从上到下，从左到右，因为已经对第一列和第一行遍历过了，所以 i 和 j 都是从下标 1 开始遍历。。
+        // for遍历计算的 顺序，当然是从上到下↓，从左到右→，因为已经对第一列和第一行遍历过了，所以 i 和 j 都是从下标 1 开始遍历。。   
         
+        //   外循环 遍历的是 text1的 各个字符 
         for (int i = 1; i < m; i++) {
+            // 内循环 遍历的是 text2的 各个字符 
             for (int j = 1; j < n; j++) {
                 
-                // 只有如果两个元素相等，采用递推公式。dp[i][j] 当前遍历的两个元素，依赖前面的状态，所以就看它们的前一个元素 dp[i - 1][j - 1] 的最长重复子数组的长度是多少，然后加 1 就行了。。。
+  // 只有 text1的 i下标 和 text2的 j下标指向的 两个字符 相等，才会采用递推公式，去更新计算dp！！
+      // dp[i][j] 当前格子，依赖前面的状态，所以就看它们的前一个元素 dp[i-1][j-1]值， 最长公共子数组的长度是多少，然后加 1 就行了。。就是 dp数组[][] 里面，2*2格子“斜着” 左上角那个值 。。。
                 if(text1.charAt(i)==text2.charAt(j))
                     dp[i][j]=dp[i-1][j-1]+1;
+                
                 else
+            // 否则的话，如果 在 两个text 字符串的 指向的 字符 它们不相等。。
+    //  那么，要么就是  text1 退前面一个字符，也就是 i-1对应的那个 dp[i-1][j]值，保存的最长公共子数组的长度。。或者是  text2 退前面一个字符，也就是 j-1对应的那个 dp[i][j-1]值，保存的最长公共子数组的长度 。。所以是取 两者的最大值就行 ！！！
                     dp[i][j]=Math.max(dp[i -1][j],dp[i][j -1]);
                 
+                  //每次都记得 dp[i][j]和 max 比较大小，然后要更新 max
                 max = Math.max(dp[i][j], max);
             }
         }
 
-        return max;
+        
+        // 这里也是返回max，而不是 dp[][]二维数组的最末尾的下标
+      // 因为不一定以最末尾的 两个数组的 text1 和 text2 的，它的dp格子值，才是最长的 
+        return max; //特殊之处 
     }
 }
 ```
@@ -4642,31 +4977,63 @@ class Solution {
 
 #### 动态规划子序列
 
+题目描述 ：
+
+```
+给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+子数组
+是数组中的一个连续部分。
+
+ 
+
+示例 1：
+
+输入：nums = [-2,1,-3,4,-1,2,1,-5,4]
+输出：6
+解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。
+示例 2：
+
+输入：nums = [1]
+输出：1
+```
+
 题解：https://leetcode.cn/problems/maximum-subarray/solutions/847114/dai-ma-sui-xiang-lu-53-zui-da-zi-xu-he-b-xqus
 
 ```java
+//   这道题 我采用的是 dp动态规划去做 。。。一维 dp数组[] 就行
+//   子数组是 --->“连续”的 ，所以就只要 定义一个 for循环去遍历计算 dp就行了。。
+
 class Solution {
-    // 子数组是 --->“连续”的  
+    
     public int maxSubArray(int[] nums) {
             
       //dp[i]是指，表示在nums中以下标 i 为结尾 的最大子数组长度是dp[i]  
         int[] dp = new int[nums.length];
         
-        int max = nums[0];  //因为这道题的话，求的是最大子数组和，不一定是 数组的最后一个下标为结尾的，所以要逐个比较遍历 dp[i]数组，得出最终的答案。。
+        int max = nums[0];  //因为这道题的话，求的是最大子数组和，不一定是 数组的最后一个下标为结尾的，所以要逐个比较遍历 dp[i]数组 和 max，得出最终的答案。。
+        // 这里 max初始值是 nums数组的第一个元素nums[0] 
+        
         
         // 初始化dp数组，dp[0]默认就是一个nums元素
         dp[0] = nums[0];
         
         
-        // 遍历顺序。很容易想到，dp[i]是依赖与 前面的 状态的，那么就是从
+        // 遍历顺序。很容易想到，dp[i]是依赖与 前面的状态i-1，那么就是从左往右 →
         for (int i = 1; i < nums.length; i++) {
             
+            // 递推公式，就是  和前面状态dp[i-1]加上当前遍历的 数组元素nums[i]，再和 当前的nums[i] 的元素比较。。。哪个更大，再赋值计算给 dp[i]当前的格子
             dp[i] = Math.max(dp[i - 1] + nums[i], nums[i]);
-            max = Math.max(max,dp[i]);
+            
+            // 记得 每次算出来的 dp[i]格子值，要和 max比较大小，然后继续更新 
+            max = Math.max(max,dp[i]); //特殊之处
             
         }
         
-        return max;
+        
+          // 这里也是返回max，而不是 dp[]数组的最末尾的下标
+      // 因为不一定以最末尾的 数组的它的dp格子值dp[nums.length]，才是最大的。。。 
+        return max; // 特殊之处 
     }
 }
 ```
@@ -5513,7 +5880,19 @@ public class Solution {
 题目描述：
 
 ```
+给定两个字符串 s 和 p，找到 s 中所有 p 的 
+异位词
+ 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
 
+ 
+
+示例 1:
+
+输入: s = "cbaebabacd", p = "abc"
+输出: [0,6]
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的异位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的异位词。
 ```
 
 题解：https://leetcode.cn/problems/find-all-anagrams-in-a-string/solutions/1125936/gong-shui-san-xie-shuang-zhi-zhen-shi-xi-t5hc/
@@ -5592,15 +5971,40 @@ class Solution {
 
 #### 回溯组合
 
+题目描述：
+
+```
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+示例 1：
+
+输入：digits = "23"
+输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
+示例 2：
+
+输入：digits = ""
+输出：[]
+示例 3：
+
+输入：digits = "2"
+输出：["a","b","c"]
+```
+
 题解：https://leetcode.cn/problems/letter-combinations-of-a-phone-number/solutions/839901/dai-ma-sui-xiang-lu-17-dian-hua-hao-ma-d-ya2x
 
 ```java
+// 也是 回溯组合 的方法去做，不断递归 。。。
+// 这里默认的话，传入的 digits数字键字符串，它的长度是多少，那么最终答案res保存的 单个临时路径答案的字符串组合的长度就是几， digits=“23” ,那么 他的长度是2 ，最终返回的 ["ad","ae","af",..] 这样的
+// 只不过这里是 两个选择的集合了。。。所以 这里的话，在下面的for 循环，横向→ 选择元素的是，i=0 ，而不是 i= startIndex 开始了 ！！！
+
 class Solution {
 		
     // 基本上这两个都是这样定义好，在最外面。。。
     // 设置全局列表存储最后的所有结果
     List<String> res = new ArrayList<>();
-    // 设置全局列表存储每次递归的 单个结果
+    // 设置全局列表存储每次递归的 单个临时路径的答案
     StringBuilder temp = new StringBuilder();
 			
    									// 自带的主函数 
@@ -5610,45 +6014,46 @@ class Solution {
         if (digits.length() == 0) {
             return res;
         }
-        // 每个数字键和 包含字符串 之间的映射，为了直接对应2-9，新增了两个无效的字符串""  
-        // 下标 2-"abc" ,3-"def" ,以此类推 
-        String[] numString = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
         
-   // 主函数必须要，调用下面自定义的 回溯方法backTracking()，这里记得传入的是 自带参数，以及额外参数numString，起始就是对应每个数字手机键 包含的 字符串。
-       // ！！然后就是 最常见的 index传入初始值 0，代表  字符串的下标。第一个字符下标是0开始。这里它的含义是，指向的digits字符串中的第几个 数字字符....
+        
+        // 每个数字键 和 包含字符串 之间的映射！！为了直接对应2-9，新增了两个无效的字符串""  
+        // 下标 2-"abc" ,3-"def" ,以此类推 
+        String[] numString = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        
+   // 主函数传入的额外参数 numString[] 字符串数组，其实就是 对应手机的 每个数字键，它里面包含的 字符串。。。比如 数字键2->"abc"
+       // ！！然后就是 index 参数，代表  当前遍历的 字符串 digits的下标。第一个字符，它的下标是从0开始。这里它的含义是，指向的 digits字符串中的第几个 数字字符....  
+        // 比如 digits ="23" ，index =0，就是指向 '2'数字字符
         backTracking(digits, numString, 0);
         
         return res;
 
     }
 
-   
 
     
-    public void backTracking(String digits, String[] numString, int num) {
+    public void backTracking(String digits, String[] numString, int index) {
         
         // 递归的结束条件
-       //这里是 指已经遍历到了 digits的最后一个字符了。。这个==的代码要记住 ！！
-        if (num == digits.length()) 
-        {		// 就是一个小细节，new 新对象，传入temp。。！！
+      //比如输入字符串 digits="23"，是两个数字，那么根节点往下递归 两层 ,就可以了，叶子节点就是要收集的结果集res 。。
+     // 所以 这里的 只需要 index 的下标遍历到了 digits字符串的长度(2)，就是递归 2次 ，就可以结束了.....
+        if (index == digits.length()) 
+        {		
             res.add(new String(temp));
             return;
         }
         
         
-    // 比如传入的 自带参数，数字字符串digits 为"23",那么num下标 为0，指向'2'，再转为数字 2，从数字键映射表 numString ，取出对应的字符串 "abc"
-    // str 表示当前num对应的字符串   
-         
-         	// charAt(num)-'0' ，从String数字字符串中，获取单个数字字符'2'，再转为 数字2                        那么就获取到了 数字2 对应字符串 "abc"，然后就可以进行遍历，找组合了
-        String str = numString[digits.charAt(num) - '0'];
-        		
-       	  // 规定模板的for循环语句。。。因为这里是从两个集合里面选元素，那么就是i=0开始，，                        也就是从 str 里面一个个取出 字母字符，寻找组合答案 
-        			
+    // 比如传入的 自带参数，数字字符串digits 为"23",那么 index 下标 为0，指向'2'，再转为数字 2，从数字键映射表 numString ，取出对应的字符串 "abc"，也就是 str
+    // str 表示当前 数字键，对应的字符串   	
+            String str = numString[digits.charAt(index) - '0'];
+        
+        
+       	  // 规定模板的for循环语句。。。因为这里是 从两个集合里面 选元素，那么就是i=0开始。。                       也就是从 str 里面一个个取出 字母字符，寻找组合答案 			
         for (int i = 0; i < str.length(); i++) {
             
             temp.append(str.charAt(i));
-            // 递归，处理下一层 。。很常见的 num+1操作 ！！！
-            backTracking(digits, numString, num + 1);
+            // 递归，处理下一层 。。很常见的 index+1，其实就是指向 digits 数字字符串中 下一个 数字字符，也就是 下一个 数字键。 比如 digits="23",那么下一个取出的数字键 就是 '3'
+            backTracking(digits, numString, index + 1);
             // 剔除末尾的，继续尝试
             temp.deleteCharAt(temp.length() - 1);
         }
@@ -5874,44 +6279,71 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给你一个字符串 s，找到 s 中最长的回文子串。
+
+ 
+
+示例 1：
+
+输入：s = "babad"
+输出："bab"
+解释："aba" 同样是符合题意的答案。
+示例 2：
+
+输入：s = "cbbd"
+输出："bb"
+```
+
 题解：https://leetcode.cn/problems/longest-palindromic-substring/solutions/7792/zhong-xin-kuo-san-dong-tai-gui-hua-by-liweiwei1419   看法3就行。
 
 ```java
+ // 采用「中心扩散法」, for 循环遍历 每一个下标，以这个下标为中心，利用「回文串」中心对称的特点，往两边扩散 left 和 right ，看最多能扩散多远。。
+   //  所以 对于 一个长度为n 的字符串，我们可以用它的 任意一个字符 当做 --->中心点，所以中心点的个数是n
+   /** 找出来的所有回文子串 就是只有下面两种情况 ：
+  	一种是回文子串长度 为奇数（如aba，中心是b）
+	另一种回文子串长度 为偶数（如abba，中心是b，b）
+**/
+
 class Solution {
     
-    // 「中心扩散法」, for 循环遍历 每一个下标，以这个下标为中心，利用「回文串」中心对称的特点，往两边扩散，看最多能扩散多远
-    
-   /** 两种情况
-  	一种是回文子串长度为奇数（如aba，中心是b）
-	另一种回文子串长度为偶数（如abba，中心是b，b）
-**/
+   
     public String longestPalindrome(String s) {
        	
-  						// 求最大长度的时候，一般都是把maxlen初始化成 整数最小值
-        				// 因为这里需要返回 子串，所以需要知道 子串的最左边界下标 ！！！
+  		// 求最大长度的时候，一般都是把 maxlen 初始化成 整数最小值
+   // 因为这里需要返回 子串，所以需要知道 子串的最左边界下标 ！！！所以定义了 start=0
          int start = 0, maxLen = Integer.MIN_VALUE;
         
         for (int i = 0; i < s.length(); i++) {
             
-            // 回文子串长度是奇数， 以单字符为中心扩散
-            int len1 = expandAroundCenter(s, i, i);
-            //   回文子串长度是偶数，以两个字符中间为中心扩散
-            int len2 = expandAroundCenter(s, i, i + 1);
+            // 这两种情况都要进行计算的,为了找的回文子串，全一点！！！就是调用两次 find()
+            
+            //  以单字符为中心扩散，找出来的 回文子串长度是-->奇数
+            int len1 = find(s, i, i);
+            //以两个字符中间为中心扩散   回文子串长度是-->偶数
+            int len2 = find(s, i, i + 1);
             
             int len = Math.max(len1, len2);
             
              if (len > maxLen) {
-                maxLen = len;			
-                start = i - (maxLen - 1)/2;	// 必须要先减去-1再除以2 。
+                maxLen = len;		
+                 
+          // 此时的 最左侧边界的下标如何 更新 ？？？ 因为此时的 i指向的是 回文子串的中心点下标，那么其实 此时的 该回文子串的长度是 maxlen。。要算出 这个 回文子串的最左侧下标的话.。。
+                 // 就必须先算出来 maxlen要先减去-1再除以2 的值，，然后 用 i减去 它 就能算出最左侧下标，赋值给 start
+                start = i - (maxLen - 1)/2;	
                
             }
         }
-        			// 知道最大子串的左边界起始位置，加上最大长度，就可以返回子串了
+       
+        
+       // 知道最大子串的左边界起始位置，加上最大长度，就可以返回 最长的回文子串了
         return s.substring(start, start + maxlen);
         
     }
 
-    private int expandAroundCenter(String s, int left, int right) {
+    private int find(String s, int left, int right) {
         
      while (left >= 0 && right <=s.length()-1 && s.charAt(left) == s.charAt(right)) 	{
             left--;
@@ -5919,9 +6351,9 @@ class Solution {
         }
         						
          // 注意此处 right,left 的值循环完后  是恰好不满足循环条件的时刻
-         // 所以求出来的最大回文子串的长度，是right-left-1 
-// 比如 aba  那么此时 跳出循环结束的时候，left= -1，right = 3 。求出来的长度 是 3-(-1)-1= 3
-//     012
+         // 所以求出来的 最大回文子串的长度，是 right-left-1 
+// 比如 "aba",那么此时 跳出循环结束的时候，left= -1，right = 3 。求出来的长度 是 3-(-1)-1= 3
+// 下标: 012
         return right - left - 1;
     }
 }
@@ -5936,35 +6368,65 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给你一个字符串 s ，请你统计并返回这个字符串中 回文子串 的数目。
+
+回文字符串 是正着读和倒过来读一样的字符串。
+
+子字符串 是字符串中的由连续字符组成的一个序列。
+
+ 
+
+示例 1：
+
+输入：s = "abc"
+输出：3
+解释：三个回文子串: "a", "b", "c"
+示例 2：
+
+输入：s = "aaa"
+输出：6
+解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+```
+
 题解：https://leetcode.cn/problems/palindromic-substrings/solutions/732485/shu-ju-jie-gou-he-suan-fa-dong-tai-gui-h-3bms  看法2
 
 ```java
+// 采用 "中心扩散" 的方法。。。。去找有多少个 回文子串，统计个数 
+// 就是 从某个字符 作为中心点，然后有两个指针，从中心点分别向left 和 right 扩散移动，每次移动，  如果发现它们指向的 字符 是相等的，就说明找到了一个 回文子串。。。。
+
+//  所以 对于 一个长度为n 的字符串，我们可以用它的 任意一个字符 当做 --->中心点，所以中心点的个数是n
+
 class Solution {
     
-    // 回文串的数量,当作全局变量，这样子的话，在次函数里面也可以直接更新了。
+    // 回文串的数量,当作全局变量，这样子的话，在下面的 次函数find()里面也可以直接更新了。
 		int count = 0;
 		
-    // 这道题其实和 求最长回文子串，差不多的思路，就是多了一个 全局变量，来记录回文串的数量了
+    
 	public int countSubstrings(String s) {
    		
             for (int i = 0; i < s.length(); i++) {
                 
-                //回文的长度是奇数
-                extendPalindrome(s, i, i);
-                //回文是长度是偶数
-                extendPalindrome(s, i, i + 1);
+ // 这里面的话，每次for循环的时候，是调用两次find()，而不是 只选择某一种if情况，主要是为了找全所有的回文子串， 因为 它们是 奇数长度 或 偶数 长度 ！！
+                
+   //那么就是 传入 i,i，找出来的回文子串长度就是 奇数。也就是 初始化的时候，指向的中心点 是一个字符，然后左右扩散
+                find(s, i, i);
+      //传入 i,i+1，找出来的回文子串是长度就是偶数。也就是 初始化的时候，指向的中心点 是两个字符，然后左右扩散
+                find(s, i, i + 1);
                 
             }
    				 return count;
 }
 
-				
-	public void extendPalindrome(String s, int left, int right) {
+	//	对于一个长度为n的字符串，我们可以用它的任意一个字符当做中心点，所以中心点的个数是n		
+	public void find(String s, int left, int right) {
     
         while (left >= 0 && right <=s.length()-1&& s.charAt(left) == s.charAt(right)) 		{
-            left--;
-            right++;
-            count++;
+                            left--;
+                            right++;
+                            count++;
          }
 	}
 
@@ -7112,6 +7574,39 @@ class Solution {
 
 ##### 暴力
 
+题目描述：
+
+```
+请你设计并实现一个满足  LRU (最近最少使用) 缓存 约束的数据结构。
+实现 LRUCache 类：
+LRUCache(int capacity) 以 正整数 作为容量 capacity 初始化 LRU 缓存
+int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+void put(int key, int value) 如果关键字 key 已经存在，则变更其数据值 value ；如果不存在，则向缓存中插入该组 key-value 。如果插入操作导致关键字数量超过 capacity ，则应该 逐出 最久未使用的关键字。
+函数 get 和 put 必须以 O(1) 的平均时间复杂度运行。
+
+ 
+
+示例：
+
+输入
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+输出
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.get(2);    // 返回 -1 (未找到)
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lRUCache.get(1);    // 返回 -1 (未找到)
+lRUCache.get(3);    // 返回 3
+lRUCache.get(4);    // 返回 4
+```
+
 题解：https://leetcode.cn/problems/lru-cache/solutions/2456294/tu-jie-yi-zhang-tu-miao-dong-lrupythonja-czgt
 
 ```java
@@ -7132,9 +7627,10 @@ class LRUCache {
 		
     // 申明 LRU类的三个final属性 
     private final int capacity; // LRU能保存的 容量，关键字个，也就是能保存多少个链表节点
-    private final Node dummy = new Node(0, 0); // 虚拟头节点 
-    private final Map<Integer, Node> keyToNode = new HashMap<>(); // map哈希表，快速知道某个关键字，也就是对应的节点，是否存在 
+    private final Node dummy = new Node(0, 0); // 双向链表的 虚拟头节点 
+    private final Map<Integer, Node> keyToNode = new HashMap<>(); // map哈希表，快速 知道某个关键字 key，也就是对应的 链表节点，是否存在 
 
+    		// LRU缓存的 构造方法
     public LRUCache(int capacity) {
         this.capacity = capacity;
         
@@ -7152,7 +7648,7 @@ class LRUCache {
         
     }
 
-    // 核心方法pu(key,value)，也需要调用下面的基础方法 
+    // 核心方法put(key,value)，也需要调用下面的3个基础方法。。。 
     public void put(int key, int value) {
         
         Node node = getNode(key);
@@ -7160,17 +7656,21 @@ class LRUCache {
             node.value = value; // 更新 value
             return;
         }
-        
-        node = new Node(key, value); // 新书
+        	
+        // 如果 这本书 不存在，那么它就是 新书
+        node = new Node(key, value); 
+        //记得往 这个 hashmap里面插入进去，key以及对应 node 节点。。便于后面去判断它是否存在
         keyToNode.put(key, node);
-        pushFront(node); // 放在最上面
+        pushFront(node); // 因为是最近访问的，也要记得 放在最上面，也就是 链表的表头
         			
-      // 通过map哈希表就能知道，关键字数量，如果超过 初始容量，就要 删除链表的最后一个尾节点 
+// 通过map哈希表就能知道，key关键字数量，如果超过 初始容量capacity，就要 删除链表的最后一个尾节点 
         if (keyToNode.size() > capacity) {
             
-            Node backNode = dummy.prev;  // 先通过 虚拟头节点的 prev，就能获取链表尾节点
-            keyToNode.remove(backNode.key);  // 哈希表map也要删除它！
-            remove(backNode); // 删除链表的最后一个尾节点 
+            
+       // 先通过 虚拟头节点的 prev，就能获取链表尾节点。。因为是 双向链表，这样可以直接获取到
+            Node backNode = dummy.prev; 
+            keyToNode.remove(backNode.key);  // 哈希表map也要删除它！！！
+            remove(backNode); // 同时，也要删除 双向链表的最后一个尾节点 ！！
             
         }
     }
@@ -7181,16 +7681,16 @@ class LRUCache {
         if (!keyToNode.containsKey(key)) { // map哈希表查询，没有这个链表节点，就返回null
             return null;
         }
-        		// 执行到了，说明有这个链表节点
+        		// 如果map哈希表中，查询的到 这个链表节点
         Node node = keyToNode.get(key); 
         
         remove(node); // 把这个节点先从 原来的位置删除
-        pushFront(node); // 然后把它放在最前面，链表表头
+        pushFront(node); // 因为最近被访问了，就要把它放在最前面，链表表头
         return node;  // 最后返回该节点 
     }
 
     
-    // 从链表中，删除一个节点，前面后面断链就行，这里就2行就可以，不用像以前那样还需要遍历到它。。。
+    // 从链表中，删除一个节点，前面后面断链就行，这里就2行就可以
     private void remove(Node x) {
         x.prev.next = x.next;
         x.next.prev = x.prev;
@@ -10871,7 +11371,7 @@ https://blog.csdn.net/m0_63997099/article/details/137123780  看 二、 就行
 
    每次元素入队 时候，**不需要** 出队  **丢弃** ！！！
 
-​	**<u>优先级队列</u>**，**默认**是  **小**顶堆，也就是 **升序↑** 。也可以指定**大**顶堆，为降序↓的~~~
+​	**<u>优先级队列</u>**，**默认**是  **小**顶堆，也就是 **升序↑** 。也可以指定**大**顶堆，为1降序↓的~~~
 
 ![image-20240724202518330](C:\Users\zwj90\AppData\Roaming\Typora\typora-user-images\image-20240724202518330.png)
 
@@ -10899,7 +11399,7 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 **注意点**：
 
-​     不过这里建议的是保存每次的 **单个结果** 的用 **List<...> temp**或者其他 **StringBuilder temp**等等类型。然后最终的 **所有结果**的 用**List<List<...>> res**或者 **List<...> res**  ，它们都定义最外面的**全局变量**，被下面的**<u>回溯函数</u>**递归的时候不断添加和更新。
+​     不过这里建议的是保存每次的 **临时路径结果** 的用 **List<...> temp**或者其他 **StringBuilder temp**等等类型。然后最终的 **所有结果**的 用**List<List<...>> res**或者 **List<...> res**  ，它们都定义最外面的**全局变量**，被下面的**<u>回溯函数</u>**递归的时候不断添加和更新。
 
    然后在**自带主函数**直接**调用**下面 自定义  **<u>回溯函数</u>**  就可以了，传入自带形参，有时候要传入额外形参，以及传入 **startIndex** 形参的初始值0，或者1
 
@@ -10909,19 +11409,19 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 ​		**参数**的话，可能**比较多** 。肯定要有题目给的 自带形参，然后根据情况，再增加几个额外形参。。。
 
-​		比较常见的是，会新增一个**startIndex** 参数，代表每次递归向右边**选择的元素**是哪个，从哪个开始，下次递归是从自己元素开始，或 自己的下一个元素开始，避免再取到前面的元素。不同的题目，它具体的含义有一点点差异的。
+​		比较常见的是，会新增一个 **startIndex**  参数，代表 每次递归 向右边**选择的元素**是哪个 ， 从哪个    **开始**，**起始路径**的临时答案中的 **元素** 是哪个，下次递归是从自己元素开始，或 自己的下一个元素开始，避免再取到前面的元素。不同的题目，它具体的含义有一点点差异的。。。
 
 ②    **<u>回溯函数</u>**的  **递归终止条件 **
 
-​		一般就是if(...) {  结果集存放单个答案 return } ，重点还是括号(...) 里面的 书写。 一般就是达到单个   答案的长度时候就停止递归了。或者就是 遍历到末尾了。
+​		一般就是if(...) {  结果集   存放临时路径答案 return } ，重点还是括号(...) 里面的 书写。 一般就是 到了答案的长度时候，就停止递归了。或者就是 遍历到末尾了。
 
-​	    然后这里的话，有个**细节**，就是 res结果集，存放单个答案temp的时候，必须是res.add（**new ArrayList<>(temp)**），如果是 res.add(temp)的话，那么结果集的 temp会受到每次递归影响，而一直变化，最终变成[][][][][][] [ [ ] , [ ] , [ ] ] 
+​	    然后这里的话，有个**细节**，就是 res 结果集，存放临时路径答案 temp 的时候，必须是res.add（**new ArrayList<>(temp)**），开辟一个独立的 对象！！！如果是 res.add(temp)的话， 结果集的 临时路径答案temp 会受到每次递归影响，而一直变化。。因为它是传入的引用类型嘛，指向同一个地址了。。。
 
 ③	**<u>回溯函数</u>**的  **单层递归逻辑 **
 
-​		可能**for循环的上面 **还需要再加一些  代码逻辑，这个要根据不同的题目。。。
+​		可能**for循环的上面 **还需要再加一些  代码逻辑 ！！这个要根据不同的题目。。。
 
-​		单层的递归逻辑，主要就是for循环的逻辑。比如for循环的  for **( )**  括号里面的书写，i=**startIndex**，有时候for循环的 i又=**0** 。如果是从一个选择集合里面取，就是 i=**startIndex**！从两个选择集合里面取，就 i=0。然后就是小于 数组的长度或者字符串的长度。最后当然是 i++
+​		单层的递归逻辑，主要就是for循环的逻辑。比如for循环的  for **( )**  括号里面的书写，i=**startIndex**，有时候for循环的 i又=**0** 。如果是从 **一个选择集合** 里面取，就是 i=**startIndex**！从 **两个选择集合** 里面取，就 **i=0**。然后就是小于   数组的长度 或者 字符串的长度。最后当然是 i++
 
 ​	    然后是for **{ ... }**里面的具体写法了， 首先是 单个答案的每次**添加**元素，list.**add**()或者 str.**append**()等等
 
@@ -10943,7 +11443,7 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 ②    **<u>回溯函数</u>**的  **递归终止条件 **
 
-​     这里有点区别的是，有些题目，**有可能还要 **在 if(...){ **if(...)** 结果集存放单个答案 return }，递归出口里面 **还多需要** if 判断，符合的才会最终被添加到结果集。
+​     这里有点区别，有些题目，**有可能还要 **在 if( ... ){  **if(...)** 结果集 存放临时路径答案 return }，递归出口 里面 **还多需要** if 判断，符合的才会最终被添加到结果集。
 
 ​	    
 
@@ -10967,7 +11467,7 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 ②    **<u>回溯函数</u>**的  **递归终止条件 **
 
-​     这里有点区别的是 ， 要在 if(...){  return } 的**上面写上** ，结果集存放单个答案 res.add( )！！！因为这样才是对 **<u>每一个节点</u>** 收集结果 ！！！所以 **递归出口 ** 里面就  **不用写**res.add( ) 。。。。。
+​     这里有点区别的是 ， 要在 if(...){  return } 的**上面写上** ，结果集 存放临时路径答案 res.add( )！！！因为这样才是对 **<u>每一个节点</u>** 收集结果 ！！！所以 **递归出口 ** 里面就  **不用写**res.add( ) 。。。。。
 
 ​	    
 
@@ -10977,7 +11477,7 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 ### 排列
 
-​	和 组合问题  **区别挺大**的！！！	主要就是不需要startIndex参数了 × 然后的话只要一个 **used数组[ ]**  √  记录此时的 temp 单个答案里面已经选了哪些元素了，如果该元素用过了，就不需要再选它了。
+​	和 组合问题  **区别挺大**的！！！	主要就是不需要 startIndex 参数了 × 然后的话只要一个 **used数组[ ]**  √  记录此时的 temp 临时路径答案，里面 **已经选了** 哪些元素，如果该元素  **用过了**，就  **不需要**  再选它了。
 
 **注意点**：	
 
@@ -11011,9 +11511,9 @@ https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%B
 
 ### 适用范围
 
-   当遇到 **基础** ( 斐波那契数，爬楼梯，不同路径 )、**背包**、**打家劫舍**、**子序列** ( 子串和 子数组一般是连续，子序列一般是不连续，编辑距离的题目都是不连续的，回文也分 连续和 不连续)  这几类  题型的时候，一般都是要用   **<u>dp 动态规划</u>** 去做的。其实它就是  **<u>for循环</u>** 遍历，把dp[i]挨个**赋值**，    最后就可以求出答案了
+   当遇到 **基础** ( 斐波那契数，爬楼梯，不同路径 )、**背包**、**打家劫舍**、**子序列** ( 子串和 子数组一般是连续，子序列一般是不连续的。。编辑距离的题目都是不连续的。。回文的题目 也分 连续和 不连续)  这几类  题型的时候，一般都是要用   **<u>dp 动态规划</u>** 去做的。其实它就是  **<u>for循环</u>** 遍历，把dp[i]挨个**赋值**，最后就可以求出答案了
 
-​	每一个状态，一定是根据 上一个状态推导得来的。
+​	每一个状态 dp[i]，一定是依赖 上一个状态dp[i-1] 推导得来的。
 
 ### 方法详解
 
@@ -11025,17 +11525,19 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 **dp五步曲**：
 
-① **确定dp数组**，以及 **下标的含义**。这个**也很重要**的！！dp数组可能是一维的 dp[i]，也可能是二维的 dp[i] [j] 。 也就是说要写出文字，比如 第 i个斐波那契数是 dp[i]， 第i阶楼梯有 dp[i]种解题方法 。**基本上**初始化的话，都是 按照这个字符串或者 **输入数组的长度**，来**确定dp数组的长度**的。。。
+① **确定dp数组**，以及 **下标的含义**。这个**也很重要**！！dp数组可能是**一维**的 dp[i]，也可能**二维**的dp[i] [j] 。 也就是说要写出文字，比如 第 i个斐波那契数是 dp[i]， 第i阶楼梯有 dp[i]种解题方法 。。。**基本上**的话，都是 按照   **字符串** str.length()或**数组的长度** nums.length，来**确定dp数组的长度**的 ！！！！
 
-② **递推公式**，也就是 **状态转移方程 **。这个是 **最难想** 的，但也是解题的 **核心**！！！可以根据题目的例子，举一点，看看前后之间的关联性，或许可以推出来。
+② **递推公式**，也就是 **状态转移方程 **。这个是 **最难想** 的，但也是解题的 **核心**！！！可以根据题目的例子，举一点，看看前后之间的关联性，或许可以推出来。。。。。
 
-③ **初始化 **dp数组。这个**也很重要**的！！如果 dp数组 是**一维**，那么 dp[0] = 和 dp[1]=   。如果 dp数组 是**<u>二维</u>**，那么就是先通过 for 循环，第一列 dp[i] [0]  =  和 第一行 dp[0] [j] = 。 
+③ **初始化 **dp数组。这个**也很重要**的！！如果 dp数组 是**一维**，那么 dp[0] = 和 dp[1]=   ；如果 dp数组 是**<u>二维</u>**，那么就是先通过 for 循环，第一列 dp[i] [0]  =  和 第一行 dp[0] [j] = 。 
 
-④ **遍历**的 **顺序**。这个**也很重要**的！！如果 dp数组 是**一维**，一般都是 从前往后，但也可能 从后往前 遍历， **一般是一层** for循环，而且一般从 **i =2**开始遍历。如果 dp数组 是 **<u>二维</u>**，还要考虑从上往下，或 从下往上 遍历，**一般是双层** for循环，但是内外for循环分别 遍历什么，也有讲究的，for循环 一般都是 **从i=1开始**遍历。
+④ **遍历**的 **顺序**。这个**也很重要**的！！如果 dp数组 是**一维**，一般都是 从前往后→，但也可能 从后往前 ← 遍历计算， **一般是一层** for循环，而且一般从 **i =2**开始遍历计算；如果 dp数组 是 **<u>二维</u>**，还要考虑从上往下↓，还是 从下往上 遍历↑，**一般是双层** for循环，但是 内外for循环 分别 遍历什么，也有讲究的，for循环 一般都是 **从i=1开始 **遍历计算。
 
 ⑤ 打印dp数组。这个就是你写完代码，看看和 定义的dp含义是否一致，但是没有跑通的情况下，你才需要这么做 。。。。
 
-​     但是 ！！！上面的是  dp题目的思考过程。。。实际上 写代码的时候，顺序是 ①-->③-->
+​     但是 ！！！上面的是  dp题目的思考过程。。。实际上 **写代码**的时候，**顺序**是 ①-->③-->④-->②
+
+​      注意 ！！！**一般**来说。。。最后的答案结果都是 return 返回  dp[**nums.length-1**] 
 
 ### 背包
 
@@ -11045,29 +11547,25 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 都差不多。。。。
 
-
-
-
-
 ### 子序列
 
 **dp五步曲**：
 
-① **确定dp数组**，补充的话，dp数组是一维的 dp[i]，就代表以i 下标为结尾的最长子序列的长度是 dp[i] 。如果是二维的 dp[i] [j] ，一般是代表 字符串在 [i,j] 下标范围的最长的子序列的长度是 dp[i] [j] ，还有表示在nums1中以下标 i 为结尾，nums2中以下标 j 为结尾的公共子序列长度是dp[i] [j] 。**有时候**的话，都是 按照这个字符串或者 输入数组的 **长度 +1** ，来**确定dp数组的长度**的，也就是多考虑**空串**的 **这一列** 和 **这一行** 的情况。。。而且有可能是会多定义而且**<u>还可能</u>**会定义成   **<u>boolean类型</u>**  的 dp数组 ，true 和 false 。。。
+① **确定dp数组**。补充的话，dp数组是**一维** dp[i]，比如代表 以i 下标为结尾的最长子序列的长度是 dp[i] ；如果是**二维 **dp[i] [j] ，比如代表 字符串在 [i,j] 下标范围的最长的子序列的长度是 dp[i] [j] ，还有表示在nums1中以下标 i 为结尾，nums2中以下标 j 为结尾的公共子序列长度是dp[i] [j] 。**有时候**的话，都是 按照这个字符串或者 输入数组的 **长度 +1** ，来**确定dp数组的长度**的，也就是多考虑**空串**的 **这一列** 和 **这一行** 的情况。。。而且有可能是会多定义而且 **<u>还可能</u>** 会定义成   **<u>boolean类型</u>**  的 dp数组 ，每个格子的值是 true 和 false 。。。
 
-② **递推公式**，补充的话，**在某些条件**下，**才会**有递推公式，**<u>不同</u> if条件**下的 **递推公式  是<u>不同</u>**  的！！！
+② **递推公式**。补充的话，**在某些条件**下，**才会**有递推公式，**<u>不同</u> if条件**下的 **递推公式  是<u>不同</u>**  的！！！
 
-③ **初始化 **dp数组。补充的话，如果 dp数组 是一维，那么 **<u>先通过for循环</u>** 遍历 <u>**dp[i] =**</u>  。如果 dp数组  是二维，那么就是先通过 for 循环，遍历第一列 dp[i] [0]  =  和 第一行 dp[0] [j] =  ，也<u>**有可能是 dp[i] [i] =**</u> 
+③ **初始化 **dp数组。补充的话，如果 dp数组 是**一维**，那么 **<u>先通过for循环</u>** 遍历 <u>**dp[i] =**</u>  ；如果 dp数组  是 **二维**，那么就是先通过 for 循环，遍历第一列 dp[i] [0]  =  和 第一行 dp[0] [j] =  ，也<u>**有可能是 dp[i] [i] =**</u> 
 
-④ **遍历**的 **顺序**，补充的话，如果 dp数组 是 **一维**，一般都是 从前往后，但也可能 从后往前 遍历， **一般是一层** for循环，一般**<u>从 i =1开始</u>** 遍历，**很少是二层 **for循环。如果 dp数组 是 **<u>二维</u>**，**一般就是二层**for循环， **很少是一层 **for循环，需要 **<u>画图了，就是2*2的正方形格子</u>**，然后画出来，根据**递推公式**，就能知道 <u>**遍历顺序**</u>了，是考虑从上往下，还是 从下往上 遍历，如果是从下往上 遍历的话，那么for循环 一般都是 **从i= len-1 开始遍历，<u>然后 j 的话</u> 要么就是 i，要么就是 i+1**。
+④ **遍历**的 **顺序**。补充的话，如果 dp数组 是 **一维**，一般遍历计算 都是 从前往后→，但也可能  从后往前  ←， **一般是一层** for循环，一般**<u>从 i =1开始</u>** 遍历计算，**很少是二层 **for循环。。 ；如果 dp数组 是 **<u>二维</u>**， **一般就是 二层**for循环， **很少是一层 **for循环。。需要 **<u>画图了！！就是2*2的正方形格子</u>**，画出来，再根据 **递推公式**，就能知道 <u>**遍历顺序**</u>了，是考虑从上往下↓，还是 从下往上 ↑遍历，如果是从下往上 ↑遍历的话，那么for循环 一般都是 **从i= len-1 开始遍历计算，<u>然后 j 的话</u> 要么就是 i，要么就是 i+1**。
 
 ⑤ 一样思路。。。
 
-​					
+​	   补充的话，"子序列"问题， **一般来说**的话！！！而是返回 reutrn  第三者变量，比如一直在比较的 **max** 最大值  ！！！！很少 return 返回 数组的**末尾**下标， dp[nums.length]  。。。
 
 ## 贪心
 
-这个方法其实是最难的。。。。因为没有特定的接替套路。。。。。。
+这个方法其实是最难的。。。因为没有特定的接替套路。。。
 
 
 
