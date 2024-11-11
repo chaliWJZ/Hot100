@@ -5101,6 +5101,84 @@ class Solution {
 
 
 
+
+
+### 152 乘积最大子数组
+
+#### 动态规划子序列
+
+题目描述：
+
+```
+给你一个整数数组 nums ，请你找出数组中乘积最大的非空连续 
+子数组
+（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 32-位 整数。
+
+ 
+
+示例 1:
+
+输入: nums = [2,3,-2,4]
+输出: 6
+解释: 子数组 [2,3] 有最大乘积 6。
+```
+
+题解：https://www.bilibili.com/video/BV1qM4m1Q7nZ/?vd_source=5fe50b1b35a25689fb0988c454fec5e0   视频辅助理解 
+
+https://leetcode.cn/problems/maximum-product-subarray/solutions/1002738/cheng-ji-zui-da-zi-shu-zu-tu-jie-dpzui-q-jjzv/?envType=study-plan-v2&envId=top-100-liked 
+
+```java
+//   很明显，是需要用 dp动态规划来做。
+//   这里的话，因为 数组中既有 正数，也有负数，0，所以 如果是 负数的最小值 乘上 负数，那么就会变成最大值。那么就是需要，声明两个dp数组，分别 代表 以nums[i]为下标的 子数组的乘积最大值 和 乘积最小值
+//   然后是需要定义一个 res 全局变量，不断地 更新比较 
+
+class Solution {
+    public int maxProduct(int[] nums) {
+        
+        int n = nums.length;
+        
+        // res 用于存储最终结果，初始化为 nums[0]
+        int res = nums[0];
+        
+        // f[i] 表示以 nums[i] 结尾的子数组的乘积最大值
+        int[] f = new int[n + 1];
+        
+        // g[i] 表示以 nums[i] 结尾的子数组的乘积最小值
+        int[] g = new int[n + 1];
+        
+        // 初始化dp数组。 f[0] 和 g[0] 为 nums[0]
+        f[0] = nums[0];
+        g[0] = nums[0];
+
+        
+        for (int i = 1; i < n; i++) {
+            
+            // 计算以 nums[i] 结尾的子数组的乘积最大值
+      
+    // nums[i]>=0的时候， 比较大小 nums[i] 本身、f[i - 1] * nums[i]（延续前面的最大乘积）
+   // nums[i]<0的时候,比较大小 nums[i] 本身、g[i - 1] * nums[i]（延续前面的最小乘积，因为乘以一个负数可能变为最大）
+            f[i] = Math.max(nums[i], Math.max(f[i - 1] * nums[i], g[i - 1] * nums[i]));
+            
+            // 计算以 nums[i] 结尾的子数组的乘积最小值
+    //nums[i]>=0的时候，比较大小 nums[i] 本身、g[i - 1] * nums[i]（延续前面的最小乘积）
+    //nums[i]<0的时候,比较大小 nums[i] 本身、f[i - 1] * nums[i]（延续前面的最大乘积，因为乘以一个负数可能变为最小）
+            g[i] = Math.min(nums[i], Math.min(g[i - 1] * nums[i], f[i - 1] * nums[i]));
+            // 更新最终结果 res，取当前最大值和已有的 res 中的较大值
+            res = Math.max(res, f[i]);
+            
+        }
+
+        return res;
+    }
+}
+```
+
+
+
+
+
 ### 198 打家劫舍
 
 #### 动态规划打家劫舍
@@ -5514,6 +5592,7 @@ dp[i][j] = dp[i - 1][j - nums[i]]；
 题解：https://leetcode.cn/problems/coin-change/solutions/1412324/by-flix-su7s/?envType=study-plan-v2&envId=top-100-liked  根据里面的文字，以及 评论区的那个 "Erica" 用户提供的代码 改编而成
 
 ```java
+// dp二维数组，是 完全背包问题。
 // 这里和 01背包的最大区别就是，对于 第i个物体可以取无数次，所以只需要考虑 取0，1，。。。k次就行。
 // 能取k次的前提 ： 第i个硬币 取k次的容量，小于等于 j背包容量金额
 
@@ -5524,7 +5603,10 @@ class Solution {
         int INF = Integer.MAX_VALUE / 2;
         int n = coins.length; 
 
-					// 这里为了方便，多搞出来了  一行，第0 行。。。也就是 没有金币的时候。。
+
+        //	dp[i][j] 表示，从前 i 种硬币中组成金额 j 所需最少的硬币数量
+        	// 这里为了方便，多搞出来了一行，第 0 行。。。也就是 没有金币的时候。。
+        	//  所以之后的话，每次选择 第i个数字的时候，那么他的下标是 i-1 哦
         int[][] dp = new int[n + 1][amount + 1];
 
         // 初始化dp数组，全为 INF，因为是不断比较 最小值，最少硬币个数。。
@@ -5583,15 +5665,152 @@ class Solution {
 解释：12 = 4 + 4 + 4
 ```
 
-题解：https://leetcode.cn/problems/perfect-squares/description/?envType=study-plan-v2&envId=top-100-liked  
+题解：https://leetcode.cn/problems/perfect-squares/solutions/823248/gong-shui-san-xie-xiang-jie-wan-quan-bei-nqes/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-//
+//这道题 和 ”零钱兑换“ 一样。。。这里就是先要 找出  所有的 完全平方数。
+// 使用的是 dp二维数组，完全背包问题
 
 
+class Solution {
+    
+    public int numSquares(int n) {
+	
+        // 预处理出所有可能用到的「完全平方数」---->找出来，把它们作为  背包的 物品。
+        // 这些平方数 都是 小于等于 n 总和的 
+        List<Integer> list = new ArrayList<>();
+        int t = 1;
+        while (t * t <= n) {
+            list.add(t * t);
+            t++;
+        }
+
+        // dp[i][j] 表示，使用前 i 个完全平方数字，凑出 总和j 所使用到的 最少完全平方数的 个数
+        	// 这里为了方便，多搞出来了一行，第 0 行。。。也就是 没有 完全平方数 的时候。。
+        	//  所以之后的话，每次选择 第i个 平方数的时候，那么他的下标是 i-1 哦
+        int m = list.size();
+        int[][] dp = new int[m + 1][n + 1]; 
+        
+        // 初始化dp数组，全为 INF，因为是不断比较 最小值，最少 平方数的 个数。。
+        // 比如 第一行可以这么理解，表示从前 0 种平方数 中选出若干个组成金额j>=1，是不可能的，无效值，所以设置成 INF
+        int INF = Integer.MAX_VALUE;
+         for (int[] row : dp) {
+            Arrays.fill(row, INF);
+        }
+        
+     // 初始化 dp数组的第一列。这是因为 背包容量为 0 时，不需要 任何完全平方数 就能凑出，即使用 0 个 平方数。
+         for (int i=0;i<=m;i++) {
+           dp[i][0] = 0;
+        }
+        
+        
+        // dp循环遍历计算，从左到右 →，从上到下 ↓
+        for (int i = 1; i <= m ; i++) {
+
+              int x = list.get(i - 1);
+ 			for (int j = 0; j <= n; j++) {
+                
+                // 这个 k代表 每一个平方数的 可以重复取的次数，默认从0 开始
+                int k = 0;
+                
+             // 能取k次的前提 ： 第i个平方数 取k次的容量，小于等于 j背包的 数字总和
+                while (k * x <= j) {
+          // ---->"特殊"，又因为这道题 是 ”恰好“凑出 总和j，所以必须 还要if(...)判断一下！！
+     //也就是 背包减去 第i个平方数 取k次的容量之后，剩下的容量 在 0,i-1区间取平方数的个数，再加上k个 第i个平方数 的个数 ，一直和之前的 dp[i][j] 比最小值min 。
+                       if (dp[i - 1][j - k * x] != INF) {
+                 dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - k *x] + k);
+                    
+                       }
+                    k++;
+                }
+            }
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+     return dp[m][n];
+
+    }
+}
 
 
 ```
+
+
+
+### 139 单词拆分
+
+#### 动态规划完全背包
+
+题目描述：
+
+```
+给你一个字符串 s 和一个字符串列表 wordDict 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+
+注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+ 
+
+示例 1：
+
+输入: s = "leetcode", wordDict = ["leet", "code"]
+输出: true
+解释: 返回 true 因为 "leetcode" 可以由 "leet" 和 "code" 拼接成。
+```
+
+题解：https://leetcode.cn/problems/word-break/solutions/790567/wan-quan-bei-bao-wen-ti-by-no_darkness-nk3j/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+//  使用的是 dp二维数组，完全背包问题
+//  这里的  字符串就是 背包，字典里面的 单词 就是 一个个的物体，可以重复取。
+
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        
+        int n = s.length();
+        
+        // 创建一个长度为 n + 1 的整数数组 dp，dp[i] 表示字符串 s 的前 i 个字符能否由字典中的单词组成。
+        boolean[] dp = new int[n + 1];
+        // 空字符串一定可以由空的单词列表组成，所以 dp[0] 设为 true
+        dp[0] = true;
+
+        
+        // 遍历字符串 s 的长度，从 1 开始，因为 dp[0] 已经初始化好了。
+        // 这里采用的是 双层for循环。。从左向右→
+        for (int i = 1; i <= n; i++) {
+            // 遍历从 0 到当前位置 i 的所有可能的子串起始位置 j。
+            for (int j = 0; j < i; j++) {
+                
+                // 获取从位置 j 到位置 i 的子串。
+                String word = s.substring(j, i);
+                // 如果这个子串在字典中，并且前 j 个字符可以由字典中的单词组成（即 dp[j] == 1）。
+                if (wordDict.contains(word) && dp[j] == true) {
+                    // 那么前 i 个字符也可以由字典中的单词组成，所以将 dp[i] 设为 1。
+                    dp[i] = true;
+                    
+                    /**
+                    
+             当考虑子串"code"（对应i = 8，j = 4）时，首先检查"code"是否在字典中，然后检查前j = 4个字符"leet"是否可以由字典中的单词组成（即dp[4] == 1）。只有这两个条件都满足时，才能确定前i = 8个字符"leetcode"可以由字典中的单词组成。
+                                  
+                    **/
+                    
+           
+                }
+            }
+        }
+
+        // 返回 dp[n] 是否为 true，即整个字符串 s 是否可以由字典中的单词组成。
+        return dp[n];
+    }
+}
+```
+
+
 
 
 
@@ -6118,6 +6337,107 @@ class Solution {
     }
 }
 ```
+
+### 32 最长有效括号
+
+#### 栈
+
+题目描述：
+
+```
+给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号
+子串
+的长度。
+
+ 
+
+示例 1：
+
+输入：s = "(()"
+输出：2
+解释：最长有效括号子串是 "()"
+```
+
+题解 ：https://leetcode.cn/problems/longest-valid-parentheses/solutions/3833/zui-chang-you-xiao-gua-hao-by-powcai/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+/** 
+对于这种括号匹配问题，一般都是使用 "栈"。
+我们先找到所有可以匹配的索引号，然后找出最长连续数列！
+
+例如：s =")(()())"，我们用栈可以找到，
+		 0123456
+位置 2 和位置 3 匹配，
+
+位置 4 和位置 5 匹配，
+
+位置 1 和位置 6 匹配，
+
+这个数组为：2,3,4,5,1,6 这是通过 栈 找到的，我们 按递增排序 ---> 1,2,3,4,5,6
+
+找出该数组的 最长连续数列(但是这里必须是紧挨着的，而且都是必须 后一个数字比 前一个数字大1)
+的长度 就是最长有效括号长度！
+
+**/
+
+
+
+class Solution {
+    public int longestValidParentheses(String s) {
+        
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        
+        // 用于存储合法括号对的索引
+        List<Integer> res = new ArrayList<>();
+        
+        // 辅助栈，存储左括号的索引
+        Stack<Integer> stack = new Stack<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            
+            // 如果当前字符是左括号，将其索引压入栈
+            if (s.charAt(i) == '(') 
+                stack.push(i);
+            
+            
+            // 如果 栈不为空 且 当前字符是右括号
+            if (!stack.isEmpty() && s.charAt(i) == ')') {
+                // 弹出栈顶左括号索引，并将当前右括号索引加入结果列表
+                // 表示找到了一个合法的括号对
+                res.add(stack.pop());
+                res.add(i);
+            }
+            
+        }
+        
+        // 然后对 res结果集合中的 下标索引 进行排序
+        Collections.sort(res);
+        int ans = 0;
+        int n = res.size();
+       
+        for (int i = 0; i < n; i++) {
+            int j = i;
+            // 查找连续的索引区间，必须是 相邻元素，而且是递增+1的那种才行 。
+            while (j < n - 1 && res.get(j + 1) == res.get(j) + 1) {
+                j++;
+                
+            }
+            // 更新最长合法括号子串的长度
+            ans = Math.max(ans, j - i + 1);
+          
+        }
+        return ans;
+    }
+}
+```
+
+
+
+
+
+
 
 ### 1047 删除字符串中的所有相邻重复项
 
@@ -12180,7 +12500,7 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
   不断更新比较 dp[ i] [ j] 
 
-
+​				       而且！！！！！！有些题目其实是分成  又有「**不超过 **容量 j」和「容量**恰好**为 j」 。。也就是如果是 **恰好**的，那么 还要在最内部，使用 **if (...)判断**， dp[ i-1 ] [ j - k* weight[i] ] 能不能装下。。。
 
 ③ **初始化 **dp数组。差不多
 
