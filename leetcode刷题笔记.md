@@ -1382,7 +1382,7 @@ int c = Math.min(a,b);
 
 
 
-# 代码随想录+ Hot100
+# 代码随想录 + Hot100
 
 ## 数组
 
@@ -2595,77 +2595,90 @@ class Solution {
 题目描述：
 
 ```
+请你仅使用两个栈实现先入先出队列。队列应当支持一般队列支持的所有操作（push、pop、peek、empty）：
 
+实现 MyQueue 类：
+
+void push(int x) 将元素 x 推到队列的末尾
+int pop() 从队列的开头移除并返回元素
+int peek() 返回队列开头的元素
+boolean empty() 如果队列为空，返回 true ；否则，返回 false
+说明：
+
+你 只能 使用标准的栈操作 —— 也就是只有 push to top, peek/pop from top, size, 和 is empty 操作是合法的。
+你所使用的语言也许不支持栈。你可以使用 list 或者 deque（双端队列）来模拟一个栈，只要是标准的栈操作即可。
+ 
+
+示例 1：
+
+输入：
+["MyQueue", "push", "push", "peek", "pop", "empty"]
+[[], [1], [2], [], [], []]
+输出：
+[null, null, null, 1, 1, false]
 ```
 
 题解 ：[https://leetcode.cn/problems/implement-queue-using-stacks/solutions/1724489/by-carlsun-2-kxer/](https://leetcode.cn/problems/implement-queue-using-stacks/solutions/1724489/by-carlsun-2-kxer/)
 
 ```java
+// 用栈 “先进后出”，实现队列“先进先出”的特性。那么就需要 用2个栈 来实现： 
+	/** 
+		一个栈，只 负责进栈in， 另一个栈，只 负责出栈out
+	**/
+	
+//  主要就是实现下面的两个核心方法： 
+              //  **队列的 pop()方法：从队头，移除并返回元素 
+                // **队列的 peek()方法： 只是返回  队头的元素
+
 class MyQueue {
 
-    //  用2个 栈 实现 队列的 “出” ....主要 就是 pop() 和 peek() 上面 需要 做文章
-    // 负责进栈
-    Stack<Integer> stackIn;
-    // 负责出栈
-    Stack<Integer> stackOut;
+    // 一个栈，只负责进栈in
+    Stack<Integer> in;
+    // 另一个栈，只负责出栈out
+    Stack<Integer> out;
 
-    /** Initialize your data structure here. */
     public MyQueue() {
-        stackIn = new Stack<>(); 
-        stackOut = new Stack<>(); 
+        in = new Stack<>();
+        out = new Stack<>();
     }
 
-    /** Push element x to the back of queue. */
+    // push（）方法，只需要进栈in，调用栈的push（）
     public void push(int x) {
-        stackIn.push(x);
+        in.push(x);
     }
-    
 
-    /** Removes the element from in front of queue and returns that element. */
+    // 队列的pop()方法：从队头，移除并返回元素
     public int pop() {
-        
-         // 如果stackOut 不为空 ，那么就意味着之前 已经调用过第一次的pop 了， 已经把之前的 进栈In，里面的元素 全部转移到 out出栈 中了 ，此时就直接 Out出栈调用pop就行
-        if(!stackOut.isEmpty()){
-            return stackOut.pop();
-        }	
-
-      // 如果stackOut为空，那么将stackIn中的元素全部放到stackOut中，这是第一次调用 pop的时候
-        else{
-
-            while(!stackIn.isEmpty()){
-
-            stackOut.push(stackIn.pop());
-        
+        // 当调用队列的pop()弹出元素方法的时候
+        // 如果out出栈为空，那么先要把in入栈中的元素全部放到out出栈
+        // 然后再调用out出栈的pop()方法，弹出1个元素就行。
+        if (out.isEmpty()) {
+            while (!in.isEmpty()) {
+                out.push(in.pop());
+            }
+            return out.pop();
         }
-            
- // 在上面 因为 while循环已经把 入栈的元素 转移到了 出栈中，所以肯定要pop()出栈弹出 1个元素呀！
-         return stackOut.pop();
 
+        // 如果out出栈非空 ，那么就意味着之前已经调用过第一次队列的pop()方法了，已经把之前的in入栈里面的元素全部转移到out出栈中了，那么现在就直接调用out出栈的pop()方法就行
+        else {
+            return out.pop();
         }
-         
     }
 
-    /** Get the front element. */
+    // 队列的peek()方法：只是返回队头的元素
     public int peek() {
-
-        //  其实 这里的 实现 逻辑和 pop()差不多的，无非就是下面是 peek()调用而已。
-        
-        // 这里的话,因为peek()就是 看一下队头元素值，并不是弹出 
-        // 所以 可以先调用上面实现好的pop()，然后再把那个弹出的值 记得 插入进去就行 。
-        
-        
-         int num = pop();
-            stackOut.push(num);
-            return num;
-        
+        // 其实这里的实现逻辑和pop()差不多的
+        // 所以可以先调用上面实现好的队列pop()弹出元素的方法，然后再把那个弹出的值插入出栈out就行。
+        int num = pop();
+        out.push(num);
+        return num;
     }
 
-    /** Returns whether the queue is empty. */
+    // 队列的判空empty（）
     public boolean empty() {
-            // 这里当然是 两个栈 都为空 ！
-        return stackIn.isEmpty() && stackOut.isEmpty();
+        // 这里当然是两个栈都为空！！
+        return in.isEmpty() && out.isEmpty();
     }
-  
 }
 ```
 
@@ -2676,18 +2689,30 @@ class MyQueue {
 题目描述：
 
 ```
+请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（push、top、pop 和 empty）。
 
+实现 MyStack 类：
+
+void push(int x) 将元素 x 压入栈顶。
+int pop() 移除并返回栈顶元素。
+int top() 返回栈顶元素。
+boolean empty() 如果栈是空的，返回 true ；否则，返回 false 。
+ 
+
+注意：
+
+你只能使用队列的标准操作 —— 也就是 push to back、peek/pop from front、size 和 is empty 这些操作。
 ```
 
 题解：[https://leetcode.cn/problems/implement-stack-using-queues/](https://leetcode.cn/problems/implement-stack-using-queues/)
 
 ```java
-// 用 1 个 队列 其实 就可以实现了  ，  “双端” 队列。最主要还是实现这个 pop弹出函数
-
+// 用 1 个 队列 其实 就可以实现了 栈的特性"先进后出"。
+// 使用 “双端” 队列。最主要还是实现这个  pop()弹出元素，这个方法 ** 
 class MyStack {
     
-				// 声明 1 个 “双端” 队列。
-        Deque<Integer> queue;
+				// 声明 1 个 “双端”队列 Deque
+        Deque<Integer> deque;
 
         public MyStack() {
 
@@ -2695,13 +2720,16 @@ class MyStack {
 
         }
 
+    		// 调用 deque双端队列的这个方法，就是从队尾插入。
         public void push(int x) {
-					// 容易想到的 
+					
             queue.offerLast(x);
         }
     
-    	// 主要就是 弹出 pop() ，要把队列中的，前size-1个 元素，按序出队，然后重新加入到队列中，
-           // 然后再调用 pollFirst() 方法就行了 
+    	// ** 主要就是要去实现 "栈”的弹出元素 pop() 方法，要满足“先进后出”
+    // 要把 目前 双端队列中的，前size-1个 元素，按序出队，然后重新 插入到 队尾
+           // 然后再调用1次 pollFirst() 方法就行了。因为此时队头的元素，就是 当时最后添加的元素
+    						// 也就是 满足 “先进后出”
         public int pop() {
 	
             int size = queue.size();
@@ -2709,7 +2737,7 @@ class MyStack {
 			
             while (--size >0)
             {	
-                //   一个队列在模拟栈弹出元素的时候只要将  队列头部的元素（除了最后一个元素外） 重新添加到 队列尾部 ，此时再去		弹出元素就是	栈	的顺序 了。
+     //   一个队列在模拟栈弹出元素的时候只要将  队列头部的元素（除了最后一个元素外） 重新添加到队列尾部 ，此时再去弹出元素就是	栈的 出栈顺序了---》“先进后出”
                 queue.offerLast(queue.pollFirst());
             }
 
@@ -2718,12 +2746,12 @@ class MyStack {
         }
 
         public int top() {
-				 // 容易想到的 ，那么这里的peek肯定是Last队尾的
+			
             return queue.peekLast();
         }
 
         public boolean empty() {
-            // 容易想到的
+         
             return queue.isEmpty();
         }
     }
@@ -2736,74 +2764,95 @@ class MyStack {
 题目描述：
 
 ```
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
 
+实现 MinStack 类:
+
+MinStack() 初始化堆栈对象。
+void push(int val) 将元素val推入堆栈。
+void pop() 删除堆栈顶部的元素。
+int top() 获取堆栈顶部的元素。
+int getMin() 获取堆栈中的最小元素。
+ 
+
+示例 1:
+
+输入：
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+
+输出：
+[null,null,null,null,-3,null,0,-2]
 ```
 
 题解：https://leetcode.cn/problems/min-stack/solutions/42521/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-38/?envType=study-plan-v2&envId=top-100-liked  解法一
 
 ```java
+// 也是需要 两个栈，来实现 “最小栈”
+// 主栈main ---》 存储所有元素的栈 ，每次添加一个元素的时候，就直接里面 无脑添加 就行  
+// 最小栈min ---》  存储当前最小元素的栈。它的栈顶！！的元素 永远是 最小的那个元素 ，所以每次添加元素的时候，都要 和栈顶元素比较，如果比 栈顶元素 小，那么才把它加入 栈顶。
 
 class MinStack {
-    
-    private Stack<Integer> stack;  // 存储所有元素的栈，  主栈
-    private Stack<Integer> minStack;  // 存储当前最小元素的栈， 最小栈
 
-    
+    private Stack<Integer> main; 
+    private Stack<Integer> min; 
+
     public MinStack() {
-        stack = new Stack<>();  // 初始化存储所有元素的栈
-        minStack = new Stack<>();  // 初始化存储当前最小元素的栈
+        main = new Stack<>();
+        min = new Stack<>();
     }
 
-    
     public void push(int x) {
+         
+   // 将元素x压入 主栈main，这个是正常的入栈。每次都要 调用  主栈main的 push()
+        main.push(x);
         
-        // 将元素x压入主栈，这个是正常的入栈，肯定是要无条件push的~~~
-        stack.push(x); 
+    // 当元素x 插入主栈main之后。还需要判断比较一下！！！是否要进入  min最小栈 ！！
+ // 如果 min最小栈 为空，也就是第一次往 main主栈加入元素的时候，那么无需判断，直接将x压入最小栈
+        if(min.isEmpty()) {
+            min.push(x);
+        }
+
         
-        
-        // 主要就是 元素x是否要进入 最小栈，还需要 判断比较 一下！！！ 
-        
-       // 如果最小栈 不为空的话。此时再每次加入 新元素的时候，就要比较 往主栈加入的 元素x 和 最小栈此时的 栈顶元素 top进行比较
-        if (!minStack.isEmpty()) {
-            
-            int top = minStack.peek();  // 查看当前最小栈的 栈顶元素top
-            // 只有当 x 小于等于最小栈的栈顶元素top， 才将x压入最小栈
-            if (x <= top) {
-                minStack.push(x);
-            }
-        } 
-        	
-        // 如果最小栈为空，也就是第一次往主栈加入元素的时候，那么就无需判断，直接将x压入 最小栈
+       // 如果 min最小栈 非空
         else {
             
-            minStack.push(x);
+      // 那么就要查看当前 min最小栈的 栈顶！！元素，因为只在它的栈顶保存的就是 最小值
+            int top = min.peek(); 
+            // 只有当 x 小于等于最小栈的栈顶元素top， 才将x压入最小栈。
+            // 这样才能保证 min最小栈的 栈顶！！元素 一直是最小的元素。
+            if (x <= top) {
+                min.push(x);
+            }
         }
         
+    
     }
 
-    	
     public void pop() {
         
-          // 从主栈中弹出栈顶元素，这个是正常的出栈，肯定是要无条件 pop 的~~~       
-        int pop = stack.pop(); 
-
-        int top = minStack.peek();  // 查看当前最小栈的栈顶元素
+        // 从 main主栈中 弹出栈顶元素，这个是正常的出栈。
+        int pop = main.pop();
         
-        // 只有当 弹出的元素等于最小栈的栈顶元素，才从最小栈中弹出
+		// min最小栈只需要调用peek()查看方法，查看当前最小栈的栈顶元素
+        int top = min.peek(); 
+        
+ // 只有当 main主栈 弹出的元素 等于 min最小栈的 栈顶元素。这时候 才从 min最小栈中弹出它的栈顶元素
         if (pop == top) {
-            minStack.pop();
+            min.pop();
         }
     }
 
     
-    	//这个top()方法就很简单了。。
+    
+    
+    
     public int top() {
-        return stack.peek();  // 返回主栈的栈顶元素
+        return main.peek(); // 返回 main主栈的 栈顶元素，这个方法 很普通
     }
 
-    		//这个 getMin()方法也很简单  
     public int getMin() {
-        return minStack.peek();  // 返回最小栈的栈顶元素，即当前最小值
+        return min.peek(); // 返回 min最小栈的  栈顶!!!元素，即当前最小值。这个是关键 ！！
     }
     
 }
@@ -2818,24 +2867,49 @@ class MinStack {
 题目描述：
 
 ```
+给你一个字符串数组 tokens ，表示一个根据 逆波兰表示法 表示的算术表达式。
 
+请你计算该表达式。返回一个表示表达式值的整数。
+
+注意：
+
+有效的算符为 '+'、'-'、'*' 和 '/' 。
+每个操作数（运算对象）都可以是一个整数或者另一个表达式。
+两个整数之间的除法总是 向零截断 。
+表达式中不含除零运算。
+输入是一个根据逆波兰表示法表示的算术表达式。
+答案及所有中间计算结果可以用 32 位 整数表示。
+ 
+
+示例 1：
+
+输入：tokens = ["2","1","+","3","*"]
+输出：9
+解释：该算式转化为常见的中缀算术表达式为：((2 + 1) * 3) = 9
 ```
 
 题解 ：[https://leetcode.cn/problems/evaluate-reverse-polish-notation/solutions/21167/java-yi-dong-yi-jie-xiao-lu-gao-by-spirit-9-19/](https://leetcode.cn/problems/evaluate-reverse-polish-notation/solutions/21167/java-yi-dong-yi-jie-xiao-lu-gao-by-spirit-9-19/)
 
 ```java
+/**	
+    1.逆波兰表达式求解,其实就是求 后缀表达式的 值。
+    2.要用一个 辅助栈 来计算，利用它的 "先进后出"的 特性
+        3.1 如果遍历到 运算符 "+"、"-"、"*"、"/"时,从栈中 pop() 弹出两个数字计算，并将计算结果
+        3.2 那么剩下的情况就是，遍历到 数字字符，直接入栈 就行了。。。
+**/
+
 class Solution {
     
-       //    建议 背 这个 代码 ！！结构 好记些 ！！
+     
 	public int evalRPN(String[] tokens) {
-        
+        	
+        // 辅助栈
         Stack<Integer> stack = new Stack<>();
         
+        
         for(int i=0;i<tokens.length;i++){
-            
-            
+  
             // 这里 采用 if 、else if、 else 判断结构，很方便！！ 
-            
             if (tokens[i].equals("+")) {
                     int a = stack.pop();
                     int b = stack.pop();
@@ -2844,8 +2918,7 @@ class Solution {
                 
                 	int a = stack.pop();
                     int b = stack.pop();
-     	// !!!! 注意  ，- 减的 运算符 与 除/ 运算符 比较特殊，先出栈的元素 a 要作为 减数
-              // 你纸头上 可以画一下就知道谁 除 谁的 顺序 了      
+     	// !!!! 注意  ，- 减的 运算符 与 除/ 运算符 比较特殊，先出栈的元素 a 要作为 减数，后出栈的元素b要作为 被减数。  记得反一下 减法顺序
                     stack.push(b - a);
                 
             } else if (tokens[i].equals("*")) {
@@ -2858,7 +2931,7 @@ class Solution {
                 
              	    int a = stack.pop();
                     int b = stack.pop(); 
-            			 // !!!! 注意  b / a;
+           // !!!! 注意  ，- 减的 运算符 与 除/ 运算符 比较特殊，先出栈的元素 a 要作为 减数，后出栈的元素b要作为 被减数。  记得反一下 减法顺序
                     stack.push(b / a);
             } 
             
@@ -3771,46 +3844,107 @@ class Solution {
 
 ### 215 数组中的第K个最大元素
 
-#### 优先级队列
+#### 暴力
 
-题解：https://leetcode.cn/problems/kth-largest-element-in-an-array/solutions/1282560/cpython3java-1da-gen-dui-diao-ku-2shou-l-xveq/?envType=study-plan-v2&envId=top-100-liked
-
-```java
-
-// 这道题的话，需要掌握 优先级队列 PriortyQueue 调用库的做法  +  手写快速排序(面试手撕必问)
-
-class Solution {
-    public int findKthLargest(int[] nums, int k) {
-        
-        // 创建一个大根堆（优先队列），用于存储数组中的元素
-        
-        // 因为默认是小根堆，升序↑。。所以要自定义比较器，重写compare方法，使得按降序 ↓排列
-        // 表示b排在a前面，实现降序排列
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b)->b-a);
-
-        // 遍历数组，先将所有元素添加到大根堆中
-        for (int i = 0; i <= nums.length-1; i++) {
-            maxHeap.offer(nums[i]); 
-        }
-
-        //  -  -- - -然后就是弹出 ，对队 的操作！！
-        // 弹出 k-1次后，因为每次弹出的都是堆顶元素(当前的最大值)。。
-        // 那么 剩下的 堆顶元素即为第k大的元素 ！！懂得这个逻辑很关键，。。。。
-        for (int i = 1; i <= k - 1; i++) {
-            maxHeap.poll(); 
-        }
-
-        // 此时的 堆顶元素 即为第k大的元素，使用peek() 方法返回，但不移除
-        return maxHeap.peek();
-    }
-}
-
+题目描述：
 
 ```
+给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+你必须设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+ 
+
+示例 1:
+
+输入: [3,2,1,5,6,4], k = 2
+输出: 5
+```
+
+题解：https://leetcode.cn/problems/kth-largest-element-in-an-array/solutions/2647778/javapython3cdui-pai-xu-kuai-su-pai-xu-ji-jcb9/   看第二种，快速选择排序，选择 中枢值 pivot 很重要。
 
 ```java
-//  手写快速排序(面试手撕可能会问的第二种写法)
+// 使用 快速排序(变形) ---> "快速选择" 排序算法。
 
+/** 主要思路：
+
+a.主要就是以 快排(升序)为基础，核心的就是 划分分区函数 partition()方法。不过这里比较特殊， pivot中枢值选择 (left+right)/2，主要是为了防止 数组中出现大量重复元素时候，选择pivot中枢值造成的排序时间浪费。 最后返回中枢值的最终下标，也就是左右分区的下标值 pivotIndex
+b. 此时，得到 pivotIndex 之后，要和 k值比较。因为 k是 有序数组中第k个大的元素。比如数组长度 n，下标是0~n-1，所以 第1个大的元素，它的下标值是 n-1 ，其实下标公式就是 数组长度n-k  。
+所以只需要比较 pivotIndex中枢值下标 和 n-k的大小：
+	如果等于，那就直接返回。
+	如果小于，说明 第k个大的 在 右分区，所以 ”递归“ 右分区
+	如果大于，说明 第k个大的 在 左分区，所以 “递归” 左分区
+**/
+
+class Solution {
+    
+	//  用于查找第k个最大元素
+    public int findKthLargest(int[] nums, int k) {
+							
+        return quickSelect(nums, 0, nums.length - 1, k);
+        
+    }
+    
+    
+    // 快速选择的 核心函数 ！！！
+    public int quickSelect(int[] nums, int left, int right, int k) {
+        
+        int pivotIndex = partition(nums, left, right);
+        
+        if (pivotIndex == nums.length - k) {
+            return nums[pivotIndex];
+        } 
+        
+        else if (pivotIndex < nums.length - k) {
+            return quickSelect(nums, pivotIndex + 1, right, k);
+        } 
+        
+        else {
+            return quickSelect(nums, left, pivotIndex - 1, k);
+        }
+        
+    }
+
+    
+    
+   // partition() 分区划分函数，以 (left + right) / 2的下标元素作为基准值 进行划分。和以前的 一直以左边第一个元素作为 基准值pivot不太一样。
+    // 主要是为了防止 数组中出现重复元素情况下的 无效选择 基准值pivot ！！导致的时间复杂度太高。。
+public int partition(int[] nums, int left, int right) {
+   
+    int pivotIndex = (left + right) / 2;
+    	// 这里是选择 pivotIndex 还要和 left 最左边的第一个元素 交换一下位置
+    	// 因为 排序流程是固定的，一个 左指针，一个右指针 
+    int temp = nums[pivotIndex];
+    nums[pivotIndex] = nums[left];
+    nums[left] = temp;
+
+    int pivot = nums[left];
+   
+        while (left < right) {
+      // right 指针 从右向左←，当元素大于 pivot的时候，指针一直左移。如果找小于 pivot 的值之后，，记得把它放到 left指针下标位置
+            while (left < right && nums[right] >= pivot) 
+                right--;
+            
+            nums[left] = nums[right];
+
+  // left 指针 从左向→，当元素小于 pivot的时候，指针一直右移。如果找大于 pivot 的值之后，记得把它放到 right 指针下标位置
+            while (left < right && nums[left] <= pivot) 
+                left++;
+            
+            nums[right] = nums[left];
+        }
+        
+        			// 此时把 pivot基准元素 放在 两个指针相遇的下标位置
+        nums[left] = pivot;
+
+        return left; // 返回基准值pivot的 最终索引下标
+}
+
+    
+    
+}
 
 ```
 
@@ -5818,23 +5952,896 @@ class Solution {
 
 #### 贪心
 
-题解：
+题目描述：
+
+```
+给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。
+
+你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。
+
+示例 1：
+
+输入：[7,1,5,3,6,4]
+输出：5
+解释：在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
+示例 2：
+
+输入：prices = [7,6,4,3,1]
+输出：0
+解释：在这种情况下, 没有交易完成, 所以最大利润为 0。
+```
+
+题解：https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/solutions/1692872/by-jyd-cu90/
 
 ```java
+// 整体思路就是：维护一个最小值 成本cost，最大值 利润profit。只是通过一次遍历股票价格 数组，一边记录最低买入成本cost，然后 计算不同时刻卖出利润，也就是 price-cost 和之前的最大利润profit值比较，最终返回整个过程中可以获得的 最大利润值profit 。
 
+// 使用 贪心的思想，局部最优，到 全局最优
+
+class Solution {
+    
+    public int maxProfit(int[] prices) {
+        
+        // 因为是要不断更新 最低买入成本 cost ，所以先初始化成 整数的最大值
+        // 同时初始化 最大利润profit为0，后续会不断更新
+        int cost = Integer.MAX_VALUE, profit = 0;
+        
+        
+        for (int i = 0; i < prices.length; i++) {
+         
+            // 获取当前 数组下标位置i 对应的股票价格
+            int price = prices[i];
+            
+    // 用当前遍历的 股票价格price和 之前记录的最低成本cost不断比较，然后更新 最低买入成本cost，
+            cost = Math.min(cost, price);
+            
+            // 计算当前价格下卖出能获得的利润，用当前价格price - cost之前记录的最低买入成本 
+            // 然后再取这个利润 和之前记录的最大利润profit中的较大值来更新最大利润
+            // 然后不断更新 最大利润值profit
+            profit = Math.max(profit, price - cost);
+        }
+    
+        return profit;
+        
+    }
+}
 ```
 
 ### 122 买卖股票的最佳时机 II
 
 #### 贪心
 
+题目描述：
+
+```
+给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。
+
+在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。
+
+返回 你能获得的 最大 利润 。
+
+ 
+
+示例 1：
+
+输入：prices = [7,1,5,3,6,4]
+输出：7
+解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
+随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。
+最大总利润为 4 + 3 = 7 。
+```
+
+题解：https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/solutions/12625/best-time-to-buy-and-sell-stock-ii-zhuan-hua-fa-ji/
+
+```java
+// 这道题相比于I的话，就是可以多次 买卖股票了
+//  总体思路就是，设 tmp 为第 i-1 日买入与第 i 日卖出赚取的利润，即 tmp = prices[i] - prices[i - 1] ；当该天利润为正 tmp > 0，则将利润加入总利润 profit；当利润为 0 或为负，则直接跳过；遍历完成后，返回总利润 profit。
+
+// 使用 贪心的思想，局部最优，到 全局最优
+class Solution {
+    public int maxProfit(int[] prices) {
+        int profit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            int tmp = prices[i] - prices[i - 1];
+            if (tmp > 0) 
+                profit += tmp;
+        }
+        return profit;
+    }
+}
+
+
+```
+
+### 55 跳跃游戏
+
+#### 贪心
+
+题目描述：
+
+```
+给你一个非负整数数组 nums ，你最初位于数组的 第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个下标，如果可以，返回 true ；否则，返回 false 。
+
+ 
+
+示例 1：
+
+输入：nums = [2,3,1,1,4]
+输出：true
+解释：可以先跳 1 步，从下标 0 到达下标 1, 然后再从下标 1 跳 3 步到达最后一个下标。
+示例 2：
+
+输入：nums = [3,2,1,0,4]
+输出：false
+解释：无论怎样，总会到达下标为 3 的位置。但该下标的最大跳跃长度是 0 ， 所以永远不可能到达最后一个下标。
+```
+
+题解：https://leetcode.cn/problems/jump-game/solutions/24322/55-by-ikaruga/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+// 大致思路.
+/**
+ 
+如果某一个作为 起跳点 的格子可以跳跃的距离是 3，那么表示后面 3 个格子都可以作为 起跳点
+可以对每一个能作为 起跳点 的格子都尝试跳一次，把 能跳到最远的距离 不断更新
+如果可以一直跳到最后，就成功了
+	贪心的思想，局部最优，到 全局最优
+
+**/
+class Solution {
+   public boolean canJump(int[] nums) {
+        
+        // k 代表 前n-1个元素能够跳到的最远距离
+        int k = 0;
+       
+        for (int i = 0; i <= k; i++) {
+            
+            //第i个格子 能够跳到的最远距离
+            int temp = i + nums[i];
+            //更新最远距离 k 
+            k = Math.max(k, temp);
+            //如果最远距离k 已经大于或等于最后一个元素的下标,则说明能 跳过去,退出，减少for循环
+            if (k >= nums.length - 1) {
+                return true;
+            }
+        }
+       
+  // for循环遍历完之后，也没有执行上面的 return true，就说明最远距离k 跳不出去，所以 返回false
+        return false;
+    }
+}
+```
+
+### 45 跳跃游戏II
+
+#### 贪心
+
+题目描述：
+
+```
+给定一个长度为 n 的 0 索引整数数组 nums。初始位置为 nums[0]。
+
+每个元素 nums[i] 表示从索引 i 向前跳转的最大长度。换句话说，如果你在 nums[i] 处，你可以跳转到任意 nums[i + j] 处:
+
+0 <= j <= nums[i] 
+i + j < n
+返回到达 nums[n - 1] 的最小跳跃次数。生成的测试用例可以到达 nums[n - 1]。
+
+ 
+
+示例 1:
+
+输入: nums = [2,3,1,1,4]
+输出: 2
+解释: 跳到最后一个位置的最小跳跃数是 2。
+     从下标为 0 跳到下标为 1 的位置，跳 1 步，然后跳 3 步到达数组的最后一个位置。
+```
+
+题解：https://leetcode.cn/problems/jump-game-ii/solutions/9347/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-10/?envType=study-plan-v2&envId=top-100-liked  看解法1，以及下面的评论用户 "suan-tou-wang-ba"
+
+```java
+//  这道题   和 I不太一样，主要就是 	这里求的是 最少的 跳跃次数。
+
+//  主要思想就是，要从 上次能跳到的范围（end 右边界）之内，选择一个 能跳最远的下标位置，作为下次的起跳点！！因为 上次跳跃的话，肯定要 落脚的，从这几个 落脚点下标 找出一个来 就行。
+// 这样子 求出来的 跳跃次数 就是最少的，每次跳跃可以 更加接近 数组的末尾位置！！
+
+// 使用 贪心的思想，局部最优，到 全局最优
+
+
+class Solution {
+    public int jump(int[] nums) {
+        
+        // 目前能跳到的最远位置
+        int maxFar = 0;
+        // 跳跃次数
+        int step = 0;
+        // 上次跳跃可达范围的右边界
+        int end = 0;
+
+        // 遍历数组，注意是 小于 数组长度-1。不遍历最后一个元素，因为不需要从最后一个元素 再跳跃了
+        for (int i = 0; i < nums.length - 1; i++) {
+            
+       // 遍历的时候，每次都要 计算 每个下标i可以跳跃到的最远位置 maxFar，不断更新
+            maxFar = Math.max(maxFar, i + nums[i]);
+
+            
+   // 当i遍历下标，到达了 上次跳跃的右边界，那么肯定是 又要进行一次新的跳跃，因此setp需要再 + 1
+            // 就比如说 当i等于0的时候，就已经准备跳跃了，找到的落脚点就是 下标为1 对应的元素3，它作为下一次起跳点，跳跃的距离最远，是下标4的位置。
+            if (i == end) {
+                // 目前能跳到的最远位置 maxFar 赋值给下次 选择起跳位置的 最右边界
+                end = maxFar;
+               
+                step++;
+            }
+        }
+
+        return step;
+    }
+}
+```
+
+### 763 划分字母区间
+
+#### 贪心
+
+#### 哈希表数组
+
+题目描述：
+
+```
+给你一个字符串 s 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。
+
+注意，划分结果需要满足：将所有划分结果按顺序连接，得到的字符串仍然是 s 。
+
+返回一个表示每个字符串片段的长度的列表。
+
+ 
+
+示例 1：
+输入：s = "ababcbacadefegdehijhklij"
+输出：[9,7,8]
+解释：
+划分结果为 "ababcbaca"、"defegde"、"hijhklij" 。
+每个字母最多出现在一个片段中。
+像 "ababcbacadefegde", "hijhklij" 这样的划分是错误的，因为划分的片段数较少。 
+示例 2：
+
+输入：s = "eccbbbbdec"
+输出：[10]
+```
+
+题解：https://leetcode.cn/problems/partition-labels/solutions/910027/tong-su-yi-dong-ti-jie-si-lu-by-mayblack-8mvz/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+// 整体算法基于 贪心 策略，每次都 尽可能地扩展 当前区间，直到当前区间 包含了所有 在该区间内出现字母的 最后出现位置，然后确定这个区间，可以高效地计算出每个区间的长度，然后 再继续寻找下一个区间 。
+
+
+
+class Solution {
+    public List<Integer> partitionLabels(String s) {
+        
+        // 用于存储最终划分的每个区间的长度
+        List<Integer> result = new ArrayList<>();
+        
+        // 用于记录每个字母最后出现的位置，数组大小为26，对应26个英文字母，初始化每个位置为
+        int[] lastIndexOfChar = new int[26];
+        
+        // 遍历字符串，记录 每个字母 最后出现的 数组下标位置
+        for (int i = 0; i < s.length(); i++) {
+            
+            // 获取当前字符在字母表中的索引位置（'a' - 'z' 对应 0 - 25）
+            int index = s.charAt(i) - 'a';
+            
+            // 不断更新 同一字母 最后出现的位置 为 当前下标位置 i
+            lastIndexOfChar[index] = i;
+        }
+
+        int start = 0;  // 当前划分区间的起始位置
+        int end = 0;    // 当前划分区间的结束位置，初始化为起始位置 0
+
+        // 第二次遍历 字符串，来确定 划分的区间
+        for (int i = 0; i < s.length(); i++) {
+            
+            // 获取当前字符 在字母表中的 下标位置
+            int index = s.charAt(i) - 'a';
+            
+            // 更新当前区间能到达的最远距离，取当前记录的最远距离和该字母最后出现位置的较大值
+            // 这个是  “关键”
+            end = Math.max(end, lastIndexOfChar[index]);
+            
+            // 如果当前位置i 已经到达了当前区间的最远距离end ， 说明可以划分出一个区间了
+            if (i == end) {
+                
+                // 将当前区间的长度添加到结果列表中
+                result.add(end - start + 1);
+                // 更新下一个区间的 起始位置 为 当前区间 结束位置的下一个下标位置 end+1
+                start = end + 1;
+            }
+        }
+
+        return result;
+    }
+}
+
+
+
+```
+
+### 56 合并区间
+
+#### 贪心
+
+题目描述：
+
+```
+以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
+
+ 
+
+示例 1：
+
+输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出：[[1,6],[8,10],[15,18]]
+解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+```
+
+题解：https://leetcode.cn/problems/merge-intervals/solutions/2985658/liang-chong-fang-fa-pai-xu-shuang-zhi-zh-o6qn/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+// 整个合并区间的过程基于 贪心思想，目标是让 相互重叠的区间 尽可能 合并成一个 更长的区间。
+
+// 思路就是，先对输入的 所有区间 按照 所有区间的左端点 从小到大 进行排序。然后再顺序遍历 这些区间，来判断合并情况了：
+	/** 排序后的intervals 中的两个区间 a,b，假设a在前，b在后，那么必然有a[0]<=b[0]，我们合并的时候 只需要判断 b区间的左端点 是否小于等于 a区间的右端点 就行了，看看 区间有没有交集，重叠。
+	如果 b区间的左端点 b[0] <= a区间的右端点 a[1]，那么当前b区间就和a区间有交集，可以合并，由于合并后并不知道a的右端点大，还是b的右端点大，可以直接取max即可。
+	否则，没有交点，直接插入一个 新的区间 就行。
+	**/
+
+class Solution {
+    
+    public int[][] merge(int[][] intervals) {
+        
+        // 先对区间数组intervals 按照 区间的左端点 进行排序，方便后续合并操作
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+
+        // 创建一个 res 合并集合，用于临时存储 合并后的区间
+        List<int[]> res = new ArrayList<>();
+
+        // 遍历排序后的 区间数组 intervals
+        for (int i = 0; i < intervals.length; i++) {
+            
+            // 获取 当前遍历区间的  左端点 和 右端点
+            int start = intervals[i][0];
+            int end = intervals[i][1];
+
+            // 判断 合并集合res 是否为空
+            if (res.isEmpty()) {
+                // 如果为空，直接 将当前区间 添加到 合并集合 res 
+                res.add(new int[]{start, end});
+            } else {
+                
+                // 如果不为空，每次都要获取 合并集合res 的最后一个区间的右端点
+                // 去和 遍历当前区间的左端点 比大小，判断 是否有重叠部分，有交集
+                int lastEnd = res.get(res.size() - 1)[1]; 
+                
+                if ( start<=lastEnd) {      
+           // 如果 当前区间的左端点 <=  合并集合的 最后一个区间的 右端点，就说明有交集
+                 // 就要更新 合并集合的 最后一个区间的 右端点，取当前遍历区间的右端点 和 合并集合的 最后一个区间的右端点 的较大值
+                    res.get(res.size() - 1)[1] = Math.max(lastEnd, end);
+                    
+                } else {
+                    // 否则，就没有 重叠部分，则直接将 当前遍历区间 添加到 合并集合
+                    res.add(new int[]{start, end});
+                }
+            }
+        }
+
+        // 将 合并集合 转换为 二维数组[][] 并返回
+        return res.toArray(new int[res.size()][]);
+    }
+}
+
+```
+
+### 136 只出现一次的数字
+
+#### 暴力
+
+题目描述：
+
+```
+给你一个 非空 整数数组 nums ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
+
+ 
+
+示例 1 ：
+
+输入：nums = [2,2,1]
+输出：1
+示例 2 ：
+
+输入：nums = [4,1,2,1,2]
+输出：4
+```
+
+题解：https://leetcode.cn/problems/single-number/solutions/2361995/136-zhi-chu-xian-yi-ci-de-shu-zi-wei-yun-iyd0/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+//主要思路 ：这道题 因为 出现很多对 相同的两个数字，只有 1个数字 是独立的。所以要用 几大位运算中的，异或运算 AOR。
+//  就是将 nums数组中所有的数字 执行一下 异或运算，因为 相同的数字 异或结果是 0，然后 最后留下的那个单独的数字 和 0 作异或，结果就是本身，也就是 我们要找的 x数字 
+
+// 异或AOR 的计算过程： 先把整数数字，转为二进制数。如果 两个二进制位，如果这两个位相同（都为 0 或者都为 1），则异或结果为 0；如果这两个位不同（一个为 0，另一个为 1），则异或结果为 1
+// 异或运算有一些特性：  相同的数字进行 ^异或，结果是 0  
+//				      任何数字 和 0 进行 ^异或,结果是 本身
+//					  异或运算 支持 结合律和交换律，所以 1^2^3 = 1^(2^3)	 1^2=2^1		
+
+class Solution {
+    public int singleNumber(int[] nums) {
+        int x = 0;
+        for (int i=0;i<nums.length;i++)  // 1. 遍历 nums 执行异或运算
+            x ^= nums[i];
+        return x;            // 2. 返回出现一次的数字 x
+    }
+}
+
+
+
+
+```
+
+### 169 多数元素
+
+#### 暴力
+
+题目描述：
+
+```
+给定一个大小为 n 的数组 nums ，返回其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+ 
+
+示例 1：
+
+输入：nums = [3,2,3]
+输出：3
+示例 2：
+
+输入：nums = [2,2,1,1,1,2,2]
+输出：2
+```
+
 题解：
 
-```
+```java
+// 这道理 采用投票法，时间复杂度是 O（n），空间复杂度 O（1）
+
+/** 投票法的主要思路就是 ，
+
+	“多数元素”res 初始化为 nums[0]，票数 count 初始化为 1。
+当遇到与 res  相同的数，则票数 count + 1，否则票数 count - 1。
+当票数 count 为 0 时，更换“多数元素”，并将票数 count 重置为 1。
+遍历完数组后，res 就是 最终答案。
+
+	因为 “多数元素”的个数 > ⌊ n/2 ⌋，其余元素的个数总和 <= ⌊ n/2 ⌋。
+所以 “多数元素”的个数 - 其余元素的个数总和 的结果 肯定 >= 1。
+这就相当于每个 “多数元素” 和其他元素 两两相互抵消，抵消到最后肯定还剩余 至少1个 “多数元素”。
+
+**/
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        
+        // 初始化 “多数元素”，并且票数初始化 1 
+        int res  = nums[0], count = 1;
+        
+        for (int i = 1; i < nums.length; ++i) {
+            
+               // 如果当前遍历元素 和 候选“多数元素” 相等，那么票数加一
+            if (nums[i] == res ) {
+                count++;
+            } else {
+                // 如果当前元素和候选多数元素不相等，票数减一
+                count--;
+            }
+            
+           // 当票数count减到0的时候，说明之前的 候选“多数元素” 可能不是真正的“多数元素”了
+  // 这时候就需要更换候选 “多数元素”，把当前遍历元素 当作 新的候选“多数元素”，并且重新把count 票数 设置为1
+            if (count == 0) {
+                res = nums[i];
+                count = 1;
+            }
+            
+        }
+        return res;
+    }
+}
 
 ```
 
+### 31 下一个排列
 
+#### 暴力
+
+题目描述：
+
+```
+整数数组的一个 排列  就是将其所有成员以序列或线性顺序排列。
+
+例如，arr = [1,2,3] ，以下这些都可以视作 arr 的排列：[1,2,3]、[1,3,2]、[3,1,2]、[2,3,1] 。
+整数数组的 下一个排列 是指其整数的下一个字典序更大的排列。更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的 下一个排列 就是在这个有序容器中排在它后面的那个排列。如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+
+例如，arr = [1,2,3] 的下一个排列是 [1,3,2] 。
+类似地，arr = [2,3,1] 的下一个排列是 [3,1,2] 。
+而 arr = [3,2,1] 的下一个排列是 [1,2,3] ，因为 [3,2,1] 不存在一个字典序更大的排列。
+给你一个整数数组 nums ，找出 nums 的下一个排列。
+
+必须 原地 修改，只允许使用额外常数空间。
+
+ 
+
+示例 1：
+
+输入：nums = [1,2,3]
+输出：[1,3,2]
+示例 2：
+
+输入：nums = [3,2,1]
+输出：[1,2,3]
+```
+
+题解：https://leetcode.cn/problems/next-permutation/solutions/3830/xia-yi-ge-pai-lie-by-powcai/?envType=study-plan-v2&envId=top-100-liked
+
+```java
+/** 主要思路，
+
+1.先找出最大下标 k 满足 nums[k] < nums[k+1]。如果不存在，就说明这个数组是降序，处于最大排列的状态，就翻转整个数组，也就是 得到 从小到大排序 的数组，也就是它的 下一个 排列数组。
+
+2.再找出另一个最大下标 l 满足 nums[l] > nums[k]。
+3.交换 nums[l] 和 nums[k]。
+	为什么要这么做？？那是因为，当找到了 最大下标k满足nums[k] < nums[k+1]，那么k之后下标的 对应元素都是 降序的，所以我们需要在 k之后的这个小范围的 降序序列里面，找到一个稍微大于 nums[k]的元素nums[l] 满足 nums[l] > nums[k] 并且l下标是最大的，此时的nums[l] 是最接近的k的元素。然后和k对应的元素交换位置。
+
+4.最后翻转 nums[k+1:]。
+	为什么要这么做 ？？ 因为 当l和k交换完之后，显然 当前排列数组 并不是 下一个排列，因为k后面的元素仍然是 降序的，所以这时候 要对k后面的元素进行 升序，这样操作之后的数组，才是 下一个排列。。。
+**/
+
+class Solution {
+    
+    public void nextPermutation(int[] nums) {
+
+       
+        int k = -1;  // 最大下标k ，满足  nums[k] < nums[k + 1]
+        int l = -1;  // 最大下标 l 满足 nums[l] > nums[k] 
+
+        // 1. 倒序遍历, 找到第一个数, 这个数 比后面的数小，然后把它对应的 下标赋值给  k 
+          // i = nums.length - 2 是为了防止下面nums[i + 1]越界!
+        for (int i = nums.length - 2;i >= 0;i--) {
+            if (nums[i] < nums[i + 1]) {
+                k = i;
+                break;
+            }
+        }
+
+      	// 这就说明for遍历之后，整个数组是 降序的，所以直接 reverse()翻转一下数组，返回就行。
+        if (k == -1) {   
+            reverse(nums,0,nums.length-1);
+            return;
+             
+        }
+        	  // 2. 继续倒序遍历, 找到一个上面的数大的数
+            for (int j = nums.length - 1; j >= 0; j--) {
+                if (nums[j] > nums[k]) {
+                    l = j;
+                    break;
+                }
+            }
+           
+            // 3. 交换i和j对应下标的 元素值
+            swap(nums, k, l); 
+
+        // 4. 将 k后面的数组元素 升序排列,也就是翻转一下。 
+        reverse(nums, k + 1, nums.length - 1);
+                
+    }
+
+    // 两两元素交换函数
+  public void swap(int[] nums, int left, int right) {
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+    }
+	
+    // 翻转数组，只需要 双向的双指针 交换就能实现。
+    public void reverse(int[] nums, int left, int right) {
+        while(left < right){
+            swap(nums, left, right);
+            left++;
+            right--;
+        }
+    }
+}
+
+
+```
+
+### 200 岛屿数量
+
+#### 暴力
+
+题目描述：
+
+```
+给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+ 
+
+示例 1：
+
+输入：grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+输出：1
+```
+
+题解：https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/?envType=study-plan-v2&envId=top-100-liked  这道题的话，只是学一个代码框架以及思路，对于这道题的话，需要自己 插入一些逻辑，就能完成了。
+
+```java
+// 其实 这道题目 可以把传入的 二维数组 [][]当作一个 图 结构。这道题采用 DFS 深度优先遍历的方式。 类似"二叉树"的遍历方式
+//  那么以 dfs前序递归遍历 二叉树为例子，遍历的终止条件就是 ：当超过了 数组的下标越界，或者 遇到了格子的值为 海洋 '0'的情况 。
+
+// 单层递归逻辑的话： 双重for循环，然后 外层是从第0行 开始遍历，内层for循环是从第0列开始遍历，每次都会调用一次 dfs()函数。在 dfs里面，都是以当前格子为起点遍历，上、下、左、右的 相邻4个格子。但是  相比于 "二叉树" 的话，这里还需要考虑 重复遍历格子的情况，所以 我们每次遍历完 一个陆地'1'格子 之后，要给它修改为'2'(陆地格子已经遍历过)，下次不需要再遍历它了 ！！！
+// 			那么 相比于 之前的话，我们的 终止条件就要改为，当超过了 数组下标越界，或者 遍历的格子不等于 '1'(未遍历过的陆地格子)。。
+
+/** 
+  		总体而言，当 双重for循环 遍历的起点是 '1'(未遍历过的陆地格子)，那么就要开始调用 dfs()函数了，当它结束完之后，记得 岛屿数量res++。说明已经找到一个岛屿了。
+  		当 双重for循环结束，把res 返回，就是最终答案。
+**/
+
+
+
+class Solution {
+   
+    
+    public int numIslands(char[][] grid) {
+       		  int res = 0;
+        for (int i = 0; i < grid.length; i ++) {
+            for (int j = 0; j < grid[0].length; j ++) {
+                
+                // 只有 遍历到 '1'(未遍历过的陆地格子)才能作为起点，调用 dfs()深度优先遍历。
+                if (grid[i][j] == '1') {
+                    dfs(grid, i, j);
+                    //结果 dfs()之后，说明找到一个 岛屿。res要++
+                    res ++;
+                }
+            }
+        }
+        return res;
+    }
+
+    public void dfs(char[][] grid, int row, int col) {
+        
+        // 第一个 递归终止条件 ：当遍历的 行或者列的数，超过了数组的下标边界，就要 return返回了。
+        if (row >= grid.length || col >= grid[0].length || row < 0 || col < 0) {
+            return;
+        }
+
+           // 第二个 递归终止条件 ：当遍历的 格子 不等于 '1'(未遍历过的陆地格子)，说明当前格子要么就是'0'，要么就是 '2'(已经遍历过的格子)，就要 return返回了。
+        if (grid[row][col] != '1') {
+            return;
+        }
+		
+        // 因为要防止 重复遍历 陆地格子，所以要给 遍历过的陆地格子，改为 '2'。。
+        grid[row][col] = '2';
+        
+        dfs(grid, row - 1, col); //上面的格子
+        dfs(grid, row + 1, col); // 下面的格子
+        dfs(grid, row, col - 1); // 左面的格子
+        dfs(grid, row, col + 1); // 右面的格子
+    }
+}
+
+
+```
+
+### 695 岛屿的最大面积
+
+#### 暴力
+
+题目描述：
+
+```
+给你一个大小为 m x n 的二进制矩阵 grid 。
+
+岛屿 是由一些相邻的 1 (代表土地) 构成的组合，这里的「相邻」要求两个 1 必须在 水平或者竖直的四个方向上 相邻。你可以假设 grid 的四个边缘都被 0（代表水）包围着。
+
+岛屿的面积是岛上值为 1 的单元格的数目。
+
+计算并返回 grid 中最大的岛屿面积。如果没有岛屿，则返回面积为 0 。
+```
+
+题解：https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/?envType=study-plan-v2&envId=top-100-liked    这道题的话，就是  题解的 例1
+
+```java
+// 其实 这道题目 可以把传入的 二维数组 [][]当作一个 图 结构。这道题采用 DFS 深度优先遍历的方式。 类似"二叉树"的遍历方式
+//  那么以 dfs前序递归遍历 二叉树为例子，遍历的终止条件就是 ：当超过了 数组的下标越界，或者 遇到了格子的值为 海洋 0的情况 。
+
+// 单层递归逻辑的话： 双重for循环，然后 外层是从第0行 开始遍历，内层for循环是从第0列开始遍历，每次都会调用一次 dfs()函数。在 dfs里面，都是以当前格子为起点遍历，上、下、左、右的 相邻4个格子。但是  相比于 "二叉树" 的话，这里还需要考虑 重复遍历格子的情况，所以 我们每次遍历完 一个陆地1 格子 之后，要给它修改为2(陆地格子已经遍历过)，下次不需要再遍历它了 ！！！
+// 			那么 相比于 之前的话，我们的 终止条件就要改为，当超过了 数组下标越界，或者 遍历的格子不等于 1(未遍历过的陆地格子)。。
+
+/** 
+  		总体而言，当 双重for循环 遍历的起点是 1(未遍历过的陆地格子)，那么就要开始调用 dfs()函数了，递归函数内部，只要遍历一次，就说明找到一个陆地格子，岛屿的面积就要 +1。
+  		然后 dfs()遍历完之后，就要和之前的 res最终的最大面积 更新比较。。。
+  		当 双重for循环结束，把res 返回，就是最终答案。
+**/
+
+
+    class Solution {
+
+
+        public int maxAreaOfIsland(int[][] grid) {
+                  int res = 0;
+            for (int i = 0; i < grid.length; i ++) {
+                for (int j = 0; j < grid[0].length; j ++) {
+
+                    // 只有 遍历到 1(未遍历过的陆地格子)才能作为起点，调用 dfs()深度优先遍历。
+                    if (grid[i][j] == 1) {
+                       
+
+           //结果 dfs()之后，说明找到一个 岛屿，并且计算了 岛屿面积。要不断和res更新比较最大值
+                        int area = dfs(grid, i, j);
+                        res = Math.max(res,area);
+                    }
+                }
+            }
+            return res;
+        }
+
+        public int dfs(int[][] grid, int row, int col) {
+
+       // 第一个 递归终止条件：当遍历的 行或者列的数，超过了数组的下标边界，就要 return返回了,面积就是 0
+            if (row >= grid.length || col >= grid[0].length || row < 0 || col < 0) {
+                return 0;
+            }
+
+               // 第二个 递归终止条件：当遍历的 格子 不等于 1(未遍历过的陆地格子)，说明当前格子要么就是0，要么就是 2(已经遍历过的格子)，就要 return返回了，面积就是 0
+            if (grid[row][col] != 1) {
+                return 0;
+            }
+
+            // 因为要防止 重复遍历 陆地格子，所以要给 遍历过的陆地格子，改为 2。。
+            grid[row][col] = 2;
+
+        // 每次遍历一个 陆地格子，就要 岛屿的面积+1
+            return 1 + dfs(grid, row - 1, col) //上面的格子
+            + dfs(grid, row + 1, col) // 下面的格子
+            + dfs(grid, row, col - 1) // 左面的格子
+            + dfs(grid, row, col + 1); // 右面的格子
+        }
+    }
+
+
+
+
+```
+
+### 208 实现前缀树
+
+#### 暴力
+
+题目描述：
+
+```
+Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。
+
+请你实现 Trie 类：
+
+Trie() 初始化前缀树对象。
+void insert(String word) 向前缀树中插入字符串 word 。
+boolean search(String word) 如果字符串 word 在前缀树中，返回 true（即，在检索之前已经插入）；否则，返回 false 。
+boolean startsWith(String prefix) 如果之前已经插入的字符串 word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。
+ 
+
+示例：
+
+输入
+["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+[[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+输出
+[null, null, true, false, true, null, true]
+
+解释
+Trie trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // 返回 True
+trie.search("app");     // 返回 False
+trie.startsWith("app"); // 返回 True
+trie.insert("app");
+trie.search("app");     // 返回 True
+```
+
+题解：
+
+```java
+// 本质就是 构建一个 26叉树。对应26个 英文字母
+// 前缀树的每个结点 都有26个子节点，对应26个 字母。
+// 一次建树，可以 多次查询。
+
+class Trie {
+
+    class TireNode {
+        // 节点值并不是存放 对应的字母，而是表示 该结点是否是一个 字符串的结束末尾
+        private boolean isEnd;
+        // 用一个 数组，来定义它的26个孩子节点，比如 下标0 就是 'a'字母，以此类推
+        TireNode[] next;
+
+        public TireNode() {
+            isEnd = false;
+            next = new TireNode[26];
+        }
+    }
+
+    private TireNode root;
+
+    public Trie() {
+        root = new TireNode();
+    }
+
+    // 构建26叉树 和 构建链表 很像。首先要定义一个 移动指针 node，从根结点的子结点root.next开始，依次遍历字符串的字符，如果对应字符所在的子节点为null，就要开辟新的结点，同时node 要下移。当插入完 word 的最后一个字符，同时还要将最后一个结点isEnd = true，表示它是一个单词的末尾。
+ 
+    public void insert(String word) {
+
+        TireNode node = root;
+        for (char c : word.toCharArray()) {
+            if (node.next[c - 'a'] == null) {
+                node.next[c - 'a'] = new TireNode();
+            }
+            node = node.next[c - 'a'];
+        }
+        node.isEnd = true;
+
+    }
+
+
+    // 查找某个字符串，必须要完全匹配。从根结点的子结点root.next开始，一直向下匹配。如果 遍历字符串的字符 过程中，结点为空null就返回 false，说明对应字符没找到。如果匹配到了最后一个word字符，那我们只需判断 node.isEnd的值 即可。为什么要判断它，而不是直接返回true？主要是因为可能 26叉树存储的已有字符串比 当前搜索的word还要长，所以 word只是它的一部分，并不是完全匹配，那么其实应该返回false。
+    public boolean search(String word) {
+        TireNode node = root;
+        for (char c : word.toCharArray()) {
+            node = node.next[c - 'a'];
+            if (node == null) {
+                return false;
+            }
+        }
+        return node.isEnd;
+    }
+
+
+    // 查找匹配 某个字符串的前缀prefix，只需要前面的几个字符 相同匹配就行。其实大致的思路和 search()方法差不多。。如果能够for循环 匹配到最后一个word字符，说明前面的字符都是相同的，只需要字符串的前半部分 匹配就行。那么 我们直接返回 true 。
+    public boolean startsWith(String prefix) {
+        TireNode node = root;
+        for (char c : prefix.toCharArray()) {
+            node = node.next[c - 'a'];
+            if (node == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
 
 
 
@@ -6432,10 +7439,6 @@ class Solution {
     }
 }
 ```
-
-
-
-
 
 
 
@@ -8093,7 +9096,7 @@ class Solution {
 题解 ：https://leetcode.cn/problems/remove-duplicates-from-sorted-list/solutions/2656499/shuang-zhi-zhen-shan-chu-lian-biao-zhong-z143/
 
 ```java
-		/**
+/**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
@@ -11361,48 +12364,47 @@ public enum Singleton {
 题解：https://www.bilibili.com/video/BV1j841197rQ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-// 快速排序的主要函数 quickSort()，对 nums[left...right]进行排序 ，不断递归调用
-// 下面还定义了 次函数 partition()，用于每次找到一个 mid分区下标。
- 
-public class Sort {
+// 快速排序的主要思路， partition()核心函数，里面 每次选择 最左边的元素nums[left]作为基准值 pivot，然后要确定它 最终要存储的数组下标，然后返回 pivotIndex
+
+// 然后在 主函数 quickSort()，得到 分区的pivotIndex下标之后，分别对 左半区 和 右半区 也进行排序 ，不断"递归"调用。最终数组就有序了。
+
 
     public  static void quickSort(int[] nums, int left, int right) {
         if (left < right) {
-            // 调用 partition()方法， 找到分区的 mid索引
-            int mid = partition(nums, left, right);
+            // 调用 partition()方法， 找到分区的  中枢值最终的索引 pivotIndex
+            int pivotIndex = partition(nums, left, right);
 
-            // 对左分区进行快速排序，递归
-            quickSort(nums, left, mid - 1);
+            // 对左分区进行快速排序，"递归"
+            quickSort(nums, left, pivotIndex - 1);
 
-            // 对右分区进行快速排序，递归
-            quickSort(nums, mid + 1, right);
+            // 对右分区进行快速排序，"递归"
+            quickSort(nums, pivotIndex + 1, right);
         }
     }
 
-    // 进行数组分区操作，然后返回 mid 下标 
+    // 进行数组分区操作，然后返回 中枢值 最终存储的下标 pivotIndex 
     private  static int partition(int[] nums, int left, int right) {
 
-        int pivot = nums[left];  // 选第一个元素作为 基准值
-
+        int pivot = nums[left];  // 每次选左边第一个元素作为 基准值 pivot
 
         while (left < right) {
-      // right 指针 从右向左←，找小于midValue的值，找到之后，记得把它放到 left指针下标位置
+       // right 指针 从右向左←，当元素大于 pivot的时候，指针一直左移。如果找小于 pivot 的值之后，，记得把它放到 left指针下标位置
             while (left < right && nums[right] >= pivot) 
                 right--;
             
             nums[left] = nums[right];
 
-  // left 指针 从左向→，找大于midValue的值，找到之后，记得把它放到 right 指针下标位置
+  // left 指针 从左向→，当元素小于 pivot的时候，指针一直右移。如果找大于 pivot 的值之后，记得把它放到 right 指针下标位置
             while (left < right && nums[left] <= pivot) 
                 left++;
             
             nums[right] = nums[left];
         }
         
-        			// 此时把 基准元素 放在 两个指针相遇的下标位置
+    // 此时把 pivot基准元素 放在 两个指针相遇的下标位置
         nums[left] = pivot;
 
-        return left; // 返回基准值的 索引下标
+        return left; // 返回基准值pivot的 最终索引下标
     }
 
     public static void main(String[] args) {
@@ -11414,7 +12416,7 @@ public class Sort {
         }
     }
 
-}
+
 ```
 
 ### 归并排序
@@ -11422,7 +12424,7 @@ public class Sort {
 题解：https://www.bilibili.com/video/BV1Pt4y197VZ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-public class Sort {
+
     
 private static void mergeSort(int[] arr, int left, int right) {
 
@@ -11432,9 +12434,9 @@ private static void mergeSort(int[] arr, int left, int right) {
         // 计算中间索引 mid 
         int mid = left + (right - left) / 2;
         
-        // 对 左半区间 进行递归，归并排序
+        // 对 左半区间 进行"递归"，归并排序
         mergeSort(arr, left, mid);
-        // 对 右半区间 进行递归排序，归并排序
+        // 对 右半区间 进行"递归"，归并排序
         mergeSort(arr, mid + 1, right);
         
         //递归的处理逻辑，每次都是要调用下面的merge()方法，合并 已排序的左半区间和右半区间
@@ -11487,15 +12489,102 @@ private static void merge(int[] arr, int left, int mid, int right) {
         }
     }
     
-}
+
     
     
 ```
 
+### 堆排序
+
+题解：https://leetcode.cn/problems/sort-an-array/solutions/179370/python-shi-xian-de-shi-da-jing-dian-pai-xu-suan-fa/  看对应的 图解
+
+```java
+// 主要思路，先建堆（大顶堆），然后再调整堆 
+// 这道题 用的是 “迭代”的思路
+
+// 堆排序的主函数
+public static void heapSort(int[] arr) {
+      
+    // a.初始化，构建1次大顶堆： 从右边往左，从下到上 调整的。
+    buildMaxHeap(arr);
+    int len = arr.length;
+    
+    // b.不断调整堆
+    for (int i = len - 1; i > 0; i--) {
+        
+        // 先把堆顶元素（最大的元素arr[0]）和当前未排序部分的最后一个元素arr[i] 交换位置      
+         int temp = arr[0];
+   		 arr[0] = arr[i];
+         arr[i] = temp;
+        
+        //  然后调整 剩下的元素，让它们 重新构成大顶堆：这次是 从上到下调整
+        // *调用核心的  调整堆的函数
+        adjustHeap(arr, 0, i);
+    }
+}
+
+//初次 构建大顶堆
+public static void buildMaxHeap(int[] arr) {
+    int len = arr.length;
+    // 从最后一个非叶子节点开始调整堆，这样可以保证整个堆构建好
+    for (int i = len / 2 - 1; i >= 0; i--) {
+       // *也是要调用 核心的  调整堆的函数
+        adjustHeap(arr, i, len);
+    }
+}
+
+//最核心的函数 adjustHeap！！！主要用于每次更新之后的 调整堆(大顶堆)
+public static void adjustHeap(int[] arr, int i, int len) {
+    int temp = arr[i];
+    // 左孩子节点的索引
+    int k = 2 * i + 1;
+    while (k < len) {
+        // 如果右孩子存在且比左孩子大，就选右孩子
+        if (k + 1 < len && arr[k + 1] > arr[k]) {
+            k = k + 1;
+        }
+        // 如果父节点已经比最大的孩子节点大了，那就不用调整了
+        if (temp >= arr[k]) {
+            break;
+        }
+        // 把较大的孩子节点的值赋给父节点
+        arr[i] = arr[k];
+        
+        // !!!!
+        // 现在 当前节点 变成 刚才那个较大的孩子节点了，继续往下调整。
+        // 因为 下面的节点，还有可能 比它大，所以还需要 不断比较更新，交换位置。
+        i = k;
+        k = 2 * i + 1;
+    }
+    
+    // 这时候才把一开始保存的temp（原来的父节点的值）放到 最终合适的位置
+    arr[i] = temp;
+}
+
+public static void main(String[] args) {
+    int[] arr = {4, 6, 8, 5, 9, 1, 2};
+    heapSort(arr);
+    for (int num : arr) {
+        System.out.print(num + " ");
+    }
+}
+
+
+
+
+
+
+```
+
+
+
 ### 冒泡排序
 
 ```java
-public class BubbleSort {
+// 用 迭代的思路，解决冒泡排序。
+//主要思路，每一趟 都是从前往后遍历 → ，它通过不断比较 相邻元素并在(i-1的元素 大于 i 的元素)交换 它们的位置。每一趟 能确定一个最大值， 放到数组的最后位置。
+//  最终实现整个数组的升序。
+
     
     public static void bubbleSort(int[] arr) {
         
@@ -11522,7 +12611,7 @@ public class BubbleSort {
             System.out.print(num + " ");
         }
     }
-}
+
 ```
 
 
@@ -12538,11 +13627,15 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 ## 贪心
 
-这个方法其实是最难的。。。因为没有特定的接替套路。。。
+### 方法详解
+
+这个贪心的方法其实是最难的。。。因为没有特定的 解题模板。。。
 
 
 
+大致的思考方向就是：局部最优—》全局最优， 并且找不到明显的反例。
 
+大部分都是 常识，数字证明，但是不需要话很多时间 去证明和搞懂他们，知道结论公式就行了。
 
 # SQL语句
 

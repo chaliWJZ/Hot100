@@ -1,66 +1,63 @@
 package com.example.demo;
 
 public class Sort {
+    // 堆排序的主函数
+    public static void heapSort(int[] arr) {
 
-    private static void mergeSort(int[] arr, int left, int right) {
+        // a.初始化，构建1次大顶堆
+        buildMaxHeap(arr);
+        int len = arr.length;
 
-        // 如果区间还有多个元素（非单个元素），就一直向下递归排序和合并 。如果只剩一个 元素，那么就是有序的
-        if (left < right) {
+        // b.不断调整堆
+        for (int i = len - 1; i > 0; i--) {
 
-            // 计算中间索引 mid
-            int mid = left + (right - left) / 2;
+            // 先把堆顶元素（最大的元素arr[0]）和当前未排序部分的最后一个元素arr[I] 交换位置
+            int temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
 
-            // 对 左半区间 进行递归，归并排序
-            mergeSort(arr, left, mid);
-            // 对 右半区间 进行递归排序，归并排序
-            mergeSort(arr, mid + 1, right);
-
-            //递归的处理逻辑，每次都是要调用下面的merge()方法，合并 已排序的左半区间和右半区间
-            merge(arr, left, mid, right);
-
+            // 然后调整 剩下的元素，让它们 重新构成大顶堆
+            adjustHeap(arr, 0, i);
         }
     }
 
-    // 这个merge()方法，主要作用其实就是 合并两个有序数组
-    private static void merge(int[] arr, int left, int mid, int right) {
-
-        // 创建临时数组temp 来存储合并后的结果，长度要指定的
-        int[] temp = new int[right - left + 1];
-        int p = 0;  // 临时数组temp 的指针p，不断后移 添加元素
-
-        int i = left;  // 左子数组 的指针i
-        int j = mid + 1;  // 右子数组 的指针j
-
-
-        // 比较 左子数组 和 右子数组的元素，将较小的元素 放入 临时数组temp
-        while (i <= mid && j <= right) {
-            if (arr[i] < arr[j])
-                temp[p++] = arr[i++];
-            else
-                temp[p++] = arr[j++];
+    //初次 构建大顶堆
+    public static void buildMaxHeap(int[] arr) {
+        int len = arr.length;
+        // 从最后一个非叶子节点开始调整堆，这样可以保证整个堆构建好
+        for (int i = len / 2 - 1; i >= 0; i--) {
+            adjustHeap(arr, i, len);
         }
+    }
 
-        // 如果 左子数组 还有剩余元素，将其 放入 临时数组temp
-        while (i <= mid) {
-            temp[p++] = arr[i++];
+    //最核心的函数 adjustHeap！！！主要用于每次更新之后的 调整堆(大顶堆)
+    public static void adjustHeap(int[] arr, int i, int len) {
+        int temp = arr[i];
+        // 左孩子节点的索引
+        int k = 2 * i + 1;
+        while (k < len) {
+            // 如果右孩子存在且比左孩子大，就选右孩子
+            if (k + 1 < len && arr[k + 1] > arr[k]) {
+                k = k + 1;
+            }
+            // 如果父节点已经比最大的孩子节点大了，那就不用调整了
+            if (temp >= arr[k]) {
+                break;
+            }
+            // 把较大的孩子节点的值赋给父节点
+            arr[i] = arr[k];
+            // 现在当前节点变成刚才那个较大的孩子节点了，继续往下调整
+            i = k;
+            k = 2 * i + 1;
         }
-
-        // 如果 右子数组 还有剩余元素，将其放入临时数组
-        while (j <= right) {
-            temp[p++] = arr[j++];
-        }
-
-        // 切记！！每次都还要将 temp临时数组中的元素 复制回 原始数组。。注意是 往原始数组的 left下标++
-        for (i = 0; i < temp.length; i++) {
-            arr[left++] = temp[i];
-        }
+        // 把一开始保存的temp（原来的父节点的值）放到合适的位置
+        arr[i] = temp;
     }
 
     public static void main(String[] args) {
-        int[] arr = {64, 34, 25, 12, 22, 11, 90};
-        mergeSort(arr,0,arr.length-1);
-        System.out.println("排序后的数组：");
-        for (int num : arr){
+        int[] arr = {4, 6, 8, 5, 9, 1, 2};
+        heapSort(arr);
+        for (int num : arr) {
             System.out.print(num + " ");
         }
     }
