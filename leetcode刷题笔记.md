@@ -2953,54 +2953,64 @@ class Solution {
 
 #### 哈希表set
 
+题目描述：
+
+```
+
+```
+
 题解：https://leetcode.cn/problems/longest-consecutive-sequence/solutions/344825/java-pai-xu-ji-he-ha-xi-biao-bing-cha-ji-by-lzhlyl/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 关键点，要先排序，从小到大升序，这样方便找 连续序列 ！！
+// 主要思想：因为题目中 要找 最长连续序列，要先"去重"，所以这样方便找 连续序列 ！！
+// 使用哈希set 数据结构，可以达到 “去重" 的目的。
+//  注意！！要找的 最长连续序列。。。。它的含义，不需要 元素在原数组中的位置，也连续
 
-// 因为数组中有可能 有重复的数字，所以要 跳过它们。。毕竟 连续序列的话 只有是1,2,3,4,5 这样的情况
+/**
+   遍历哈希set。对于每个数字，如果 它是连续序列的起始数字（也就是 当前数字-1 不在哈希集合中）。那么才从 当前数字 开始，统计以它为起始的 连续序列长度。
+   然后判断 当前遍历的数字+1 是否在哈希set中，在的话，就说明有连续的序列，那么 count序列长度+1 ，然后继续向后遍历，也就是 当前数字+1。。在while循环里面，直到 不存在当前数字+1 为止，退出循环
+   所以，在每个有效的起点数字，找到的连续序列长度中，取最大值，就最最终答案。
 
-// 而且 连续序列可能是 在数组的中间产生的，也有可能 会断掉，所以 我们要定义一个 max变量，每次都要    比较  连续序列的最大长度 
+**/
 
 class Solution {
 
-    public int longestConsecutive(int[] nums) {
-
-        // 为了防止 数组为空 [] 的情况！！
-        if (nums.length == 0) return 0;
-
-            // 先 set “去重“ ！！
-        HashSet<Integer> set = new HashSet<>();
-        for (int i = 0; i < nums.length; i++) {
-            set.add(nums[i]);
+   public static int longestConsecutive(int[] nums) {
+       
+       if(nums.length==0)
+           return 0;
+       
+     // 创建哈希set， 将数组中的元素添加进去，利用他的 ”去重“ 以及快速查找的特性contains()方法
+        Set<Integer> numSet = new HashSet<>();
+        for (int num : nums) {
+            numSet.add(num);
         }
-            
-          // 然后排序，又因为只有 list 集合 可以排序，所以先把set转为list 集合 
-        List<Integer> list = new ArrayList<>(set);
-        Collections.sort(list);
 
-        // max 最终结果, count 当前长度, last 是记住上个数字，而不是 last++ ，这个你一定要搞清楚 ！！
-        int max = 1, count = 1, last = list.get(0);
-
-        for (int i = 1; i < list.size(); i++) {
-
-            if (list.get(i) == last + 1)
-                count++; // 符合连续，长度 +1
-
-            else {
-                max = Math.max(max, count); // 连不上了，记录长度
-                count = 1; // 重新开始
+      
+       int res = 1; // 不断更新，最长连续序列的长度值。
+       
+        // 遍历哈希set 中的元素
+        for (int num : numSet) {
+            // 判断当前元素是否是连续序列的起始元素（即 当前元素-1 不在 set集合中）
+            if (!numSet.contains(num - 1)) {
+                
+                 int count = 1;  // 每个连续序列长度，默认为 1
+            	 int currentNum = num;
+                
+          // 从当前起始元素开始，不断往后查找连续的元素，只要当前元素 + 1在集合中，就继续循环
+                while (numSet.contains(currentNum + 1)) {
+                   
+                     count++;
+                     currentNum++;
+                }
+                // 更新最长连续序列的长度
+                res = Math.max(res, count);
             }
-
-            last = nums[i];
         }
-        
-   // 别忘了 比较 最后一段的连续区间 ！！！因为它可能一直 连续到 数组末尾！！
-        max = Math.max(max, count); 
-        return max;
 
+        return res;
     }
-
+    
 }
 ```
 
@@ -3010,19 +3020,38 @@ class Solution {
 
 #### 双指针快慢指针
 
+题目描述：
+
+```
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+请注意 ，必须在不复制数组的情况下原地对数组进行操作。
+
+ 
+
+示例 1:
+
+输入: nums = [0,1,0,3,12]
+输出: [1,3,12,0,0]
+```
+
 题解：https://leetcode.cn/problems/move-zeroes/solutions/490356/283-yi-dong-ling-shuang-zhi-zhen-xiang-jie-by-ca-2/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
+//   利用快慢指针的方式，通过一次遍历将非零元素 “紧凑” 地放置在数组前部，然后再将剩余位置填充为零。
+/**	 fast快指针每次都会向后移动，只有当fast快指针指向的 元素不为零，就将 fast 指针所指向的这个非零元素 赋值给 slow 指针，然后 slow++ 才会向后移动。。。。
+	  当fast快指针移动到了 数组末尾，那么数组的前半部分，slow指针之前的元素，都是非零的了。
+	  然后从slow的位置开始，把它后面的下标位置 赋值0就行。
+	**/
 class Solution {
 
        public void moveZeroes(int[] nums) {
 
-            
-            int size = nums.length;
+                  
             int slow = 0;
             int fast=0;
             
-            while (fast<size){
+            while (fast<nums.length){
 
                 if (nums[fast] != 0)
                     nums[slow++] = nums[fast];
@@ -3030,9 +3059,9 @@ class Solution {
                 fast++;
                 
             }
-
-            // 这段代码，就是 根据不同的 双指针 题目的情况，在模板的基础上 稍作修改。。。。
-            // 当快指针fast 到达数组 末尾的时候，  此时 slow慢指针 后面的元素全变成 0 ，就能实现最终的效果了
+				
+           
+           								
             for (int i = slow; i < nums.length; i++) {
                 nums[i] = 0;
             }   
@@ -3044,40 +3073,104 @@ class Solution {
 
 ### 560 和为K的子数组
 
-#### 暴力
+#### 哈希表map
 
 ```
+给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
 
+子数组是数组中元素的连续非空序列。
+
+ 
+
+示例 1：
+
+输入：nums = [1,1,1], k = 2
+输出：2
 ```
 
 题解：https://leetcode.cn/problems/subarray-sum-equals-k/solutions/2260091/bao-li-jie-yyds-suan-fa-tao-lu-duo-dan-w-7e52/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 主要因为用 “滑动窗口”解决这道 子数组的题目，，真的做不出来。。。。所以只能用 暴力！！
-// 暴力的话，一般就是 双重 for 循环，列举所有的情况罢了。。。。。
+// 这道题可以结合 前缀和 + 再通过 哈希表的优化方式，达到 O(n) 时间复杂度。
+	//  因为 前缀和数组，有这么一个特性：
+	// 对于一个连续子数组 nums[i:j] (i 到 j 的区间，包含 i 和 j),它的和,等于前缀和 preSum[j] - preSum[i - 1] 的差值
+
+/**  
+ 想要求出 和为k的子数组 的个数？！就可以通过遍历 前缀和数组preSum，使用哈希map 来记录 每一个前缀和 出现的次数。
+ 在依次向后遍历 的过程中，对于当前的前缀和 preSum[j]，我们去哈希map中查找，preSum[j] -k的差值 对应的 元素key，出现的次数value 就行。然后 个数count 一直累加。。。因为 它其实只会  在当前j下标 以前的那些前缀和里面找。。。所以不需要考虑 它可能会遍历到 哈希map 后面下标的 前缀和
+	因为每出现一次 preSum[j] - k，就意味着 存在一个以当前位置j 为结尾的 子数组的和为 k
+
+**/
+
 class Solution {
 
-    public int subarraySum(int[] nums, int k) {
+    public static int subarraySum(int[] nums, int k) {
         
-        int count = 0;  // 用于计数满足条件的子数组数量。
+        int n = nums.length;
         
-        for(int i = 0; i < nums.length; i++) {  // 遍历数组的每一个元素，作为子数组的起点。
-           
-    int sum = 0;  //初始化当前子数组的和 sum 为0。。。这个 每次外层for的开始的话，都要变成 0的！！ 
-            for(int j = i; j < nums.length; j++) {  // 从当前元素开始，遍历其后的每一个元素，作为子数组的终点。
-                sum += nums[j];  // 累加子数组的元素和。
-                if(sum == k) count++;  // 如果子数组的和等于k，计数器加1。
-            }
+        // 创建 前缀和数组，长度为n + 1，长度多一个，方便后续计算
+        // preSum[0] 的前缀和, 初始化为 0
+        int[] preSum = new int[n + 1];
+
+        // 计算 前缀和数组 preSum
+        for (int i = 0; i < n; i++) {
+       //计算当前的前缀和，就等于 前一个的前缀和，再加上当前遍历数组的元素值 nums[i]
+            preSum[i + 1] = preSum[i] + nums[i];
         }
-        return count;  // 返回满足条件的子数组数量。
+        
+			// map哈希表, 统计每一个前缀和,出现的次数.
+        Map<Integer, Integer> sumCountMap = new HashMap<>();
+        
+        // 初始化前缀和为0，出现1次. 用于处理从索引0开始，就满足和为k的 那种 特殊情况
+        sumCountMap.put(0, 1);
+        
+        int count = 0; // 统计,最终的个数
+        
+        for (int j = 1; j <= n; j++) {
+            
+       // 计算出 当前的前缀和preSum[j] - k 的差值. 然后去 哈希map 查询,找到对的value值,就是和为k的连续子数组 的个数了.
+            int targetSum = preSum[j] - k;
+            
+            if (sumCountMap.containsKey(targetSum)) {
+                count += sumCountMap.get(targetSum);
+            }
+            
+            
+            // 不论 存不存在target差值,都会 统计某个 前缀和 出现的次数,不断累加
+            sumCountMap.put(preSum[j], sumCountMap.getOrDefault(preSum[j], 0) + 1);
+        }
+        
+        return count;
     }
+
+
+
 }
 
 ```
 
+
+
 ### 189 轮转数组
 
 #### 双指针相向指针
+
+题目描述:
+
+```
+给定一个整数数组 nums，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
+
+ 
+
+示例 1:
+
+输入: nums = [1,2,3,4,5,6,7], k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右轮转 1 步: [7,1,2,3,4,5,6]
+向右轮转 2 步: [6,7,1,2,3,4,5]
+向右轮转 3 步: [5,6,7,1,2,3,4]
+```
 
 题解：https://leetcode.cn/problems/rotate-array/solutions/551634/javadai-ma-3chong-fang-shi-tu-wen-xiang-q8lz9/?envType=study-plan-v2&envId=top-100-liked
 
@@ -3088,7 +3181,7 @@ class Solution {
 
         int length = nums.length;
 
-        k %= length;    // 这行代码很关键！！！因为 k 可能会，大于数组的长度，而且 可以防止 数组的越界问题 。而且则旋转 k 次和旋转 k % nums.length 次的效果是一样的。这个操作可以有效地避免不必要的多次完全旋转。
+        k %= length;    // 这行代码很关键！！！因为 k 可能会，大于数组的长度，而且 可以防止 数组的越界问题 。而且则旋转 k 次和旋转 k % nums.length 次的效果是一样的。
 
         reverse(nums, 0, length - 1);//先反转全部的元素
         reverse(nums, 0, k - 1);//在反转前k个元素
@@ -3096,7 +3189,7 @@ class Solution {
     }
 
     //把数组中从[start，end]之间的元素两两交换,也就是"反转"
-    // 这道题的 次方法 reverse()，其实和 344 反转字符串的思想一摸一样，，，  用到了 双指针的相向指针，来实现的
+    // 这道题的 次方法 reverse()，其实和 344 反转字符串的思想一摸一样。用到了 双指针的相向指针，来实现的
     public void reverse(int[] nums, int start, int end) {
 
         
@@ -3118,15 +3211,28 @@ class Solution {
 
 #### 暴力
 
-题解：https://leetcode.cn/problems/product-of-array-except-self/description/  题目
+题目描述：
 
-https://www.bilibili.com/video/BV1xb4y1b7KM?p=74&vd_source=5fe50b1b35a25689fb0988c454fec5e0   视频 
+```
+给你一个整数数组 nums，返回 数组 answer ，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积 。
 
+题目数据 保证 数组 nums之中任意元素的全部前缀元素和后缀的乘积都在  32 位 整数范围内。
 
+请 不要使用除法，且在 O(n) 时间复杂度内完成此题。
+
+ 
+
+示例 1:
+
+输入: nums = [1,2,3,4]
+输出: [24,12,8,6]
+```
+
+题解：https://leetcode.cn/problems/product-of-array-except-self/solutions/1533133/by-ac_oier-fqp3/
 
 ```java
-import java.util.*;
 
+// 用空间换时间，定义两个数组，left数组和 right数组。---》有点“前缀和”的思想
 // 本题目的总体思想是 nums[i]的求解值 = nums[i]左侧的累乘 * nums[i]右侧的累乘
 // 						  ans[i]  = left[i - 1] * right[i + 1]
 class Solution {
@@ -3140,12 +3246,10 @@ class Solution {
         
         int[] ans = new int[len];
 		
-        //3 个 “并行”的 
-        
-        
+        //3 个 “并行”的 for循环    
         // 初始化左侧数组left[i]，从左到右遍历 ->
        	
-        // 这个 的话一般就是先 [0]赋值成nums[0]，所以遍历从下标[1]开始 
+        // 这个 的话一般就是先 下标0 赋值成nums[0]
         left[0] = nums[0];
         for (int i = 1; i < len; i++) {
             left[i] = left[i - 1] * nums[i];
@@ -3159,7 +3263,7 @@ class Solution {
         }
 
         // 计算结果数组。总体思想是 nums[i]的求解值 = nums[i]左侧的累乘 * nums[i]右侧的累乘
-        // 不过要先考虑 nums[0] 和 nums[len-1] 的边界情况
+        // 不过要先考虑 nums[0] 和 nums[len-1]  这两种的边界情况
         for (int i = 0; i < len; i++) {
             if (i == 0) {
                 ans[i] = right[i + 1];
@@ -3182,36 +3286,53 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给定一个 m x n 的矩阵，如果一个元素为 0 ，则将其所在行和列的所有元素都设为 0 。请使用 原地 算法。
+
+示例 1：
+输入：matrix = [[1,1,1],[1,0,1],[1,1,1]]
+输出：[[1,0,1],[0,0,0],[1,0,1]]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250107224937803.png" alt="image-20250107224937803" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/set-matrix-zeroes/solutions/6594/o1kong-jian-by-powcai/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-import java.util.HashSet;
-import java.util.Set;
-
+// 主要思路，定义两个 set集合。
+/**
+	第一次遍历 矩阵的时候：
+			rowZero集合，记录 用于存储包含零的 行下标 有哪些
+			colZero集合，用于存储包含零的 列下标 有哪些
+	第一次遍历 矩阵的时候：
+			如果当前元素matrix[i][j] 所在的 行下标i 或 列下标 j，在 rowZero的set集合 或 colZero set集合 中，则将该行的 所有元素 置为零，或者 该列的下面所有元素 置为0
+**/
 public class Solution {
     public void setZeroes(int[][] matrix) {
         
         
-        int row = matrix.length;  // 获取矩阵的行数
- int col = matrix[0].length;  // 获取矩阵的列数，，这个一般就是 这样获取二维数组的 列！！
+        int row = matrix.length;  // 获取 矩阵的行数（其实就是个 二维数组[][]）
+ 		int col = matrix[0].length;  // 获取矩阵的列数。
         
         
-        // 为什么要用 set集合，因为如果matrix[0][1] 和 matrix[0][2] 这两个元素都是0值，那么他们的行索引，都会加入到 行set集合中，那么 第0行 其实会加入两次，但只会保留1个 0行。。。
-        Set<Integer> rowZero = new HashSet<>();  // 用于存储包含零的行索引的set集合
-        Set<Integer> colZero = new HashSet<>();  // 用于存储包含零的列索引的set集合
+        // 为什么要用 set集合？主要是为了“去重”。因为如果matrix[0][1] 和 matrix[0][2] 这两个元素都是0值，那么他们的行索引0 ，都会加入到 行set集合中，但只会保留1个 下标0行。。。
+        Set<Integer> rowZero = new HashSet<>();  // 用于存储包含零的行下标的set集合
+        Set<Integer> colZero = new HashSet<>();  // 用于存储包含零的列下标的set集合
 
-     //第一遍遍历 ：找出所有是0的元素 matrix[i][j]，把他们对应的 行索引i 和 列索引j 记录下来，存入对应的 set集合
+     //第一遍遍历 ：找出所有是0的元素 matrix[i][j]，把他们对应的 行下标i 和 列下标j 记录下来，存入对应的 set集合
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (matrix[i][j] == 0) {
                     		// 两个 set 集合 要同时一起记录！！！ 
-                    rowZero.add(i);  // 记录包含零的，行索引i 的set集合
-                    colZero.add(j);  // 记录包含零的，列索引j 的set集合
+                    rowZero.add(i);  // 记录包含零的，行下标i 的set集合
+                    colZero.add(j);  // 记录包含零的，列下标j 的set集合
                 }
             }
         }
 
-        // 第二遍遍历：再次遍历 二维矩阵，如果当前所在的 行i或 列索引 j，在 rowZero的set集合 或 colZero set集合 中，则将该行的 所有元素 置为零，或者 该列的下面所有元素 置为0
+      // 第二遍遍历：再次遍历 二维矩阵，如果当前元素matrix[i][j]  所在的 行下标i 或 列下标 j，在 rowZero的set集合 或 colZero set集合 中，则将该行的 其他所有元素 置为零，或者 该列的下面所有元素 置为0
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (rowZero.contains(i) || colZero.contains(j)) {
@@ -3228,46 +3349,41 @@ public class Solution {
 
 #### 暴力
 
-题解：
+题目描述：
 
-https://leetcode.cn/problems/rotate-image/solutions/1228078/48-xuan-zhuan-tu-xiang-fu-zhu-ju-zhen-yu-jobi/?envType=study-plan-v2&envId=top-100-liked 这个是通过一个辅助矩阵的
+```
+给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
 
-https://leetcode.cn/problems/rotate-image/solutions/5012/yi-ci-xing-jiao-huan-by-powcai/?envType=study-plan-v2&envId=top-100-liked 这里看思路二 ，上下翻转方式+ 正对角线翻转，就也是“原地”翻转
+你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。
+
+示例 1：
+输入：matrix = [[1,1,1],[1,0,1],[1,1,1]]
+输出：[[1,0,1],[0,0,0],[1,0,1]]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250107224954585.png" alt="image-20250107224954585" style="zoom:50%;" />
+
+题解：https://leetcode.cn/problems/rotate-image/solutions/5012/yi-ci-xing-jiao-huan-by-powcai/?envType=study-plan-v2&envId=top-100-liked  这里看思路二 ，上下翻转方式+ 正对角线翻转，就也是“原地”翻转
 
 ```java
 
-// 方式1， 辅助矩阵
+// 上下翻转方式(翻转一整行)+ 正对角线翻转(对称的单个元素，交换) ===》就也是“原地”翻转
 class Solution {
+    
     public void rotate(int[][] matrix) {
         
-        int n = matrix.length;
-        // 深拷贝 matrix -> tmp
-        int[][] tmp = new int[n][];
-        for (int i  = 0; i < n; i++)
-            tmp[i] = matrix[i].clone();
-        // 根据元素旋转公式，遍历修改原矩阵 matrix 的各元素
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                matrix[j][n - 1 - i] = tmp[i][j];
-            }
-        }
-    }
-}
-
-// 方式2，上下翻转方式+ 正对角线翻转，就也是“原地”翻转
-class Solution {
-    public void rotate(int[][] matrix) {
+        int n = matrix.length; // 记录 二维数据[][]的行数 n
         
-        int n = matrix.length;
-        
-        // 上下翻转，这个公式好理解的，主要就是记得 是 n-i-1。记得要 -1 
+        // 上下翻转：也就是 先把第0行 和 第n-1行 元素，整个翻转交换一下。
+        // 然后依次 遍历中间行，不断翻转
         for (int i = 0; i < n / 2; i ++){
             int[] tmp = matrix[i];
             matrix[i] = matrix[n - i - 1];
             matrix[n - i - 1] = tmp;
         }
         
-        // 按照 正对角对角线 翻转，内部的 j 要设置成 i+1 。
+        // 按照 正对角对角线 翻转：对称的单个元素，交换
+       //  内部的 j 要设置成 i+1 。
         for (int i = 0; i < n; i ++){
             for (int j= i + 1; j < n; j++){
                 int tmp = matrix[i][j];
@@ -3286,23 +3402,49 @@ class Solution {
 
 #### 暴力
 
+题目描述：
+
+```
+给你一个满足下述两条属性的 m x n 整数矩阵：
+
+每行中的整数从左到右按非严格递增顺序排列。
+每行的第一个整数大于前一行的最后一个整数。
+给你一个整数 target ，如果 target 在矩阵中，返回 true ；否则，返回 false 。
+
+示例 1：
+输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250107224821634.png" alt="image-20250107224821634" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/search-a-2d-matrix/description/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 这道题的 代码和  240题 一摸一样的。
+/** 主要思路：
+		题目的描述，说明每一行都是递增的，适合用 二分查找。。。
+		遍历每一行，每一行进行1次二分查找。找到的话就直接 return true。			
+**/
 class Solution {
 
    public boolean searchMatrix(int[][] matrix, int target) {
     
+       
+  // 这个for循环遍历的话，其实就是 对 二维矩阵的 每一行进行遍历 。。。因为每一行都是“有序”的
+       // 二维数组[][]的每一行，就是 一个数组[]，所以可以作为参数，直接传入 下面的函数
+        //  所以 很适合----> 二分查找 
     for (int i = 0; i < matrix.length; i++) {
-       // 这个for循环遍历的话，其实就是 对 二维矩阵的 每一行进行遍历 。。。因为每一行都是“有序”的
-        												//  所以 很适合----> 二分查找 
+       	   
         int res = binarySearch(matrix[i], target);
+        
+        	// 如果返回值不是 -1，就说明在矩阵的某一行 找到 target元素了
         if (res != -1) {
             return true;
         }
     }
-    return false;
+       
+         return false;
+       
 }
 
     
@@ -3326,6 +3468,8 @@ public int binarySearch(int[] nums, int target) {
                 return mid;
 
         }
+    
+    //没找到的话，就返回 -1
         return -1;
 }
 
@@ -3338,10 +3482,25 @@ public int binarySearch(int[] nums, int target) {
 
 #### 暴力
 
+题目描述：
+
+```
+编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target 。该矩阵具有以下特性：
+
+每行的元素从左到右升序排列。
+每列的元素从上到下升序排列。
+
+示例 1：
+输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250107225703198.png" alt="image-20250107225703198" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/118335/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-5-4/?envType=study-plan-v2&envId=top-100-liked  只看 解法1就行
 
 ```java
-// 这道题的 代码和 
+
 class Solution {
 
    public boolean searchMatrix(int[][] matrix, int target) {
@@ -3396,32 +3555,35 @@ https://leetcode.cn/problems/first-missing-positive/solutions/2359860/que-shi-de
 https://leetcode.cn/problems/first-missing-positive/solutions/553194/yi-miao-jiu-neng-gao-dong-de-shi-pin-jie-et3v/?envType=study-plan-v2&envId=top-100-liked 解法二的图解 
 
 ```java
+/**   而对于一个 连续的正整数序列，下标从 0 开始，最好是 下标0存放1， 下标1存放2，也就是下标i处存放的 元素值就是 i+1 。
+	  所以我们要先遍历一下给定数组，调整 数组中每个元素x的位置，都放在 下标x-1的位置上。
+	 然后，方便后续 从头遍历数组 的时候，查找判断，缺失的最小正整数 是哪个。只要有个 下标位置上的元素 不符合 下标i+1，它就是 缺失的最小正整数。
 
+
+**/
 class Solution {
-    
+ 
     public int firstMissingPositive(int[] nums) {
         
         
-       // 第1轮循环：（原地，重排数组）
-        // 元素 x 应该放在数组中下标为 x-1 的位置上，所以要进行元素的交换）
-        for (int i = 0; i < nums.length; i++) {        
-           // 需要交换的 元素 x必须满足以下条件：大于等于1，元素小于等于数组长度，最后一个条件就是 不和 下标 x-1上的元素相等，不然的话 就会一直 无限while死循环。。。。。。。。
+       // 第1轮for循环：原地，重排数组
+        // 元素x 应该放在  数组中下标为x-1 的位置上，所以要进行 数组元素的交换
+        for (int i = 0; i < nums.length; i++) {       
+            
+        // 需要交换的 元素x 必须满足以下条件：元素值 大于等于1 并且 小于等于数组长度(防止越界)，最后一个条件就是，不和 下标x-1上 的元素相等，不然的话 就会一直 无限while死循环。。。
          while (nums[i] >= 1 && nums[i] <= nums.length && nums[i] != nums[nums[i] - 1]) { 
              // 因为可能交换一次之后，还有符合条件的元素，所以此处不用 if ，必须改用while，这样可以执行多次
-            	// 交换元素的三行代码，但是注意，对于数字x， 应该放在数组中下标为 x-1 的位置上
+            	// 交换数组元素，但是注意，对于数字x，应该放在数组中 下标为 x-1 的位置上
                         int temp = nums[i];
                         nums[i] = nums[temp-1];
-                        nums[temp-1] = temp;
-                
+                        nums[temp-1] = temp;   
             }
-            
-            
+ 
         }
         
         
-        // 第2轮循环：（查找缺失的最小正整数）
-        // 因为 元素x放在了 下标x-1的地方。如果for循环扫描的时候，发现nums[i]的值 不等于 i+1，那么就发生了缺失，就要返回 i+1  
-        
+        // 第2轮for循环： 查找缺失的最小正整数
+        // 因为 元素x放在了 下标x-1的地方。如果for循环扫描的时候，发现 nums[i]的元素值 不等于 下标i+1，那么就发生了缺失，就要返回 下标i+1  (也就是缺失的最小 正整数)
         for (int i = 0; i < nums.length; i++) {
             
             if (nums[i] != i + 1) 
@@ -3442,50 +3604,66 @@ class Solution {
 
 #### 单调栈
 
+题目描述：
+
+```
+给定一个整数数组 temperatures ，表示每天的温度，返回一个数组 answer ，其中 answer[i] 是指对于第 i 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 0 来代替。
+
+ 
+
+示例 1:
+
+输入: temperatures = [73,74,75,71,69,72,76,73]
+输出: [1,1,4,2,1,1,0,0]
+```
+
 题解：https://leetcode.cn/problems/daily-temperatures/solutions/609485/739-mei-ri-wen-du-dan-diao-zhan-xiang-ji-8kl5/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 这道题的话是 找右边的第一个比 当前元素大(栈顶元素)的 元素---->所以用的是 单调递增栈↑
+// 这道题的话是 找右边的第一个比 当前元素大(栈顶元素)的 元素---->所以用的是 单调递增栈↑(我这里是 栈顶-栈底，递增)
+// 单调递增栈↑，用于保存遍历过的数组元素。。这里保存的是 数组元素的下标i，而不是元素值nums[i]，这样方便计算，下标的差值(隔了多少天) ！！！！！！！！！
 
 class Solution {
+    
     public int[] dailyTemperatures(int[] temperatures) {
 
- // 递增栈，用于保存遍历过的数组元素。。这里保存的是 元素的下标！！而不是元素值。。。这个是根据题目所选的 
         Stack<Integer> st = new Stack<>();
            
         int size = temperatures.length;
 
-           // 用于保存最终的答案结果
+   // 用于保存最终的答案结果，也就是每个元素的 第一个比它大的元素值，它们之前下标的差值(隔了多少天)
         int[] result = new int[size];
 
-        // 因为先保存数组的第一个元素的下标值，所以就是0
+        // 因为栈保存的是 元素的下标i。所以 先保存数组的第一个元素的下标值0
         st.push(0);
-        // 所以for循环要从第二个元素，开始下标值就是1了。。而且是从左到右遍历
+        
+        // 然后for循环要从下标1 开始遍历，而且是从 左到右遍历→
         for (int i = 1; i < size; i++) {
 
-            //当前遍历的元素 小于< 栈顶元素，就直接插入 当前元素的下标值
+            //当前遍历的元素 小于< 栈顶元素，就直接插入 当前元素的下标值i
             if (temperatures[i] < temperatures[st.peek()])  
                 st.push(i);
-             //  当前遍历的元素 == 栈顶元素，就直接插入 当前元素的下标值
+             //  当前遍历的元素 == 栈顶元素，也是直接插入 当前元素的下标值
             else if (temperatures[i] == temperatures[st.peek()])  
                 st.push(i);
 
             
-         //  当前遍历的元素 大于> 栈顶元素，就说明此时的 遍历元素 是 比当前元素(栈顶元素)大的右边第一个元素，那么就要执行 逻辑操作，以及弹栈的操作
+  // 当前遍历的数组元素temperatures[i] 大于> 栈顶元素temperatures[st.peek()]，就说明此时已经找到  右边第一个 比栈顶元素大的 元素 ， 也就是当前遍历的数组元素temperatures[i] 
+         //  那么就要执行 弹栈 pop()的操作，以及 记录答案 res了 ！！！ 内部是while，因为要继续和栈里面的已有元素比较，如果还是 大于＞，说明又找到答案了。。。
             else {
 
-        // 里面的这个while循环肯定是要有的 ，而且终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素 小的，都弹出去。。。直到新元素遇到了比它 大的元素，才结束while循环
+    // 里面的这个while循环的终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素temperatures[i] 小的，都弹出去！！！
+    //直到 当前遍历的数组元素temperatures[i]遇到了 比它大的 栈内元素，才结束while循环
                 while (!st.isEmpty() && temperatures[i] > temperatures[st.peek()]) { 
 
-             //主要逻辑，，不同的题目，主要就是这里的写法不同。。。这里是 计算下标值的 差值
-         // 因为 result结果数组一开始初始化的时候，都为0，这里的话是为 某些下标赋值，，
+         //不同的题目，主要就是这里的 判断写法不同。。。这里是 计算下标值的 差值(相隔天数)
                     result[st.peek()] = i - st.peek();
 
                      //弹出栈顶元素。。。这个是必须要有的代码！！
                     st.pop();
                 }
 
-         // 当上面的while循环终止了，也就是直到新元素遇到了比它 大的元素，此时 才加入新元素的下标值。。。这个是必须要有的代码！！
+         // 当上面的while循环终止了，也就是直到新元素遇到了 栈里比它 大的元素，此时 才把新元素的下标值插入 单调栈。！！！
                 st.push(i);
             }
         }
@@ -3500,11 +3678,32 @@ class Solution {
 
 #### 单调栈
 
+题目描述：
+
+```
+给定一个循环数组 nums （ nums[nums.length - 1] 的下一个元素是 nums[0] ），返回 nums 中每个元素的 下一个更大元素 。
+
+数字 x 的 下一个更大的元素 是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1 。
+
+ 
+
+示例 1:
+
+输入: nums = [1,2,1]
+输出: [2,-1,2]
+解释: 第一个 1 的下一个更大的数是 2；
+数字 2 找不到下一个更大的数； 
+第二个 1 的下一个最大的数需要循环搜索，结果也是 2。
+```
+
 题解：https://leetcode.cn/problems/next-greater-element-ii/solutions/611205/503-xia-yi-ge-geng-da-yuan-su-iidan-diao-9ez5/
 
 ```java
-// 1、这道题 主要和之前的 每日温度一样。。找右边的第一个比 当前元素(栈顶元素)大的 元素---->所以用的是 单调递增栈↑
-// 2、只不过呢，，，有个特殊的地方 。就是说 可以找当前元素的 第一个比它大的元素，还可以从头开始遍历找。。也就是“环形”。。主要是这个地方的处理。。那么就是 for循环遍历数组nums[]的 终止条件变成2倍的 size，然后要对 i取模size，防止下标溢出嘛！！  其实这个就是 等价于 原来的数组后面再接上 自身数组 。。。
+// 1、这道题 和之前的 每日温度 思路一样。。找右边的第一个比 当前元素(栈顶元素)大的 元素---->所以用的是 单调递增栈↑ (我这里是 栈顶-栈底，递增)
+// 而且这里保存的是 数组元素的下标i，而不是元素值nums[i]，这样方便计算。
+
+// 2、只不过呢，这道题有个特殊的地方。就是说 找右边第一个比它大的元素，还可以从头开始遍历找。。也就是“环形”数组。。主要是这个地方的处理。。
+// 那么就是 for循环遍历数组nums[]的 终止条件，变成 2倍的size，然后要对 i 取模size，防止下标溢出嘛！！
 
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
@@ -3523,12 +3722,12 @@ class Solution {
 
         // 因为先保存数组的第一个元素的下标值，所以就是0
         st.push(0);
-        // 所以for循环要从第二个元素，开始下标值就是1了。。而且是从左到右遍历。。。
-
-
-        // 这里由于可以“环形”的从头开始再遍历数组，所以要2*size作为终止条件，以及 每次都是要 i取模 %size
+        
+        // 所以for循环要是从 左到右遍历→
+        // 这里由于是“环形”数组，说明可以 从头开始 再遍历数组，所以要2*size作为终止条件，以及 每次都是要 i取模 %size
         for (int i = 1; i < 2*size; i++) {
-                // 这个很关键 
+            
+                // 这行代码很关键 
             int  j = i%size;
 
             //当前遍历的元素 小于< 栈顶元素，就直接插入 当前元素的下标值
@@ -3539,10 +3738,12 @@ class Solution {
                 st.push(j);
 
             
-               //  当前遍历的元素 大于> 栈顶元素，就说明此时的 遍历元素 是 比当前元素(栈顶元素)大的右边第一个元素，那么就要执行 逻辑操作，以及弹栈的操作
+             // 当前遍历的数组元素nums[j] 大于> 栈顶元素nums[st.peek()]，就说明此时已经找到  右边第一个 比栈顶元素大的 元素 ， 也就是当前遍历的数组元素nums[j] 
+         //  那么就要执行 弹栈 pop()的操作，以及 记录答案 res了 ！！！ 内部是while，因为要继续和栈里面的已有元素比较，如果还是 大于＞，说明又找到答案了。。。
             else {
-
-        // 里面的这个while循环肯定是要有的 ，而且终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素 小的，都弹出去。。。直到新元素遇到了比它 大的元素，才结束while循环
+     
+                 // 里面的这个while循环的终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素nums[j] 小的，都弹出去！！！
+    //直到 当前遍历的数组元素nums[j]遇到了 比它大的 栈内元素，才结束while循环
                 while (!st.isEmpty() && nums[j] > nums[st.peek()]) { 
 
             // 主要逻辑，，不同的题目，主要就是这里的写法不同。。。这里是 赋值对应的 第一个比当前元素大的  元素值！！！
@@ -3570,28 +3771,41 @@ class Solution {
 
 #### 单调栈
 
+题目描述：
+
+```
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+示例 1：
+输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+输出：6
+解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250109005154623.png" alt="image-20250109005154623" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/trapping-rain-water/solutions/616404/42-jie-yu-shui-shuang-zhi-zhen-dong-tai-wguic/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 1、这道题 主要和之前的 每日温度一样。。找右边的第一个比 当前元素(栈顶元素)大的 元素-->所以用的是 单调递增栈↑
-
-// 2、 这道题，还要找 从左边的第一个比当前元素大的 元素，那么就是要栈顶元素的里面的下一个相邻元素。
+// 1、这道题 ，其实就是 找左边的第一个大的元素 和 右边第一个大的元素，比较最小值，然后计算高和宽，就能计算面积了-->所以用的是 单调递增栈↑(我这里是 栈顶-栈底，递增)
+// 递增栈，用于保存遍历过的数组元素。。这里保存的是 元素的下标！！而不是元素值。。。方便后续计算
 
 class Solution {
     public int trap(int[] height) {
 
- // 递增栈，用于保存遍历过的数组元素。。这里保存的是 元素的下标！！而不是元素值。。。这个是根据题目所选的 
+ 
         Stack<Integer> st = new Stack<>();
            
         int size = height.length;
 
-           // 用于保存最终的答案结果，也就是 对于数组中的每一个nums[i]，看它能接到的雨水面积，最后累加。
+// 用于保存最终的答案结果，也就是 对于数组中的每一个nums[i]，看它能接到的雨水面积大小 ，最后累加。
         int sum=0;
 
         
         // 因为先保存数组的第一个元素的下标值，所以就是0
         st.push(0);
-        // 所以for循环要从第二个元素，开始下标值就是1了。。而且是从左到右遍历
+        
+        // 所以for循环要 从左到右遍历→
         for (int i = 1; i < size; i++) {
 
             //当前遍历的元素 小于< 栈顶元素，就直接插入 当前元素的下标值
@@ -3602,30 +3816,32 @@ class Solution {
                 st.push(i);
 
             
-             //  当前遍历的元素 大于> 栈顶元素，就说明此时的 遍历元素 是 比当前元素(栈顶元素)大的右边第一个元素，那么就要执行 逻辑操作，以及弹栈的操作
+            // 当前遍历的数组元素height[i] 大于> 栈顶元素height[st.peek()]，就说明此时已经找到  右边第一个 比栈顶元素大的 元素 ， 也就是当前遍历的数组元素height[i] 
+         //  那么就要执行 弹栈 pop()的操作，以及 记录答案 res了 ！！！ 内部是while，因为要继续和栈里面的已有元素比较，如果还是 大于＞，说明又找到答案了。。。
             else {
 
-        // 里面的这个while循环肯定是要有的 ，而且终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素 小的，都弹出去。。。直到新元素遇到了比它 大的元素，才结束while循环
+          // 里面的这个while循环的终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素height[i] 小的，都弹出去！！！
+    //直到 当前遍历的数组元素height[i]遇到了 比它大的 栈内元素，才结束while循环
                 while (!st.isEmpty() && height[i] > height[st.peek()]) { 
 
                     
-     //主要逻辑，不同的题目，主要就是这里的写法不同。。这里是计算，数组中的每一个nums[i]，能接雨水的面积 
-         // 这里比较”特殊“，要先把 栈顶元素(当前元素)弹出来！那么剩下的栈中的下一个元素 就是 栈顶元素的 左边第一个比它大的元素，不过要先保留这个中间的元素 mid。。。
+     //主要逻辑，不同的题目，主要就是这里的写法不同。。这里求的是，数组中的每一个nums[i]，能接雨水的面积大小
+         // 这里比较”特殊“，要先把！！！栈顶元素 弹出来！！然后保留 栈顶元素 作为中间值mid 。。。那么 剩下的栈顶元素 就是 之前的栈顶元素的 左边第一个比它大的元素。。。同时 在上面我们也找到了比 之前栈顶元素 右边第一个大的元素(当前遍历的数组元素)。。。接下来就只需要判断，高宽，计算面积了
                     int mid = st.pop();
                     
-                 // 计算雨水的 高和宽，这里要先 if判断一下栈是否空，因为要左侧和右侧！！一定要记得！！
+       // 想要计算之前栈顶元素mid，可以接收的 雨水的高和宽。。这里要先 if判断一下栈是否空，因为要左侧和右侧！！一定要记得！！
 					 if (!st.empty()) {
-               // 左边的第一个大的，和 右边第一个大进行比较，找到其中较小值。然后 和 中间mid 值作差，就能算出 雨水的高。
+               // 左边的第一个大的，和 右边第一个大进行比较，找到其中较小值。然后 和 之前栈顶元素mid值 作差，就能算出 雨水的高h。
                int h = Math.min(height[st.peek()], height[i]) - height[mid];
-               int w = i - st.peek() - 1; // 注意减一，只求中间宽度，具体可以草稿画图 ！！
+               int w = i - st.peek() - 1; // 注意减一，就能求出 雨水宽度w 
                         
-                         // 雨水面积累加
+                         // 雨水面积(长*宽)，累加
                          sum += h * w;
                     }
         
                 }
 
-         // 当上面的while循环终止了，也就是直到新元素遇到了比它 大的元素，此时 才加入新遍历的元素的下标值。。。这个是必须要有的代码！！
+         // 当上面的while循环终止了，也就是直到新元素遇到了 栈里比它 大的元素，此时 才把新元素的下标值插入 单调栈。！！！
                 st.push(i);
             }
         }
@@ -3640,101 +3856,156 @@ class Solution {
 
 #### 单调栈
 
+题目描述：
+
+```
+给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+示例 1:
+
+输入：heights = [2,1,5,6,2,3]
+输出：10
+解释：最大的矩形为图中红色区域，面积为 10
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250109095903263.png" alt="image-20250109095903263" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/893994/dai-ma-sui-xiang-lu-dai-ni-gao-ding-dan-e3cak/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 1、这道题 主要和之前的 ”接雨水“题目的思路，相反！！找右边的第一个比 当前元素(栈顶元素)小的元素------->所以用的是 单调递减栈↓ 
-
-// 2、这道题，还要找 从左边的第一个比当前元素小的 元素，那么就是要栈顶元素的里面的下一个相邻元素。
-
-//3、这道题对于”接雨水“这题，更特殊了点，因为如果 原始的 height数组是 [1,2,3,5] 递增，会有问题，比如入栈了也不进入 计算面积这段代码;以及原始的 height数组是 [5,4,3,2,1] 递减，也会有问题，因为 每次弹栈的时候，会少左侧的元素，也导致不计算面积！！  --->所以要 对初始的height 数组 首尾加 0元素！
+    // 1、这道题 ，其实就是 找左边的第一个小的元素 和 右边第一个小的元素，比较最小值，然后计算高和宽，就能计算面积了 -->所以用的是 单调递增减↓(我这里是 栈顶-栈底，递减)
+    // 递增栈，用于保存遍历过的数组元素。。这里保存的是 元素的下标！！而不是元素值。。。方便后续计算
 
 
-class Solution {
-    public int largestRectangleArea(int[] heights) {
+    //2、这道题，有点特殊，因为如果 原始的 height数组是 [1,2,3,5] 递增，会有问题，比如 入栈了 也不会 计算面积  ;以及原始的 height数组是 [5,4,3,2,1] 递减，也会有问题，因为 每次弹栈的时候，会少左侧的元素，也导致不计算面积！！  --->所以要 对初始的height 数组 首尾加 0元素！
 
- // 递增栈，用于保存遍历过的数组元素。。这里保存的是 元素的下标！！而不是元素值。。。这个是根据题目所选的 
-        Stack<Integer> st = new Stack<>();
-           
-    // 对原来数组扩容，返回一个新数组newHeights。在头和尾各加入一个元素 0 ！！！这个很关键！！！
-        int [] newHeights = new int[heights.length + 2];
-        newHeights[0] = 0;
-        newHeights[newHeights.length - 1] = 0;
-		
-        // 对中间的，要原封不动的一一复制过来
-        for (int i = 0; i < heights.length; i++){
-            newHeights[i + 1] = heights[i];
-        }
+    class Solution {
+        public int largestRectangleArea(int[] heights) {
 
-		int newsize = newHeights.length;
-			
-   // 这题的求最大值，初始化result 不应该是 Integer.MIN_VALUE，因为 面积的最小值也只是 从0开始 
-           // 用于保存最终的答案结果，也就是 对于数组中的每一个nums[i]，看它能形成的矩阵面积，需要不断比较更新的
-        int result= 0;
 
-        
-        // 因为先保存数组的第一个元素的下标值，所以就是0
-        st.push(0);
-        // 所以for循环要从第二个元素，开始下标值就是1了。。而且是从左到右遍历
-        for (int i = 1; i < newsize; i++) {
+            Stack<Integer> st = new Stack<>();
 
-        //因为这道题是递减栈↓ ，所以当前遍历的元素 大于＞ 栈顶元素，就直接插入 当前元素的下标值
-            if (newHeights[i] > newHeights[st.peek()])  
-                st.push(i);
-             //  当前遍历的元素 == 栈顶元素，就直接插入 当前元素的下标值
-            else if (newHeights[i] == newHeights[st.peek()])  
-                st.push(i);
+        // 对原来数组扩容，返回一个新数组newHeights。在头和尾各加入一个元素 0 ！！！这个很关键！！！
+            int [] newHeights = new int[heights.length + 2];
+            newHeights[0] = 0;
+            newHeights[newHeights.length - 1] = 0;
 
-            
-                //  当前遍历的元素 小于＜ 栈顶元素，就说明此时的 遍历元素 是 比当前元素(栈顶元素)小的右边第一个元素，那么就要执行 逻辑操作，以及弹栈的操作
-            else {
-
-        // 里面的这个while循环肯定是要有的 ，而且终止条件是两个！！！因为是维护的单调递减栈↓，所以 要把 栈中 比当前遍历元素 大的，都弹出去。。。直到新元素遇到了比它 小的元素，才结束while循环
-                while (!st.isEmpty() && newHeights[i] < newHeights[st.peek()]) { 
-           
-     //主要逻辑，不同的题目，主要就是这里的写法不同。。这里是计算，数组中的每一个nums[i]，能形成的矩形面积，这个值需要不断和前面的 面积 比较！！
-                    
-         // 这里比较”特殊“，要先把 栈顶元素(当前元素)弹出来！那么剩下的栈中的下一个元素 就是 栈顶元素的 左边第一个比它大的元素，不过要先保留这个中间的元素 mid。。。和”接雨水“类似
-                    int mid = st.pop();
-                    
-         // 和”接雨水“一样！！这里仍要先 if判断一下栈是否空，因为要左侧和右侧！！一定要记得！！
-					 if (!st.empty()) {
-            	   	
-                    int left = st.peek();
-                    int right = i;
-                    int w = right - left - 1; // 注意减一，只求中间宽度，具体可以草稿画图！
-                    int h = newHeights[mid];   
-                    result = Math.max(result, w * h);
-        
-                    }
-        
-                }
-
-         // 当上面的while循环终止了，也就是直到新元素遇到了比它 大的元素，此时 才加入新遍历的元素的下标值。。。这个是必须要有的代码！！
-                st.push(i);
+                 // 把原来数组，要原封不动的一一复制到 新数组中。
+            for (int i = 0; i < heights.length; i++){
+                newHeights[i + 1] = heights[i];
             }
+
+            int newsize = newHeights.length;
+
+
+
+     // result变量 用于保存最终的答案结果，也就是 对于数组中的每一个nums[i]，看它能形成的矩阵面积，需要不断比较更新的
+            int result= 0;
+
+
+            // 因为先保存数组的第一个元素的下标值，所以就是0
+            st.push(0);
+
+            // 所以for循环要从左到右遍历→
+            for (int i = 1; i < newsize; i++) {
+
+            //因为这道题是递减栈↓ ，所以当前遍历的元素 大于＞ 栈顶元素，就直接插入 当前元素的下标值
+                if (newHeights[i] > newHeights[st.peek()])  
+                    st.push(i);
+                 //  当前遍历的元素 == 栈顶元素，就直接插入 当前元素的下标值
+                else if (newHeights[i] == newHeights[st.peek()])  
+                    st.push(i);
+
+
+                   // 当前遍历的数组元素newHeights[i] 小于＜ 栈顶元素newHeights[st.peek()]，就说明此时已经找到  右边第一个 比栈顶元素小的 元素 ， 也就是当前遍历的数组元素newHeights[i] 
+             //  那么就要执行 弹栈 pop()的操作，以及 记录答案 res了 ！！！ 内部是while，因为要继续和栈里面的已有元素比较，如果还是 小于＜，说明又找到答案了。。。
+                else {
+
+          // 里面的这个while循环的终止条件是两个！！！因为是维护的单调递增栈↑，所以 要把 栈中 比当前遍历元素newHeights[i] 大的，都弹出去！！！
+        //直到 当前遍历的数组元素newHeights[i]遇到了 比它小的 栈内元素，才结束while循环
+                    while (!st.isEmpty() && newHeights[i] < newHeights[st.peek()]) { 
+
+         //主要逻辑，不同的题目，主要就是这里的写法不同。。这里是计算，数组中的每一个newHeights[i]，能形成的矩形面积，这个值需要不断和前面的面积result 比较，得出最大值 !!
+
+            // 这里比较”特殊“，要先把！！！栈顶元素 弹出来！！然后保留 栈顶元素 作为中间值mid 。。。那么 剩下的栈顶元素 就是 之前的栈顶元素的 左边第一个比它小的元素。。。同时 在上面我们也找到了比 之前栈顶元素 右边第一个小的元素(当前遍历的数组元素)。。。接下来就只需要判断，高宽，计算面积了
+                        int mid = st.pop();
+
+      // 这里仍要先 if判断一下栈是否空，因为 每个newHeights[i]要有左侧和右侧，才能计算面积！！一定要记得！！
+                         if (!st.empty()) {
+					
+                             
+                      // 这里只需要计算宽w 就可以了 
+                        int left = st.peek();
+                        int right = i;
+                        int w = right - left - 1; // 注意减一，只求中间宽度
+                        
+ //然后 高h的话，就是 当前mid下标对应的元素值。其实，就是画个图，它向右边横向扩展一个自己柱子，计算面积
+                        int h = newHeights[mid];   
+                        
+                             // 和之前的 最大柱子面积，不断比较更新。
+                        result = Math.max(result, w * h);
+
+                        }
+
+                    }
+
+             // 当上面的while循环终止了，也就是直到新元素遇到了比它 小的元素，此时 才加入新遍历的元素的下标值。。。这个是必须要有的代码！！
+                    st.push(i);
+                }
+            }
+
+            return result;
+
         }
-
-        return result;
-
     }
-}
 ```
 
 
 
 ### 11 盛最多水的容器
 
-#### 双指针双向指针
+#### 双指针相向指针
+
+#### 贪心
+
+题目描述：
+
+```
+给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
+
+找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+返回容器可以储存的最大水量。
+
+说明：你不能倾斜容器。
+
+
+示例 1：
+
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49 
+解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250110004648096.png" alt="image-20250110004648096" style="zoom:50%;" />
 
 题解：https://leetcode.cn/problems/container-with-most-water/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
-// 这道题和 。。“单调栈" 没关系 !!!
 
-// 若向内 移动短板 ，水槽的短板 min(h[i],h[j]) 可能变大，因此下个水槽的面积 可能增大↑；若向内移动长板 ，水槽的短板 不变或变小，因此下个水槽的面积 一定变小↓ 。
+// 把数组中的每一个元素值，当作一块板。。。。。此时左右边界 有两块板。。。。
 
-//因此，初始化双指针分列水槽左、右两端，循环每轮将 短板 向内移动一格，并更新面积最大值，直到两指针相遇时跳出，即可获得最大面积。
+/** 
+	若向内 移动短板 ，水槽的短板 min(h[i],h[j]) 可能变大，因此下个水槽的面积 可能增大↑；
+ 	若向内 移动长板 ，水槽的短板 不变或变小，因此下个水槽的面积 一定变小↓ 。
+因为  长板先不动，每次都移动 短板，向中间 移动一个位置，遍历里面的 元素， 就可能会找到 水槽的面积最大值-----》  也就是  “贪心”的思想 
+
+**/
+
+// 因此，初始化双指针，分别指向 数组 左、右两端，每次循环，都将 短板 向内移动一格，并更新面积最大值，直到两指针相遇时跳出，即可获得最大面积。。
+
 class Solution {
     public int maxArea(int[] height) {
 
@@ -3747,24 +4018,22 @@ class Solution {
                   // 进行条件判断 
         if (height[left] < height[right]) {
 			
-            // 要不要再减去1，画个草稿图就行了
+
             // 计算面积：(右指针 - 左指针) * 左指针对应高度
             // 每次都要更新res  为当前最大面积
             res = Math.max(res, (right - left) * height[left]);
-            left++; // 左指针向右移动
+            left++; // 左指针向右移动(向内)
 
         } 
             // 如果height[left]大于或等于height[right]  
             else {
 
-           
             // 计算面积：(右指针 - 左指针) * 右指针对应高度
             // 每次也要更新res  为当前最大面积 
-        res = Math.max(res, (right - left) * height[right]);
-            right--; // 右指针向左移动
+        	res = Math.max(res, (right - left) * height[right]);
+            right--; // 右指针向左移动(向内)
 
         }
-
 
         }
         
@@ -3778,12 +4047,47 @@ class Solution {
 
 #### 单调队列
 
+题目描述：
+
+```
+给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回 滑动窗口中的最大值 。
+
+ 
+
+示例 1：
+
+输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+输出：[3,3,5,5,6,7]
+解释：
+滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+
+题解：https://leetcode.cn/problems/sliding-window-maximum/solutions/10025/shuang-xiang-dui-lie-jie-jue-hua-dong-chuang-kou-2/
+
 ```java
+// 这道题用 双端队列  + 单调队列来实现，使用的是 单调递减队列↓ (队头-队尾，递减)(队头永远是最大值)
+
+// 这道题，主要是遍历数组新元素的时候，要和 队尾的元素比较，如果是小于等于的话，那么直接插入就行 。如果 新元素比 队尾元素大，就要把 队尾元素弹出来，直接弹，直到新元素遇到了 比它大的，才把它插入队列。
+
+//  双端队列里面 保存的是 元素的下标！！而不是元素值。。。 因为每次遍历的时候，已经形成 定长窗口k，其实 直接从 队头取值(单调递减队列↓，所以它永远是最大值) 作为答案就行。。。但是 还要 判断队头的值是否在窗口范围k 之内。。。所以保存数组下标，可以很方便知道 队头元素在不在 范围里。。。同时下标取值也很方便。  
+
+
+
+
+
 class Solution {
     public int[] maxSlidingWindow(int[] nums, int k) {
 		
-  // 这里 单调队列里面存入的仍然是 元素的下标 ！！！ 和单调栈有点像。。主要是为了后面的方便比较大小
-
+ 
         // 保存每个窗口的最大值，用list集合来保存
         List<Integer> res = new ArrayList<>();
 			
@@ -3791,36 +4095,31 @@ class Solution {
         Deque<Integer> queue = new ArrayDeque<>();
 
         
-        // 遍历数组中元素，right表示滑动窗口右边界
+        // 1.遍历数组中元素，right 表示 滑动窗口的 右边界 
         for(int right = 0; right < nums.length; right++) {
 
-			
-        // 1. ------ >>>> 单调队列的开始部分，这里的话 队头是 最大值，所以是 单调递减队列↓
-              
-            // 如果队列不为空且当前遍历元素  大于等于队尾元素，则将队尾元素移除。
-            
+
+            // 如果队列不为空，并且 当前遍历的新元素 大于等于 >= 队尾元素，则将队尾元素移除
+            // 又因为可能会满足多次 出队，所以用 while 循环。。。
             while (!queue.isEmpty() && nums[right] >= nums[queue.peekLast()]) 
                 queue.pollLast();
            		            
-         //  直到，队列为空或当前遍历元素  小于  新的队尾元素的时候。才存储元素下标
+    //如果 队列为空 或者 当前遍历的新元素  小于  新的队尾元素的时候，才插入，存储元素下标
             queue.offerLast(right);
             
-           // 单调队列的 结束 部分  <<<<  -------- 
             
-            
-   // 2.当前遍历元素添加之后，都要重新 计算滑动窗口的左边界。。这个+1 草稿纸上 想想就知道了。。。
+   // 2.当前遍历的新元素  添加之后 ，都要重新 计算滑动窗口的左边界left。。
             int left = right - k +1;
             
-            // 当队首元素(当前窗口的最大值)，的下标小于 滑动窗口的左边界left时
-            // 表示队首元素 已经不在 滑动窗口内 ！！因此将其从队首移除
+            // 当队头元素(当前窗口的最大值) 的下标，小于 滑动窗口的左边界left时
+            // 表示队头元素 已经不在 滑动窗口内 ！！因此将其从队头移除
             if (queue.peekFirst() < left)
                 queue.pollFirst();
-            
-
-            
-             //！！！！这个肯定也要 注意的 ！！
-  // 3.由于数组下标从0开始，因此当 滑动窗口右边界 right+1 大于等于窗口大小k时，意味着 定长k的    滑动窗口，已经形成
-            //  所以，之后的话，每次循环的结束处，队首元素 就是该窗口内的 最大值，要 保存一下
+                       
+          
+  // 3.因此当 滑动窗口右边界 right+1 大于等于 窗口大小k时，意味着 定长k的 滑动窗口，已经形成
+      // 并且 队头元素在  滑动窗口内！！
+            //  此时 队首元素 就是该窗口内的 最大值，直接当作答案，保存一下就行。
             
             if (right +1 >= k) {
                 res.add(nums[queue.peekFirst()]);
@@ -6346,6 +6645,16 @@ class Solution {
 }
 
 ```
+
+
+
+
+
+
+
+
+
+
 
 ### 136 只出现一次的数字
 
@@ -13260,54 +13569,53 @@ https://www.bilibili.com/video/BV1AV4y1n7Zt/?spm_id_from=333.788&vd_source=5fe50
 
 ### 栈
 
-  一般就是 Stack 数据结构   
+  一般就是 **Stack** 数据结构   
 
  **“先进后出”**，适合 “**<u>相邻</u>**” ，“**<u>匹配</u>**” 的情况，主要还是 “ **<u>相邻</u> **”。大致的思路就是，如果匹配的话就要 “出”栈 pop( )；不匹配的话 “入”栈 push( ) 。
 
 ### 队列
 
-  一般就是 Deque 双端队列 数据结构
+ 一般就是 **Deque** 双端队列 数据结构，它在**两端**都可以 **插入和弹出** 元素，更加高级。
 
 **“先进先出”**，如果一端 进入，一端 出去，比如  **固定长度k** 的 **滑动窗口**，就可以考虑用 **<u>队列</u>** 
 
 ### 单调栈
 
- 一般就是 Stack 数据结构   
+ 一般就是 **Stack** 数据结构  
 
-   一种特殊的栈。在栈的「先进后出」规则基础上。其中满足 **从栈顶到栈底的元素  是 "始终保持" 单调递增** 或 **单调递减**的 栈，**每次  加入或者  删除元素 时都保持序列里的元素  有序**，即保证 **栈顶**元素 始终是**最小值**或者  **最大值** ，叫做「**单调栈**」
+   一种特殊的栈 (**横着摆**) 。**保存** 之前**遍历过**的元素 。其中满足 **从栈顶 - 栈底的元素  是 "始终" 单调递增**↑   或 **单调递减**↓ 的栈。每次 遍历数组 **新元素**时，通过和 **栈顶**元素进行**比较 **，根据它们的大小情况 ( 3种 )， **直接插入**新元素  或者  **弹出** 栈中的元素，**从而保持 单调栈里的元素  有序**。保证 **栈顶**元素 始终是**最小值**或者  **最大值** ，叫做「**单调栈**」。
 
-每次元素入栈 时候，把某些元素 **出栈 丢弃**，从而保证 **有序**。要“  **手动**  ”编码实现，就是些 if **判断语句 **！  
+​    以 单调**递增栈↑**为例，当遍历一个**新元素**的时候，它**大于**＞**栈顶**元素，就会进入**内部**的 **while** 循环判断， 就要**开始弹出 **栈顶元素了， 说明**此时**找到**答案**了，**被弹出**的元素(**栈顶**)   找到了   **右边比他第一个大** 的元素(也就是 **新元素**)，此时就要记录res答案。。。。然后继续向栈里面的元素 **不断比较**，如果又大于，就又要弹出栈，再记录下答案。。
 
 ​	https://www.bilibili.com/video/BV1my4y1Z7jj/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0     视频版本
 
-​     https://blog.csdn.net/weixin_50348837/article/details/136304458   文字版本，含有 **代码模板**
+​     https://blog.csdn.net/zy_dreamer/article/details/131036101   文字版本，含有 **代码模板**
 
 
 
-总结一下 单调栈里，存放的是  数组num[ ]元素的什么 （这个得看具体题目要求什么）：
+总结一下 单调栈里，**存放的是**  数组num[ ]元素的什么 （这个得看具体题目要求什么）：
 
-① 元素的下标，这个更常用！！
+① 元素的**下标**，这个更常用！！
 
 ② 元素值
 
-总结一下选 递增 or 递减栈（因为这会决定 **代码模板** 某些地方的书写）：
+总结一下选 递增↑ or 递减栈↓（因为这会决定 **代码模板** 某些地方的书写，要稍微 **反一下**）：
 
-① 如果题目中 找左边或者右边 比当前遍历元素 大的元素时候，那么就用 单边递增栈↑。栈顶-栈底，递增
+① 如果题目中 找**左边或者右边的第一个** 。。 **大的元素**时，就用 单边**递增栈**↑。栈顶(小)-栈底(大)，递增
 
-② 如果题目中 找左边或者右边 比当前遍历元素 大的元素时候，那么就用 单边递减栈↓。栈顶-栈底，递减
+② 如果题目中 找左边或者右边的第一个 。。 **小**的元素时，就用 单边**递减栈**↓。栈顶(大)-栈底(小)，递减
 
-总结一下：
+总结一下：for循环的**遍历顺序**
 
-① 不管是什么类型的题目，**都是**   for循环从左到右开始遍历  数组num[ ] 
+① 不管是什么类型的题目，**都是**   for循环 **从左到右**→ 开始遍历  数组nums[ ] 
 
 
 
 ### 单调队列
 
-  一般就是 Deque 双端队列 数据结构
+   一般就是 **Deque** 双端队列 数据结构，它在**两端**都可以 **插入和弹出** 元素，更加高级。
 
-  一种特殊的队列。在栈的「先进先出」规则基础上，**<u>队列</u>**中的元素  **"始终保持" 着单增或者单减**  的特性。
-在每次  **加入或者  删除元素** 时都**保持序列里的元素**  **有序**，即保证  **队首元素** 始终是  **最小值**或者  **最大值** ，叫做「**单调队列**」
+  一种特殊的队列，**横着**的。在队列的「先进先出」规则基础上，**<u>队列</u>**中的元素  **"始终保持" 着单增或者单减**  的特性。每次 遍历数组 **新元素**时，通过和 **队尾**元素进行**比较 **，根据它们的大小情况 ( 3种 )， **直接插入**新元素  或者  **弹出** 队尾的元素，从而 **保持序列里的元素**  **有序**，即保证  **队头元素** 始终是  **最小值**或者  **最大值** ，叫做「**单调队列**」
 
 每次元素入队 时候，把某些元素 **出队 丢弃**，从而保证**有序**。要“ **手动** ”编码实现，就是些 if **判断语句** ！
 
@@ -13315,9 +13623,9 @@ https://blog.csdn.net/m0_63997099/article/details/137123780  看 二、 就行
 
 
 
-① 其实这个 单调队列和 单调栈有点像的。。。一般都是存入元素的 下标。。。
+① 其实这个 单调队列 **和** **单调栈** **有点像**的。。。一般都是存入元素的 **下标**。。。
 
-② 单调递减队列↓，队头是最大的元素 
+② 单调**递减**队列↓，**队头 ** 是  **最大**的元素 
 
 ​     单调递增队列↑，对头是最小的元素
 
@@ -13338,8 +13646,6 @@ https://blog.csdn.net/m0_63997099/article/details/137123780  看 二、 就行
 ![image-20240724202518330](C:\Users\zwj90\AppData\Roaming\Typora\typora-user-images\image-20240724202518330.png)
 
 https://blog.csdn.net/studyForMokey/article/details/128955587  看 二、
-
-
 
 
 
@@ -13629,13 +13935,13 @@ https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%B
 
 ### 方法详解
 
-这个贪心的方法其实是最难的。。。因为没有特定的 解题模板。。。
+这个贪心的方法其实是最难的。。。因为**没有**特定的 **解题模板**。。。
 
 
 
-大致的思考方向就是：局部最优—》全局最优， 并且找不到明显的反例。
+大致的思考方向就是：**局部最优**—》全局最优， 并且找不到明显的反例。
 
-大部分都是 常识，数字证明，但是不需要话很多时间 去证明和搞懂他们，知道结论公式就行了。
+大部分都是 **常识**，**数字证明**，但是**不需要**花很多时间 **去证明**和搞懂他们，**知道结论**公式 **就行了**。
 
 # SQL语句
 
