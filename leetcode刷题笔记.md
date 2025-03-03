@@ -3042,7 +3042,17 @@ class Solution {
 题目描述：
 
 ```
+给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
 
+请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+ 
+
+示例 1：
+
+输入：nums = [100,4,200,1,3,2]
+输出：4
+解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。
 ```
 
 题解：https://leetcode.cn/problems/longest-consecutive-sequence/solutions/344825/java-pai-xu-ji-he-ha-xi-biao-bing-cha-ji-by-lzhlyl/?envType=study-plan-v2&envId=top-100-liked
@@ -10287,7 +10297,7 @@ class Solution {
 
 若它的右子树不空，则 右  子树上所有结点的值均  大于  它的  根结点  的值
 
-它的左、右子树  也分别为  二叉  搜索  树，其实么就是 二叉  排序  树
+它的左、右子树  也分别为  二叉  搜索  树，其实么就是 二叉  排序树（二叉 搜索树）
 
 ![image-20240927112050838](https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20240927112050838.png)
 
@@ -10309,7 +10319,7 @@ class Solution {
 
 ​        如果是 **<u>主函数</u>** 要返回的是**<u>int 、boolean、TreeNode</u>** 等 类型，常见情况↑，就只需要 对这个  **<u>主函数</u>**  当成   **<u>递归函数</u>** 就行，返回值类型就是自带的，形参也是自带的就行，然后开始 书写代码；较少情况↓ 如果 !!!! 分析题目发现， 自带的主函数给的 形参不太好用的话，那么 才需要在下面再 定义个 **“次”递归函数**，那么就要定义多个 形参，形参的个数和类型就得自己好好考虑咯，当然 返回值类型  和 主函数 肯定是 一样 ；较少的情况↓ ，是 返回值类型 不一样的，如  **<u>主函数</u>**  返回值是boolean，但 **“次”递归函数** 是 void，那是因为这里是 传入了一个  list集合 形参 不断变化，最终对 list 作出判断 。最后要在 主函数里面 调用    下面定义的递归函数，传入对应的参数即可，一般调用之后就 直接 return 就行了 ，主函数的代码是最少的
 
-​	  有时候，我们也会定义一些**全局变量** 比如 max 或者Hashmap，写在方法的 最外面，为了 能让下面的递归函数使用它。
+​	  有时候，我们也会定义一些**全局变量** 比如 **max** 或者 **Hashmap**，**写在方法**的 **最外面**，为了 **能让下面**的**递归函数**  使**用它**。
 
  2、确定  **终止条件** 
      我们在写  递归函数时候，必须  要写  **递归出口** 。主要是 if(...) 里面的 **判断逻辑**  怎么书写, 就是**<u>不</u> ** **满足题意 和 遍历到空节点null(传入空树)**的几个情况要写在**递归出口**，**但是有时候**却只需要考虑 **遍历到空节点null(传入空树)** 的情况，    下面的**单层递归逻辑代码**就是  **符合**题意 且  **非空**的情况了 。多数情况的话↑，都是遍历到二叉树最下面的 空节点      if (root ==null) ，才是递归出口；多数情况↑，只有一个递归出口，形式都是 if （root ==null） return  。      比如说 如果 递归函数的返回值 是 void  ，那就是 if(root ==null)  return     。如果 递归函数 的返回值 是 int ，那就是  if(root ==null)  return 0 或其他数字。如果是  boolean 那么就是 if(root ==null)  return true 或 false；较少情况↓，有多个 递归出口 ，也就是  if (...)  return   if (...)  return  if (...)  return 
@@ -10319,7 +10329,7 @@ class Solution {
   3、确定  **单层递归 **的  **逻辑代码** 
          先确定你用 哪种 **遍历顺序**，一般只用 **<u>前序</u>** 或  **后序** 的**递归**，这样才能 确定   单层递归的   **逻辑代码** 写在**哪**。不过主要还是    这段**逻辑代码**   应该怎么写 。如果是 **<u>修改  和 寻找</u>** 二叉树的话,适合 <u>**前序**</u>  ，那么就是     **逻辑代码** 写在**<u>最前面</u>** ，剩下的两行 就是 递归函数名。对于**<u>修改</u>** 而言，一般是**<u>创建</u>**二叉树、二叉树 **<u>增加</u>**节点、二叉树**<u>删除</u>**节点，剩下的两行要用**<u>root.left</u>**和 **<u>root.right</u>**去  **<u>接收</u>**  递归函数处理后的 左子树和右子树。对于**<u>查找</u>**而言，那么就只需要return 递归函数就行了，**<u>不需要</u>** root.left和root.right去接收;如果是**判断 和 计算 **二叉树的话,一般适合用 **后序**， 会**用 一个变量** 去**接收** 递归左子树的**返回值** ，**另外一个变量** 也去 **接收** 递归右子树的 **返回值**，最后把这两个 变量进行 **逻辑操作** ，比如 &&，或者max( )取最大值，或者直接 把它们相加，  最后  return 返回 
 
-​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入**递归函数自己去**一层层的想**！！因为这样思路会很乱！！所以你应该做的是，就比如 **后序**，那么你就当 上面的左子树递归函数 和 右子树递归函数   **已经执行完**，你脑子里就想象下 ，整颗二叉树中的**带有3个节点**的 **子树**， 然后进行比较然后向上  return 返回，能弄明白子树的逻辑，其他就是一层层向上返回罢了。
+​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入**递归函数自己去**一层层的想**！！因为这样思路会很乱！！所以你应该做的是，就比如 **后序**，那么你就当 上面的左子树递归函数 和 右子树递归函数   **已经执行完**，你脑子里就想象下 ，整颗二叉树中的**带有3个节点**的 **子树**， 然后进行比较然后向上  return 返回，能弄明白子树的逻辑，其他就是   一层层   **向上返回**   罢了。
 
 
 
@@ -10327,7 +10337,20 @@ class Solution {
 
 #### 226 翻转二叉树
 
-题解 ： https://leetcode.cn/problems/invert-binary-tree/solutions/73159/dong-hua-yan-shi-liang-chong-shi-xian-226-fan-zhua/https://leetcode.cn/problems/invert-binary-tree/)
+题目描述：
+
+```
+给你一棵二叉树的根节点 root ，翻转这棵二叉树，并返回其根节点。
+
+示例 1：
+
+输入：root = [4,2,7,1,3,6,9]
+输出：[4,7,2,9,6,3,1]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303193456997.png" alt="image-20250303193456997" style="zoom: 50%;" />
+
+题解 ： https://leetcode.cn/problems/invert-binary-tree/solutions/73159/dong-hua-yan-shi-liang-chong-shi-xian-226-fan-zhua/https://leetcode.cn/problems/invert-binary-tree/
 
 ```java
 /**
@@ -10373,6 +10396,19 @@ class Solution {
 ```
 
 #### 101 对称二叉树
+
+题目描述：
+
+```
+给你一个二叉树的根节点 root ， 检查它是否轴对称。
+
+示例 1：
+
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303194223015.png" alt="image-20250303194223015" style="zoom: 33%;" />
 
 题解:  [https://leetcode.cn/problems/symmetric-tree/solutions/862694/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-hnjo/](https://leetcode.cn/problems/symmetric-tree/solutions/862694/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-hnjo/)
 
@@ -10440,6 +10476,21 @@ class Solution {
 
 #### 100 相同的树
 
+题目描述：
+
+```
+给你两棵二叉树的根节点 p 和 q ，编写一个函数来检验这两棵树是否相同。
+
+如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+
+示例 1：
+
+输入：p = [1,2,3], q = [1,2,3]
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195033926.png" alt="image-20250303195033926" style="zoom: 50%;" />
+
 题解：https://leetcode.cn/problems/same-tree/solutions/12686/hua-jie-suan-fa-100-xiang-tong-de-shu-by-guanpengc/
 
 ```java
@@ -10501,6 +10552,21 @@ class Solution {
 
 #### 572 另一个树的子树
 
+题目描述：
+
+```
+给你两棵二叉树 root 和 subRoot 。检验 root 中是否包含和 subRoot 具有相同结构和节点值的子树。如果存在，返回 true ；否则，返回 false 。
+
+二叉树 tree 的一棵子树包括 tree 的某个节点和这个节点的所有后代节点。tree 也可以看做它自身的一棵子树。
+
+示例 1：
+
+输入：root = [3,4,5,1,2], subRoot = [4,1,2]
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195344181.png" alt="image-20250303195344181" style="zoom: 33%;" />
+
 题解：https://leetcode.cn/problems/subtree-of-another-tree/solutions/235760/java-di-gui-ban-by-kelly2018/
 
 ```java
@@ -10550,7 +10616,24 @@ class Solution {
 }
 ```
 
-104 二叉树的最大深度
+#### 104 二叉树的最大深度
+
+题目描述：
+
+```
+给定一个二叉树 root ，返回其最大深度。
+
+二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。
+
+ 
+
+示例 1：
+
+输入：root = [3,9,20,null,null,15,7]
+输出：3
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195421012.png" alt="image-20250303195421012" style="zoom:33%;" />
 
 题解：https://leetcode.cn/problems/maximum-depth-of-binary-tree/solutions/10740/hua-jie-suan-fa-104-er-cha-shu-de-zui-da-shen-du-b/  
 
@@ -10585,6 +10668,20 @@ class Solution {
 ```
 
 #### 110 平衡二叉树
+
+题目描述：
+
+```
+给定一个二叉树，判断它是否是 平衡二叉树  
+
+ 
+示例 1：
+
+输入：root = [3,9,20,null,null,15,7]
+输出：true
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195536763.png" alt="image-20250303195536763" style="zoom:33%;" />
 
 题解： [https://leetcode.cn/problems/balanced-binary-tree/solutions/16112/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-25/](https://leetcode.cn/problems/balanced-binary-tree/solutions/746538/shu-ju-jie-gou-he-suan-fa-ping-heng-er-c-ckkm/)
 
@@ -10663,6 +10760,23 @@ class Solution {
 
 #### 257  二叉树的所有路径
 
+题目描述：
+
+```
+给你一个二叉树的根节点 root ，按 任意顺序 ，返回所有从根节点到叶子节点的路径。
+
+叶子节点 是指没有子节点的节点。
+
+ 
+示例 1：
+
+
+输入：root = [1,2,3,null,5]
+输出：["1->2->5","1->3"]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195811807.png" alt="image-20250303195811807" style="zoom: 33%;" />
+
 题解 ：[https://leetcode.cn/problems/binary-tree-paths/solutions/400434/257-er-cha-shu-de-suo-you-lu-jing-tu-wen-jie-xi-by/](https://leetcode.cn/problems/binary-tree-paths/solutions/400434/257-er-cha-shu-de-suo-you-lu-jing-tu-wen-jie-xi-by/)
 
 ```java
@@ -10716,6 +10830,24 @@ class Solution {
 ```
 
 #### 112 路径总和
+
+题目描述：
+
+```
+给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
+
+叶子节点 是指没有子节点的节点。
+
+ 
+
+示例 1：
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+输出：true
+解释：等于目标和的根节点到叶节点路径如上图所示。
+```
+
+<img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303195915271.png" alt="image-20250303195915271" style="zoom:33%;" />
 
 题解：https://leetcode.cn/problems/path-sum/description/
 
@@ -10774,6 +10906,24 @@ class Solution {
 
 #### 113 路径总和 II 
 
+题目描述：
+
+```
+给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
+
+叶子节点 是指没有子节点的节点。
+
+ 
+
+示例 1：
+
+
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：[[5,4,11,2],[5,8,4,5]]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303195945809.png" alt="image-20250303195945809" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/path-sum-ii/solutions/867902/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-sbm3/ 
 
 ```java
@@ -10823,6 +10973,20 @@ class Solution {
 
 
 #### 106 从中序与后序序列构造二叉树
+
+题目描述：
+
+```
+给定两个整数数组 inorder 和 postorder ，其中 inorder 是二叉树的中序遍历， postorder 是同一棵树的后序遍历，请你构造并返回这颗 二叉树 。
+
+示例 1:
+
+
+输入：inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+输出：[3,9,20,null,null,15,7]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303200657017.png" alt="image-20250303200657017" style="zoom:33%;" />
 
 题解： [https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
 
@@ -10895,6 +11059,21 @@ class Solution {
 
 #### 105 从前序与中序遍历序列构造二叉树
 
+题目描述：
+
+```
+给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。
+
+ 
+
+示例 1:
+
+输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+输出: [3,9,20,null,null,15,7]
+```
+
+<img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303200736231.png" alt="image-20250303200736231" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
 
 ```java
@@ -10965,90 +11144,29 @@ class Solution {
 }
 ```
 
-#### 654 最大二叉树
+#### 617 合并二叉树
 
-题解：[https://leetcode.cn/problems/maximum-binary-tree/solutions/604651/654-zui-da-er-cha-shu-gen-ju-shu-zu-gou-q0hp9/](https://leetcode.cn/problems/maximum-binary-tree/solutions/604651/654-zui-da-er-cha-shu-gen-ju-shu-zu-gou-q0hp9/)
+题目描述：
 
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-			
-class Solution {
-    
-    	// 发现一个主函数不够用 ， 所以要下面定义一个  “次”递归函数，  多设点 方法形参
-    public TreeNode constructMaximumBinaryTree(int[] nums) {
-        
-   	// 这里仍然用的是  左闭右开 [ , ) 原则 	，所以传入的是 length		
-        return buildTree(nums, 0, nums.length);
-        
-    }
-    
-    
-    
-		   // 方法形参，定义一下 数组的起始 start 和 终止下标 end		
-    public TreeNode buildTree(int[] nums, int start, int end) {
-        
-        	// 这里的递归出口的写法，参考了 105和106题 
- 	// 递归出口 ， 因为这里采用的是 左闭右开 [ , ) 原则 ， 所以要 >= 大于等于号，带上 等于号= 
-        if( start >= end)
-            return null;
-        
-        	
-        // 因为是  因为是 “修改”，构造，所以 用---->前序 
-        //中 
-        
-        
- //并不是 修改原数组，，而是通过 下标直接在原数组上 比较查找，不会修改原数组，往递归函数里 传入 起始 和 终止下标 就行
- // 每次默认 最大值下标 是 数组的起始下标 对应的元素，因为这个maxIndex 后面还要用，所以这里要先定义出来。。。。       
-        int maxIndex = start;
-        int maxVal = nums[start];// 最大值 也就是 数组的起始下标对应的元素
-       
-        //  这里的算法 只是 “找”最大值，并不是对 整个数组 进行排序，变动元素  
-        for (int i = start; i < end; i++) {
-            if (nums[i] > maxVal){
-                
-                 maxIndex = i;
-                 maxVal = nums[i];
-                
-            }
-        }
-    
-        TreeNode root = new TreeNode(maxVal);
+```
+给你两棵二叉树： root1 和 root2 。
 
-        
-         //左
-        
-    	// 根据maxIndex划分左右子树  
-        // 左闭右开：[start, maxIndex)
-        root.left = buildTree(nums, start, maxIndex);
-        
-        
-        	 //右
-        
-       	  // 左闭右开：[maxIndex + 1, end) 起始下标肯定是要跳过 maxIndex这个对应值的,因为 这个最大值 已经被作为 根节点用过了。
-        root.right = buildTree(nums, maxIndex + 1, end);
-        
-        return root;
+想象一下，当你将其中一棵覆盖到另一棵之上时，两棵树上的一些节点将会重叠（而另一些不会）。你需要将这两棵树合并成一棵新二叉树。合并的规则是：如果两个节点重叠，那么将这两个节点的值相加作为合并后节点的新值；否则，不为 null 的节点将直接作为新二叉树的节点。
 
-    }
+返回合并后的二叉树。
 
-}
+注意: 合并过程必须从两个树的根节点开始。
+
+ 
+
+示例 1：
+
+
+输入：root1 = [1,3,2,5], root2 = [2,1,3,null,4,null,7]
+输出：[3,4,5,5,4,null,7]
 ```
 
-#### 617 合并二叉树
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303201038216.png" alt="image-20250303201038216" style="zoom: 50%;" />
 
 题解 ：[https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/](https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/)
 
@@ -11099,6 +11217,27 @@ class Solution {
 
 #### 543 二叉树的直径
 
+题目描述：
+
+```
+给你一棵二叉树的根节点，返回该树的 直径 。
+
+二叉树的 直径 是指树中任意两个节点之间最长路径的 长度 。这条路径可能经过也可能不经过根节点 root 。
+
+两节点之间路径的 长度 由它们之间边数表示。
+
+ 
+
+示例 1：
+
+
+输入：root = [1,2,3,4,5]
+输出：3
+解释：3 ，取路径 [4,2,1,3] 或 [5,2,1,3] 的长度。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303201748799.png" alt="image-20250303201748799" style="zoom:33%;" />
+
 题解:https://leetcode.cn/problems/diameter-of-binary-tree/solutions/37205/hot-100-9er-cha-shu-de-zhi-jing-python3-di-gui-ye-/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
@@ -11134,81 +11273,29 @@ class Solution {
 }
 ```
 
-#### 700 二叉搜索树中的搜索
-
-题解：https://leetcode.cn/problems/search-in-a-binary-search-tree/solutions/867987/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-3ww7/
-
-```java
-class Solution {
-    public TreeNode searchBST(TreeNode root, int val) {
-
-        
-      // 递归出口就一个，很简单，就是考虑 遍历到空节点null 的时候 
-            // 这里就不需要再写， 并不符合题意的 情况了。
-            // 因为如果再写 root.val!=val作为递归出口的话，会一个问题。如果是根节点不符合，但是 其他节点== val了，那么这个出口就是有问题的 ！！
-        if (root == null ) 
-            return null;
-        
-        
-        // 剩下的情况，就是节点非空，并且符合题意的 
-        
-        // 因为是 查找，所以用 ---> 前序 
-        if(root.val == val)  //中 
-            return root;
-
-        if (root.val < val)  // 左
-            return searchBST(root.right, val);
-        			  
-     //所以这里改成了 else的写法，，因为只剩下 大于>这种情况了。。。否则不符合，力扣的 返回规则
-        else			// 右 
-            return searchBST(root.left, val);
-
-       
-        
-    }
-}
-
-
-```
-
-#### 701 二叉搜索树中的插入操作
-
-题解：https://leetcode.cn/problems/insert-into-a-binary-search-tree/submissions/546173957/
-
-```java
-class Solution {
-   
-    public TreeNode insertIntoBST(TreeNode root, int val) {
-        
-   // 递归出口也只需要考虑这一个，当 二叉树为空null的时候，也是需要 把传入的val作为根节点返回的
-        // 另一种理解就是，当遍历到 空节点的时候，就要返回 val值的节点给上层 
-        if (root == null) {
-            return new TreeNode(val);
-        }
-        
-		
-   // 这道题的话，，，其实是 类似“修改”类型，但是这里并不是----> “前序”遍历的样子
-        						// 只能算 ≈ “前序”，所以写法很“特殊” 
-        // 由于这道题 的基础上是 二叉搜索树，所以代码可以参照 700去书写 
-        
-   //  而且这道题是  插入节点，那么肯定是要 用 root.left和root.right去接收 递归函数的返回值的 
-        								// 这样最终才能返回修改之后 root根节点的 二叉树 
-        if (val<root.val) 
-            root.left = insertIntoBST(root.left, val);
- 
-        else 
-            root.right = insertIntoBST(root.right, val);
-        
-        return root;
-    }
-}
-
-
-```
-
-
-
 #### 450 删除二叉搜索树中的节点
+
+题目描述：
+
+```
+给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+
+一般来说，删除节点可分为两个步骤：
+
+首先找到需要删除的节点；
+如果找到了，删除它。
+ 
+
+示例 1:
+
+
+
+输入：root = [5,3,6,2,4,null,7], key = 3
+输出：[5,4,6,2,null,null,7]
+解释：给定需要删除的节点值是 3，所以我们首先找到 3 这个节点，然后删除它。
+```
+
+<img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303202027225.png" alt="image-20250303202027225" style="zoom:50%;" />
 
 题解：https://leetcode.cn/problems/delete-node-in-a-bst/solutions/582561/miao-dong-jiu-wan-shi-liao-by-terry2020-tc0o/
 
@@ -11265,49 +11352,28 @@ class Solution {
 
 ```
 
+#### 98 验证二叉搜索树
 
-
-#### 669 修剪二叉搜索树
-
-题解：https://leetcode.cn/problems/trim-a-binary-search-tree/solutions/1814532/by-ac_oier-help/
-
-```java
-
-// 上一道题目是只删除 1个节点，这道题目是删除多个节点，所以就是要在返回的时候也要返回删除过的子树 
-
-class Solution {
-    public TreeNode trimBST(TreeNode root, int low, int high) {
-        
-        if (root == null) 
-            return null;
-        
-        
-         // 因为是 删除，也就是 因为是 “修改”，所以用-----> 前序 
-        
-        				
-        if (root.val < low) 		// 中	
-            
-           // 因为这道题目是“删除” 多个节点，根据“删除”节点 root 的代码规则。所以就是要return 返回 递归函数删除之后的子树，给上层
-  	// 又因为 root的值小于low最小值边界，而且由于二叉搜索树的性质，那么它的右子树是大于root的，所以有可能满足 []的，所以是去 递归遍历 右子树
-            return trimBST(root.right, low, high);
-        
-        
-        if (root.val > high) 
-            return trimBST(root.left, low, high);
-        
-        
-     // 肯定是要最后用 root.left和  root.right 去接收 递归函数的返回值的！！
-        root.left = trimBST(root.left, low, high); // 左 
-        root.right = trimBST(root.right, low, high); // 右 
-        return root;
-    }
-}
+题目描述：
 
 ```
+给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+
+有效 二叉搜索树定义如下：
+
+节点的左子树只包含 小于 当前节点的数。
+节点的右子树只包含 大于 当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+ 
+
+示例 1：
 
 
+输入：root = [2,1,3]
+输出：true
+```
 
-#### 98 验证二叉搜索树
+<img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303202128853.png" alt="image-20250303202128853" style="zoom:50%;" />
 
 题解：https://leetcode.cn/problems/validate-binary-search-tree/solutions/84032/er-cha-sou-suo-shu-yu-zhong-xu-bian-li-by-wisemove/
 
@@ -11346,6 +11412,23 @@ class Solution {
 ```
 
 #### 108 将有序数组转换为二叉搜索树
+
+题目描述：
+
+```
+给你一个整数数组 nums ，其中元素已经按 升序 排列，请你将其转换为一棵 平衡 二叉搜索树。
+
+ 
+
+示例 1：
+
+
+输入：nums = [-10,-3,0,5,9]
+输出：[0,-3,9,-10,null,5]
+解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303202405565.png" alt="image-20250303202405565" style="zoom:33%;" />
 
 题解：https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/solutions/313508/jian-dan-di-gui-bi-xu-miao-dong-by-sweetiee/?envType=study-plan-v2&envId=top-100-liked
 
@@ -11395,6 +11478,22 @@ class Solution {
 
 #### 230 二叉搜索树中第K小的元素
 
+题目描述：
+
+```
+给定一个二叉搜索树的根节点 root ，和一个整数 k ，请你设计一个算法查找其中第 k 小的元素（从 1 开始计数）。
+
+ 
+
+示例 1：
+
+
+输入：root = [3,1,4,null,2], k = 1
+输出：1
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303202940246.png" alt="image-20250303202940246" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/kth-smallest-element-in-a-bst/solutions/409487/di-kxiao-yuan-su-de-san-chong-zhao-fa-by-lan-se-2/?envType=study-plan-v2&envId=top-100-liked 
 
 ```java
@@ -11440,6 +11539,28 @@ class Solution {
 
 #### 235 二叉树的最近公共祖先
 
+题目描述：
+
+```
+给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+
+例如，给定如下二叉搜索树:  root = [6,2,8,0,4,7,9,null,null,3,5]
+
+
+
+ 
+
+示例 1:
+
+输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+输出: 6 
+解释: 节点 2 和节点 8 的最近公共祖先是 6。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303203022517.png" alt="image-20250303203022517" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/solutions/240096/236-er-cha-shu-de-zui-jin-gong-gong-zu-xian-hou-xu/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
@@ -11478,6 +11599,24 @@ class Solution {
 
 
 #### 114 二叉树展开为链表
+
+题目描述：
+
+```
+给你二叉树的根结点 root ，请你将它展开为一个单链表：
+
+展开后的单链表应该同样使用 TreeNode ，其中 right 子指针指向链表中下一个结点，而左子指针始终为 null 。
+展开后的单链表应该与二叉树 先序遍历 顺序相同。
+ 
+
+示例 1：
+
+
+输入：root = [1,2,5,3,4,null,6]
+输出：[1,null,2,null,3,null,4,null,5,null,6]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303203101575.png" alt="image-20250303203101575" style="zoom:50%;" />
 
 题解：https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/solutions/17274/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--26/?envType=study-plan-v2&envId=top-100-liked
 
@@ -11524,9 +11663,28 @@ public void flatten(TreeNode root) {
 
 ```
 
-
-
 #### 124 二叉树中的最大路径和
+
+题目描述：
+
+```
+二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 root ，返回其 最大路径和 。
+
+ 
+
+示例 1：
+
+
+输入：root = [1,2,3]
+输出：6
+解释：最优路径是 2 -> 1 -> 3 ，路径和为 2 + 1 + 3 = 6
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303203143136.png" alt="image-20250303203143136" style="zoom:33%;" />
 
 题解：
 
@@ -11596,6 +11754,22 @@ class Solution {
 
 #### 107 二叉树的层次遍历 II
 
+题目描述：
+
+```
+给你二叉树的根节点 root ，返回其节点值 自底向上的层序遍历 。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+
+ 
+
+示例 1：
+
+
+输入：root = [3,9,20,null,null,15,7]
+输出：[[15,7],[9,20],[3]]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303204317816.png" alt="image-20250303204317816" style="zoom:33%;" />
+
 题解：https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/description/
 
 ```java
@@ -11663,6 +11837,22 @@ class Solution {
 
 #### 199 二叉树的右视图
 
+题目描述：
+
+```
+给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+ 
+
+示例 1：
+
+输入：root = [1,2,3,null,5,null,4]
+
+输出：[1,3,4]
+```
+
+<img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303204408013.png" alt="image-20250303204408013" style="zoom: 50%;" />
+
 题解 ：https://leetcode.cn/problems/binary-tree-right-side-view/
 
 ```java
@@ -11708,6 +11898,25 @@ class Solution {
 ```
 
 #### 637 二叉树的层平均值
+
+题目描述：
+
+```
+给定一个非空二叉树的根节点 root , 以数组的形式返回每一层节点的平均值。与实际答案相差 10-5 以内的答案可以被接受。
+
+ 
+
+示例 1：
+
+
+
+输入：root = [3,9,20,null,null,15,7]
+输出：[3.00000,14.50000,11.00000]
+解释：第 0 层的平均值为 3,第 1 层的平均值为 14.5,第 2 层的平均值为 11 。
+因此返回 [3, 14.5, 11] 。
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303204657056.png" alt="image-20250303204657056" style="zoom:33%;" />
 
 题解 ：https://leetcode.cn/problems/average-of-levels-in-binary-tree/description/
 
@@ -11788,6 +11997,25 @@ class Solution {
 
 #### 429 N叉树的层序遍历
 
+题目描述：
+
+```
+给定一个 N 叉树，返回其节点值的层序遍历。（即从左到右，逐层遍历）。
+
+树的序列化输入是用层序遍历，每组子节点都由 null 值分隔（参见示例）。
+
+ 
+
+示例 1：
+
+
+
+输入：root = [1,null,3,2,4,null,5,6]
+输出：[[1],[3,2,4],[5,6]]
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303204738070.png" alt="image-20250303204738070" style="zoom:50%;" />
+
 题解：https://leetcode.cn/problems/n-ary-tree-level-order-traversal/description/
 
 ```java
@@ -11855,254 +12083,27 @@ class Solution {
 }
 ```
 
-#### 515 在每个树行中找最大值
-
-题解：https://leetcode.cn/problems/find-largest-value-in-each-tree-row/description/
-
-```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }   
- * }
- */
-
-
-class Solution {
-    public List<Integer> largestValues(TreeNode root) {
-
-        List<Integer> res = new ArrayList<>();
-        Deque<TreeNode> deque = new ArrayDeque<>();
-
-
-        if (root == null) {
-            return res;
-        }
-
-        deque.offerLast(root);
-
-        while (!deque.isEmpty()) {
-
-
-            int size = deque.size();
-            
-	// 定义 max变量 ，用来保存 每一层 的 最大值，不断和 节点比较
-            int max = Integer.MIN_VALUE;
-            
-          for (int i = 0; i < size; i++) {
-
-                TreeNode treeNode = deque.pollFirst();
-               
-              
-		// 这是  找 每一层 最大值的 逻辑 ，判断比较
-                if (treeNode.val>max) {
-  
-                    max =treeNode.val;
-                    
-                }
-
-
-                if (treeNode.left != null) {
-                    deque.offerLast(treeNode.left);
-                }
-
-                if (treeNode.right != null) {
-                    deque.offerLast(treeNode.right);
-                }
-
-            }
-            
-            // 内层for循环结束之后，把每层的 max 插入到 res结果集中
-            res.add(max);
-
-        }
-
-        return res;
-
-    }
-}
-```
-
-#### 116 填充每个节点的下一个右侧节点指针
-
-题解：https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/
-
-```java
-/*
-// Definition for a Node.
-class Node {
-    public int val;
-    public Node left;
-    public Node right;
-    public Node next;
-
-    public Node() {}
-    
-    public Node(int _val) {
-        val = _val;
-    }
-
-    public Node(int _val, Node _left, Node _right, Node _next) {
-        val = _val;
-        left = _left;
-        right = _right;
-        next = _next;
-    }
-};
-*/
-
-//“纯”自己写的。通过  
-//  这道题 比较特殊 ，因为  每一层的 节点 都是满的 。。。。
-class Solution {
-    
-    public Node connect(Node root) {
-		
-     // 这里 最前面的  框架没什么 变化 。。因为要处理 这颗二叉树 ，而且 最终返回的 也是一颗 二叉树 
-      // 而在这个方法内 ，对于 root 这颗 二叉树 处理的时候，root的结构 也是不断在变化 的。
-        //  所以，最后 返回这个 root 根节点就行
-        	// 所以 这里就不用 自己 定义一个 List 结果集合 了
-        Deque<Node> deque = new ArrayDeque<>();
-
-        if (root == null) {
-            return root;
-        }
-
-        deque.offerLast(root);
-
-        
-        while (!deque.isEmpty()) {
-
-
-            int size = deque.size();
-
-
-             for (int i = 0; i < size; i++) {
-
-                Node node = deque.pollFirst();
-                
-               // 对于 每一层的最后一个节点，那么就是 它的 next域设置成 null
-                if (i == size-1)
-                    node.next =null;
-                 
-    // 其余 情况的 话，只需要 next 赋值为 peekFirst()的节点 就行。必须是peek!!!而不是 poll，这个你很容易发现  的
-                else 
-                  node.next = deque.peekFirst();
-                
-                    
-
-                if (node.left != null) {
-                    deque.offerLast(node.left);
-                }
-
-                if (node.right != null) {
-                    deque.offerLast(node.right);
-                }
-
-            }
-
-        }
-        
-        return root;
-
-    }
-}
-```
-
-#### 117 填充每个节点的下一个右侧节点指针II
-
-题解：https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/description/
-
-```java
-/*
-// Definition for a Node.
-class Node {
-    public int val;
-    public Node left;
-    public Node right;
-    public Node next;
-
-    public Node() {}
-    
-    public Node(int _val) {
-        val = _val;
-    }
-
-    public Node(int _val, Node _left, Node _right, Node _next) {
-        val = _val;
-        left = _left;
-        right = _right;
-        next = _next;
-    }
-};
-*/
-
-//“纯”自己写的。通过  
-//  这道题 比较特殊 ，因为  每一层的 节点 不一定是满的 。。。。  但是 也不影响。。 和 力扣 116 的 答案一摸一样 的！！！
-class Solution {
-    
-    public Node connect(Node root) {
-		
-     // 这里 最前面的  框架没什么 变化 。。因为要处理 这颗二叉树 ，而且 最终返回的 也是一颗 二叉树 
-      // 而在这个方法内 ，对于 root 这颗 二叉树 处理的时候，root的结构 也是不断在变化 的。
-        //  所以，最后 返回这个 root 根节点就行
-        	// 所以 这里就不用 自己 定义一个 List 结果集合 了
-        Deque<Node> deque = new ArrayDeque<>();
-
-        if (root == null) {
-            return root;
-        }
-
-        deque.offerLast(root);
-
-        
-        while (!deque.isEmpty()) {
-
-
-            int size = deque.size();
-
-
-             for (int i = 0; i < size; i++) {
-
-                Node node = deque.pollFirst();
-                
-               // 对于 每一层的最后一个节点，那么就是 它的 next域设置成 null
-                if (i == size-1)
-                    node.next =null;
-                 
-    // 其余 情况的 话，只需要 next 赋值为 peekFirst()的节点 就行。必须是peek!!!而不是 poll，这个你很容易发现  的
-                else 
-                  node.next = deque.peekFirst();
-                
-                    
-
-                if (node.left != null) {
-                    deque.offerLast(node.left);
-                }
-
-                if (node.right != null) {
-                    deque.offerLast(node.right);
-                }
-
-            }
-
-        }
-        
-        return root;
-
-    }
-}
-```
-
 #### 111 二叉树的最小深度
+
+题目描述：
+
+```
+给定一个二叉树，找出其最小深度。
+
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+
+说明：叶子节点是指没有子节点的节点。
+
+ 
+
+示例 1：
+
+
+输入：root = [3,9,20,null,null,15,7]
+输出：2
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303205416889.png" alt="image-20250303205416889" style="zoom:33%;" />
 
 题解：https://leetcode.cn/problems/minimum-depth-of-binary-tree/description/
 
@@ -12175,6 +12176,24 @@ class Solution {
 ```
 
 #### 222 完全二叉树的节点个数
+
+题目描述：
+
+```
+给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
+
+完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层（从第 0 层开始），则该层包含 1~ 2h 个节点。
+
+ 
+
+示例 1：
+
+
+输入：root = [1,2,3,4,5,6]
+输出：6
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303205505022.png" alt="image-20250303205505022" style="zoom:33%;" />
 
 题解：
 
@@ -12272,6 +12291,24 @@ class Solution {
 
 #### 404 左叶子节点之和
 
+题目描述：
+
+```
+给定二叉树的根节点 root ，返回所有左叶子之和。
+
+ 
+
+示例 1：
+
+
+
+输入: root = [3,9,20,null,null,15,7] 
+输出: 24 
+解释: 在这个二叉树中，有两个左叶子，分别是 9 和 15，所以返回 24
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303205650123.png" alt="image-20250303205650123" style="zoom:50%;" />
+
 题解 ： [https://leetcode.cn/problems/sum-of-left-leaves/solutions/866969/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-j6f9/](https://leetcode.cn/problems/sum-of-left-leaves/solutions/866969/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-j6f9/)
 
 ```java
@@ -12331,6 +12368,20 @@ class Solution {
 ```
 
 #### 513 找左下角的值
+
+题目描述：
+
+```
+给定一个二叉树的 根节点 root，请找出该二叉树的 最底层 最左边 节点的值。
+
+假设二叉树中至少有一个节点。
+
+示例1:
+输入: [1,2,3,4,null,5,6,null,null,7]
+输出: 7
+```
+
+<img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303205754386.png" alt="image-20250303205754386" style="zoom: 50%;" />
 
 题解：[https://leetcode.cn/problems/find-bottom-left-tree-value/solutions/1616928/by-ac_oier-sv59/](https://leetcode.cn/problems/find-bottom-left-tree-value/solutions/1616928/by-ac_oier-sv59/)
 
@@ -12764,7 +12815,7 @@ class AtomicCounter {
 ```java
 class DeadlockExample {
     
-    // 创建两个对象，用于模拟资源竞争
+    // 创建两个 资源对象，用于模拟 资源竞争
     private  Object resource1 = new Object();
     private  Object resource2 = new Object();
 
@@ -12772,7 +12823,7 @@ class DeadlockExample {
         
         synchronized (resource1) {
             System.out.println("线程A 持有资源 1");
-            // 暂停一下，增加死锁发生的可能性
+            // 暂停一下，增加死锁发生的可能性，主要是为了等待 线程2已经占用资源2 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -12789,7 +12840,7 @@ class DeadlockExample {
         
         synchronized (resource2) {
             System.out.println("线程B 持有资源 2");
-            // 暂停一下，增加死锁发生的可能性
+           // 暂停一下，增加死锁发生的可能性，主要是为了等待 线程1已经占用资源1
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -12901,7 +12952,7 @@ public class Singleton {
 
 
 
-### 双重检查锁（线程安全）
+### DCL 双重检查锁（线程安全）
 
 ```java
 public class Singleton {
@@ -13040,7 +13091,7 @@ public enum Singleton {
 题解：https://www.bilibili.com/video/BV1j841197rQ/?spm_id_from=333.337.search-card.all.click&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-// 快速排序的主要思路， partition()核心函数，里面 每次选择 最左边的元素nums[left]作为基准值 pivot，然后要确定它 最终要存储的数组下标，然后返回 pivotIndex
+// 快速排序的主要思路， partition()核心函数，里面 每次选择 最左边的元素nums[left]作为基准值 pivot。然后要确定它 最终要存储的数组下标，然后返回 pivotIndex
 
 // 然后在 主函数 quickSort()，得到 分区的pivotIndex下标之后，分别对 左半区 和 右半区 也进行排序 ，不断"递归"调用。最终数组就有序了。
 
@@ -13050,15 +13101,15 @@ public enum Singleton {
             // 调用 partition()方法， 找到分区的  中枢值最终的索引 pivotIndex
             int pivotIndex = partition(nums, left, right);
 
-            // 对左分区进行快速排序，"递归"
+            // 对左分区 进行快速排序，"递归"
             quickSort(nums, left, pivotIndex - 1);
 
-            // 对右分区进行快速排序，"递归"
+            // 对右分区 进行快速排序，"递归"
             quickSort(nums, pivotIndex + 1, right);
         }
     }
 
-    // 进行数组分区操作，然后返回 中枢值 最终存储的下标 pivotIndex 
+    // 进行数组 分区操作，然后返回 中枢值，也就是 最终存储的下标 pivotIndex 
     private  static int partition(int[] nums, int left, int right) {
 
         int pivot = nums[left];  // 每次选左边第一个元素作为 基准值 pivot
@@ -13104,7 +13155,7 @@ public enum Singleton {
     
 private static void mergeSort(int[] arr, int left, int right) {
     
-     // 从上到下 ↓
+     // 首先 从上到下分割  数组元素 ↓
     // 如果区间还有多个元素（非单个元素），就一直向下递归排序和合并 。如果只剩一个 元素，那么就是有序的
     if (left < right) {
 
@@ -13116,6 +13167,7 @@ private static void mergeSort(int[] arr, int left, int right) {
         // 对 右半区间 进行"递归"，归并排序
         mergeSort(arr, mid + 1, right);
         
+        // 直到 只剩下 一个元素 的时候，此时单个元素就是有序的，开始 合并 两个有序数组。
         //递归的处理逻辑，每次都是要调用下面的merge()方法，合并 已排序的左半区间和右半区间
         merge(arr, left, mid, right);
 
@@ -13176,25 +13228,27 @@ private static void merge(int[] arr, int left, int mid, int right) {
 题解：https://leetcode.cn/problems/sort-an-array/solutions/179370/python-shi-xian-de-shi-da-jing-dian-pai-xu-suan-fa/  看对应的 图解
 
 ```java
-// 主要思路，先建堆（大顶堆），然后再调整堆 
+// 主要思路：
+//            a.先建堆（大顶堆）b.然后再调整堆 
 // 这道题 用的是 “迭代”的思路
 
 // 堆排序的主函数
 public static void heapSort(int[] arr) {
       
-    // a.初始化，构建1次大顶堆： 从右边往左，从下到上 调整的。
+    // a.初始化，构建1次大顶堆：   ←从右边往左，从下到上↑ 调整的。
     buildMaxHeap(arr);
+    
     int len = arr.length;
     
     // b.不断调整堆
     for (int i = len - 1; i > 0; i--) {
         
-        // 先把堆顶元素（最大的元素arr[0]）和当前未排序部分的最后一个元素arr[i] 交换位置      
+        // 先把堆顶元素（最大的元素arr[0]）和当前未排序部分的 最后一个元素arr[i]，交换位置     
          int temp = arr[0];
    		 arr[0] = arr[i];
          arr[i] = temp;
         
-        //  然后调整 剩下的元素，让它们 重新构成大顶堆：这次是 从上到下调整
+        //  然后调整 剩下的元素，让它们 重新构成 大顶堆：这次是 从上到下↓调整
         // *调用核心的  调整堆的函数
         adjustHeap(arr, 0, i);
     }
@@ -13203,7 +13257,7 @@ public static void heapSort(int[] arr) {
 //初次 构建大顶堆
 public static void buildMaxHeap(int[] arr) {
     int len = arr.length;
-    // 从最后一个非叶子节点开始调整堆，这样可以保证整个堆构建好
+    // 从最后一个 非叶子节点，开始调整堆。
     for (int i = len / 2 - 1; i >= 0; i--) {
        // *也是要调用 核心的  调整堆的函数
         adjustHeap(arr, i, len);
@@ -13259,19 +13313,21 @@ public static void main(String[] args) {
 
 ```java
 // 用 迭代的思路，解决冒泡排序。
-//主要思路，每一趟 都是从前往后遍历 → ，它通过不断比较 相邻元素并在(i-1的元素 大于 i 的元素)交换 它们的位置。每一趟 能确定一个最大值， 放到数组的最后位置。
-//  最终实现整个数组的升序。
 
+/**  主要思路：
+	每一趟 都是从前往后遍历 → ，它通过不断比较 相邻元素，当(i-1下标的元素 大于 i下标的元素)的时候，就交换 它们的位置。每一趟 能确定一个最大值， 放到数组的最后位置。
+	最终实现整个数组的升序。
+**/
     
     public static void bubbleSort(int[] arr) {
         
             int n = arr.length;
-// 外层for循环，只需要 遍历 n-1次就行了，因为每次确立一个元素的最终位置，确立 n-1个元素之后，那么最后一个元素，它不需要再进行比较就已经有序了。        
+// 外层for循环，只需要 遍历 n-1次就行了，因为每次都会 确立一个元素的 最终位置。
         for (int i = 0; i < n - 1; i++) {  
 // 内层for循环，每次都是 n-1-i 比较次数，因为每次确立一个元素之后，那么之后的元素 比较的次数会依次 -1，
             for (int j = 0; j < n - 1 - i; j++) {
                 if (arr[j] > arr[j + 1]) {
-           // 这里是要求升序，如果前面的元素比后面元素大，就交换 arr[j] 和 arr[j + 1]
+           // 这里是要求升序，如果前面的元素比后面元素大，就 交换元素 arr[j] 和 arr[j + 1]
                     int temp = arr[j];
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
@@ -13327,18 +13383,18 @@ class Solution {
         // 声明 一个 双端队列 Deque。  "先进先出" 原则
         Deque<TreeNode> queue = new ArrayDeque<>();
 
-        // 因为如果传入的 根节点 为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
+        // 因为如果传入的 根节点root 为空的话，那么就直接返回这个最初始化的  空的 嵌套 res 集合
         if (root == null)
             return res;
 
 	
-        // 首先把 树的 根节点 入队列 
+        // 首先把 树的 根节点root 入队列 
         queue.offerLast(root);
 
         // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
         while (!queue.isEmpty()) {
 
-  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数，很关键 ！！
+  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数， 很关键 ！！
             int size = queue.size();
             // level 集合 保存  每一层的 节点，按顺序添加。
             List<Integer> level = new ArrayList<>();
@@ -13394,7 +13450,7 @@ public class TreeNode {
 
 
 // 就是 要配合 “栈” 来实现，迭代遍历！！！   "先进后出"原则
-//   入栈顺序：中-右-左 ，那么出栈顺序 才是 中-左-右，符合 前序遍历 的结果 
+// 入栈顺序：中-右-左 ，那么 出栈顺序 相反一下，也就是 中-左-右，才符合 前序遍历 的结果 
 class Solution {
     
     public List<Integer> preorderTraversal(TreeNode root) {
@@ -13407,20 +13463,21 @@ class Solution {
         
         
         Stack<TreeNode> stack = new Stack<>();
-        // 首先把 树的 根节点 入栈 
+        // 首先把 树的 根节点root 入栈 
         stack.push(root);
         		
         // "栈" 不为空的话， 就一直遍历，控制 while循环的结束。。
         // 相比于 “层序”遍历，它只需要一个外层的 while 循环就行了
         while (!stack.isEmpty()){
             	
-                 // 先 出“栈”
+                 // 先 出“栈”，加入 result结果集合里面
             TreeNode node = stack.pop();
             result.add(node.val);
             
             
       //  先判断左、右孩子 是否为空，非空的话 入栈
             // 前序迭代的话 ，入栈顺序是 右-左 ，这样出栈才是 左-右
+            // 所以先判断 节点的右孩子。
             if (node.right != null){
                 stack.push(node.right);
             }
@@ -13531,6 +13588,7 @@ class Solution {
         
         	
         Stack<TreeNode> stack = new Stack<>();
+        
         // 本来下面应该要有 stack.push(root)这行代码，插入根节点，，但是这里没写，很特殊！！！因为换成了 cur 移动指针 
         // 这里要定义一个 cur 节点指针，用于 访问 树中的每一个节点 ！！
         // 这里是 “特殊”的地方 ！！！ !!!!!!!
@@ -13546,12 +13604,13 @@ class Solution {
                cur = cur.left;
                
            }
-            		// 遇到空节点的话，就要开始 出栈了  ！！
+            		// 遇到 空节点null 的话，就要开始 出栈了  ！！
             		// 以及 要往 右节点 遍历了。。。
             else{	
                 	// 记得要让 cur 接收重新指向 ！！！
                cur = stack.pop();
                result.add(cur.val);
+                // 记得 要往 右节点 遍历了。。。
                cur = cur.right;
            }
         }
