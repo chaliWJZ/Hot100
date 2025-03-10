@@ -10313,23 +10313,51 @@ class Solution {
 
 1、确定递归函数的  **参数**和**<u>返回值</u>**   
 
-   首先，我们看题目中最原始的 **<u>主函数</u>** 的 方法名的**<u>返回值</u>**类型，来确定   **是否**  下面要在写 "**次"递归函数**
+​		 首先，我们看题目**最原始**的 **<u>主函数</u>** 的**<u>返回值</u>**类型，来确定   **是否**  下面要在写 "**次"递归函数**：
 
-​		 如果是 **<u>主函数</u>** 返回的是 **<u>List <...></u>**  集合，那么就要在下面  **再定义**一个**“次”递归函数**。**“次”递归函数**的 返回值 是 void ， 常见↑的情况，第一个形参 肯定是 节点 TreeNode，第二个形参 是**<u>List<...></u>** 集合， 这个是对象引用，可以在递归的过程中**<u>不断更新</u>**的，用于返回最终结果的， 其他 形参根据情况而定 ；很少↓ 的情况，会出现 第一个形参是 left左节点，第二个形参 是 right右节点 ，第三个 形参是 List<>集合，然后是其他参数；**次递归函数** 的 **单层递归**的 **逻辑代码** ，记得向 list 集合形参 进行添加元素。对于**“次”递归函数**的**自身递归**调用的时候，对于**某些其他形参**，可以在**递归函数调用**时候 **传参** 有些**小逻辑**，如 +1或 +node.val 求和  或 +"->" 字符串拼接 。最后要在 在  **<u>主函数</u>** 里面 定义一个 List<> 集合，**调用** 下面的 **"次"递归函数** ，要传参list 集合，和其他形参，如 sum的话，就是传入0，如果是 字符串拼接，那么传入空串 ""。最后 return 这个list 集合 就行，或者对 list集合做一些判断罢了，不同题目不同写法。
+①  如果是 **<u>主函数</u>** 返回的是 **<u>List <...></u>**  集合，那么就要在下面  **再定义**一个**“次” 递归函数**。**“次” 递归函数**的 **返回值** 是 **void** 。 **常见↑**的情况，**“次”递归函数**的 **第一个形参** 肯定是 **节点 TreeNode**；**第二个**形参 是**<u>List<...></u>** 集合， 这个是 **对象引用**，可以在  **递归的过程**中  **<u>不断更新</u>**的，也就是  要求的**最终结果**； **其他** 形参根据 **情况而定** 。。。**很少↓** 的情况，会出现 **第一个**形参是 **left左**节点**，**第二个**形参 是 **right**右**节点 ，**第三个** **形参**是 **List<>集合**，然后是 **其他**参数；
 
-​        如果是 **<u>主函数</u>** 要返回的是**<u>int 、boolean、TreeNode</u>** 等 类型，常见情况↑，就只需要 对这个  **<u>主函数</u>**  当成   **<u>递归函数</u>** 就行，返回值类型就是自带的，形参也是自带的就行，然后开始 书写代码；较少情况↓ 如果 !!!! 分析题目发现， 自带的主函数给的 形参不太好用的话，那么 才需要在下面再 定义个 **“次”递归函数**，那么就要定义多个 形参，形参的个数和类型就得自己好好考虑咯，当然 返回值类型  和 主函数 肯定是 一样 ；较少的情况↓ ，是 返回值类型 不一样的，如  **<u>主函数</u>**  返回值是boolean，但 **“次”递归函数** 是 void，那是因为这里是 传入了一个  list集合 形参 不断变化，最终对 list 作出判断 。最后要在 主函数里面 调用    下面定义的递归函数，传入对应的参数即可，一般调用之后就 直接 return 就行了 ，主函数的代码是最少的
+​		“**次**” 递归函数 的 **单层递归**的 **逻辑代码** ，记得向  **list 集合**形参 进行**添加元素**。对于  **“次”递归函数**的 **自身递归 **调用的时候，对于 **某些其他形参**，可以在 **递归函数调用** 时候，**传参** 有些**小逻辑**，如 **+1**或 **+node.val** **求和**  或   **+"->" 字符串拼接** 。
 
-​	  有时候，我们也会定义一些**全局变量** 比如 **max** 或者 **Hashmap**，**写在方法**的 **最外面**，为了 **能让下面**的**递归函数**  使**用它**。
+​		**最后**要在 在  **<u>主函数</u>** 里面 **定义**一个 **List<> 集合**，**调用** 下面的 **"次"递归函数** ，**要传参  ** **list** 集合，和**其他形参**，如 **sum**的话，就是**传入0**，如果是 **字符串**拼接，那么传入**空串 ""**。**最后 return返回**   这个**list** 集合 就行，或者 **对 list集合 ** 做一些 **判断** 罢了 ， **不同题目**   **不同**的写法。
+
+
+
+​      ②  如果是 **<u>主函数</u>** 要返回的是**<u>int 、boolean、TreeNode</u>** 等 类型。**常见**情况↑，就**只要** 对这个**<u>主函数</u>**  当成   **<u>递归函数</u>** 就行，**返回值类型** 就是 **自带**的，**形参** 也是  **自带的**  就行；**较少情况↓**   如果 !!!!  分析题目 发现， **<u>主函数</u>**  自带的  **形参**  不太好用的话，那么 **才需要**在下面  **再定义**个 **“次”递归函数**。**返回值类型**  和 **<u>主函数</u>** 肯定是 **一样**，那么要定义**多**个 **形参**，形参的  **个数  和 类型**  就得自己好好考虑咯；**较少的情况↓** ，是 **返回值**类型   **不一样**的，如  **<u>主函数</u>**  返回值是boolean，但 **“次”递归函数** 是 void，那是因为这里是 传入了一个  list集合 形参 不断变化，**最终对 list**  作出**判断** 。
+
+​		**最后**要在 **<u>主函数</u>**里面 **调**用    下面定义的  **<u>“次”</u>**递归函数，**传入** 对应的**参数** 即可，一般**调用之后**  直接 **return** 就行了 ，**主函数**的**代码**是  最**少**的  。。。。 
+
+
+
+​	  有时候，我们也会定义一些**全局变量** 比如 **max** 或者 **Hashmap**，**写在方法**的 **最外面**，为了 **能让下面**的**递归函数**  使**用它**，并且 **不断更新** 它。
 
  2、确定  **终止条件** 
-     我们在写  递归函数时候，必须  要写  **递归出口** 。主要是 if(...) 里面的 **判断逻辑**  怎么书写, 就是**<u>不</u> ** **满足题意 和 遍历到空节点null(传入空树)**的几个情况要写在**递归出口**，**但是有时候**却只需要考虑 **遍历到空节点null(传入空树)** 的情况，    下面的**单层递归逻辑代码**就是  **符合**题意 且  **非空**的情况了 。多数情况的话↑，都是遍历到二叉树最下面的 空节点      if (root ==null) ，才是递归出口；多数情况↑，只有一个递归出口，形式都是 if （root ==null） return  。      比如说 如果 递归函数的返回值 是 void  ，那就是 if(root ==null)  return     。如果 递归函数 的返回值 是 int ，那就是  if(root ==null)  return 0 或其他数字。如果是  boolean 那么就是 if(root ==null)  return true 或 false；较少情况↓，有多个 递归出口 ，也就是  if (...)  return   if (...)  return  if (...)  return 
+		我们在写 **递归函数 **的时候，必须  要写  **递归出口**！！！而且if 要判断的**全面**，**考虑多种**情况！！！！这个**非常影响** 最后 能不能**AC** ！！它写在 **最前面**。主要是  if(...) 里面的 **判断逻辑**    怎么写。主要分为        **遍历到二叉树的空节点null（其实就是传入 空树 null）和  不满足题意的(此时也有 节点 非空null)  **。。。
 
-​	切记， **递归出口** 必须要考虑 **正确 和 全面**，因为这很影响这道题是否ac的。。。
+​        **当我们在** 最前面的 **递归出口** **排除了**  **这些情况** 之后，下面的  **单层递归逻辑代码**  就是  **非空节点** 并且 **符合**题意 的情况了 。多数情况的话↑，都是  **遍历到** 二叉树**最下面**的 **空节点**   if (root ==null) ，才是**递归出口**；多数情况↑，**只有 一个** 递归**出口**，形式都是 if （root ==null） return。**较少**情况↓，**有多个** 递归**出口** ，也就是  if (...)  return   if (...)  return  if (...)  return 
+
+​		比如说 如果 **递归函数**的**返回值** 是 **void**  ，那就是 if(root ==null)  **return**     。如果 递归函数 的返回值 是 **int** ，那就是  if(root ==null)  return **0** 或其他数字。如果是  **boolean** ，那么就是 if(root ==null)  return **true** 或 **false**。
 
   3、确定  **单层递归 **的  **逻辑代码** 
-         先确定你用 哪种 **遍历顺序**，一般只用 **<u>前序</u>** 或  **后序** 的**递归**，这样才能 确定   单层递归的   **逻辑代码** 写在**哪**。不过主要还是    这段**逻辑代码**   应该怎么写 。如果是 **<u>修改  和 寻找</u>** 二叉树的话,适合 <u>**前序**</u>  ，那么就是     **逻辑代码** 写在**<u>最前面</u>** ，剩下的两行 就是 递归函数名。对于**<u>修改</u>** 而言，一般是**<u>创建</u>**二叉树、二叉树 **<u>增加</u>**节点、二叉树**<u>删除</u>**节点，剩下的两行要用**<u>root.left</u>**和 **<u>root.right</u>**去  **<u>接收</u>**  递归函数处理后的 左子树和右子树。对于**<u>查找</u>**而言，那么就只需要return 递归函数就行了，**<u>不需要</u>** root.left和root.right去接收;如果是**判断 和 计算 **二叉树的话,一般适合用 **后序**， 会**用 一个变量** 去**接收** 递归左子树的**返回值** ，**另外一个变量** 也去 **接收** 递归右子树的 **返回值**，最后把这两个 变量进行 **逻辑操作** ，比如 &&，或者max( )取最大值，或者直接 把它们相加，  最后  return 返回 
+         先确定你用 哪种 **遍历顺序**，一般只用 **<u>前序</u>** 或  **后序** 的**递归**，这样才能 确定   单层递归的   **逻辑代码** 写在**哪**，它其实就是 "**中**"。
 
-​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入**递归函数自己去**一层层的想**！！因为这样思路会很乱！！所以你应该做的是，就比如 **后序**，那么你就当 上面的左子树递归函数 和 右子树递归函数   **已经执行完**，你脑子里就想象下 ，整颗二叉树中的**带有3个节点**的 **子树**， 然后进行比较然后向上  return 返回，能弄明白子树的逻辑，其他就是   一层层   **向上返回**   罢了。
+​		不过  主要还是  这段**逻辑代码**   应该**怎么写：** 
+
+​		① 如果是 **<u>修改  和 查找</u>** 二叉树的话，适合 <u>**前序**</u>  ，那么就是   **逻辑代码** 写在**<u>最前面</u>** 。
+
+​		对于**<u>修改</u>** 而言，一般是 **<u>创建</u>**二叉树、二叉树 **<u>增加</u>**节点、二叉树 **<u>删除</u>**节点，**剩下的两行 ** 要用**<u>root.left</u>**和 **<u>root.right</u>**去  **<u>接收</u>**  **递归函数 ** 处理**后**的  **左子树 **和  **右子**树。
+
+​		对于**<u>查找</u>**而言，那么就  **只需**要  **return** 递归**函数**就行了，**<u>不需要</u>** root.left和root.right去接收;
+
+​		② 如果是**判断 和 计算 **二叉树的话,一般适合用 **后序**， 会**用 一个变量** 去**接收**  递归**左**子树的 **返回值** ，**另外一个变量** 也去 **接收**  递归 **右**子树 的 **返回值**，最后把  **这两个变量**进行 **逻辑运算** ，比如 **与&&**、**最大值max()**、把它们**相加**，  **最后  return** 返回 。
+
+
+
+​		注意！！！你写 **<u>前序递归</u>** 或者 **后序递归 **的时候，千万**<u> 别</u>**想   **具体**的过程！！<u>**别 **</u>   **一直代入 **递归函数自己去**一层层的想**！！因为这样  **思路会很乱**！！所以**你应该这么想：**
+
+​		比如 **<u>前序</u>**，那么就**想象**  **3**个节点的 **子**树，一直**向下↓** 递归遍历。。。
+
+​		比如 **后序**，那么你就当 上面的**左**子树 递归函数 和 **右**子树递归函数   **已经执行完**，你**脑子里**  就**想象**下 ，**整颗 二叉树**中的 **带有3个节点**的 **子树**， 然后进行比较，**然后向上  return** 返回，能弄明白 **子树**的逻辑，**其他就是**   一层层   **向上返回**↑   一样的。   
 
 
 
@@ -10353,33 +10381,21 @@ class Solution {
 题解 ： https://leetcode.cn/problems/invert-binary-tree/solutions/73159/dong-hua-yan-shi-liang-chong-shi-xian-226-fan-zhua/https://leetcode.cn/problems/invert-binary-tree/
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+// 主要思路 ：
+// 其实就是交换一下 左、右节点left和right，然后再 "递归"的交换左节点，右节点
 
 class Solution {
    
    
        public TreeNode invertTree(TreeNode root) {
 		
+           // 终止条件：当遍历的节点为 null空节点，就要return 返回。
             if(root ==null)
                 return null;
 		
-           	//  这个是 “修改”，所以是 --->前序，中-左-右
-          
-           // 其实和 之前的那种 交换两个值一样的逻辑。这里是交换节点的代码，不仅仅是值交换了
+           
+         //  这个是 “修改”类型的 二叉树 ，所以采用 --->前序：中-左-右 。。逻辑代码 写在 最前面
+          // 其实和 之前的那种 交换两个值一样的逻辑。这里是交换节点的代码，不仅仅是 val值交换了
             TreeNode temp = root.left;  // 中
             root.left = root.right;
             root.right = temp;
@@ -10414,61 +10430,53 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+判断 对称二叉树，要比较的是根节点root，它的 左子树与 右子树，是不是相互对称的。。比较的是 两棵 子树
+   所以在 “递归"遍历的过程中，也是要同时遍历 两棵树。。。 	
+大致的思路就是， 先比较 两棵树的外侧 。然后再比较两棵树的 内侧。。。不断的"递归" 比较。。。
+
+// 因为 默认的主函数 提供的方法参数 只有一个TreeNode 不够，所以在下面 定义了个 “次”函数，它作为主要的 ”递归“函数 。。。而且 形参是两个。分别传入 left左节点 和 右节点right。。。
+
+
+
+**/
+
 class Solution {
     
     public boolean isSymmetric(TreeNode root) {
         
-        // 最终要调用下面的 “次”函数，并且传入 左、右节点 作为参数
+      // 在 主函数里面，要调用下面的 “次”函数，并且传入 root的左、右节点 作为参数，作为初始值。
         return compare(root.left, root.right);
         
     }
 		
-   	// 因为主函数 提供的方法参数 不够，所以定义了个 “次”函数，而且 形参是两个。比较“特殊”
+   //因为 主函数 提供的方法参数 不够，所以定义了个 “次”函数，而且 形参是两个。分别是 left和right
     private boolean compare(TreeNode left, TreeNode right) {
 
-        //  递归的出口 就是 以下 几种情况
-          
-        //  左右节点中  只要它们都是 空节点 是 为空那么就是 true    
+        //  递归出口 就是 以下 几种情况：    
+        //  左右节点中，如果它们都是 空节点null，那么就是 true，是对称的  
         if (left == null && right == null) 
             return true;
         
-        // 这行代码，必须写在下面，你自己想想吧，如果把它写在上面的话，当两个 二叉树都是null的时候，也只会进入这个判断，变成false了，所以 是不合理的 。。。。，所以只能 把它放在第2个递归出口
-        //  左右节点中  只要有一个 是 为空那么就是 false    
+        //  左右节点中，只要有一个 是 为空节点null ，那么就是 false，肯定不是对称的	  
         if (left == null || right == null) {
             return false;
         
-       
-        //  因为此时只剩下的情况就是，左右节点都不为空，并且值不相等 那么就是 false    
+        //  因为此时只剩下的情况就是，左右节点 都不为空，并且val值不相等，那么就是 false，不对称
         if (left.val != right.val) 
             return false;
       
 
         
        // 因为我们把以上情况都排除之后，剩下的就是 左右节点都不为空，并且 数值相同的情况。
-       //  因为是判断  ，，，  采用的是 ---> 后序遍历 
+       //  因为是 “判断”类型的 二叉树  ，  采用的是 ---> 后序遍历 
 
-
-        //先递归的比较 左节点的左孩子 和 右节点的右孩子，比较外侧
-		//再比较  左节点的右孩子 和 右节点的左孩子，比较内侧
-        	
+        	 //比较 外侧：先递归的比较 左节点的左孩子 和 右节点的右孩子，
         boolean compareOutside = compare(left.left, right.right); // 左
         
+            //比较 内侧：再比较  左节点的右孩子 和 右节点的左孩子，
         boolean compareInside = compare(left.right, right.left);  // 右
         
+            // 对这两个 变量 进行 与&&运算，必须这两棵树都是 ture，才是 对称的
         return compareOutside && compareInside;  // 中
     }
 }
@@ -10495,59 +10503,47 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+大致思路：
+
+1.当两棵树的当前节点都为 null 时返回 true
+2.当其中一个为 null 另一个不为 null 时返回 false
+3.当两个都不为空但是值不相等时，返回 false
+
  */
-		// 这道题，其实和 101 的次函数的 一摸一样，，，，
+		
 class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
         
-        // 递归出口有多个，有以下几种情况
+        // 递归出口有多个，有以下几种情况：
         
-
-         //  递归的出口 就是 以下 几种情况
-          
-        //  左右节点中  只要它们都是 空节点 是 为空那么就是 true    
+        // 如果两棵树的 当前节点 都为空null，说明这部分结构相同，返回true
         if (p == null && q == null) 
             return true;
         
-        // 这行代码，必须写在下面，你自己想想吧，如果把它写在上面的话，当两个 二叉树都是null的时候，也只会进入这个判断，变成false了，所以 是不合理的 。。。。，所以只能 把它放在第2个递归出口
-        //  左右节点中  只要有一个 是 为空那么就是 false    
-        if (p == null || q == null) {
+      // 如果其中一棵树的 当前节点 为空null，另一棵 不为空，说明结构不同，返回false
+        if (p == null || q == null) 
             return false;
         
        
-        //  因为此时只剩下的情况就是，左右节点都不为空，并且值不相等 那么就是 false    
+    // 因为此时只剩下的情况就是，两棵树的当前节点 都不为空，并且值不相等 那么就是 false    
         if (p.val != q.val) 
             return false;
+
         
         
         
-         // 因为我们把以上情况都排除之后，剩下的就是 左右节点都不为空，且数值相同的情况。
-       //  因为是判断  ，，，  采用的是 ---> 后序遍历 
-       
-        // 比较外侧：左节点的左孩子和右节点的右孩子
+        
+     // 因为我们把以上情况都排除之后，剩下的就是 两棵树的当前节点 都不为空null，且数值相同的情况。
+        //  因为是 “判断”类型的 二叉树  ，  采用的是 ---> 后序遍历 
+        
+        
+      // 递归地比较两棵树的 左子树和右子树  ，如果都相同 则整棵树 相同，返回true
         boolean compareLeft = isSameTree(p.left, q.left);
-        
-        // 比较内侧：左节点的右孩子和右节点的左孩子
         boolean compareRight = isSameTree(p.right, q.right);
-        
-        // 只有左右子树都相同，两个树才相同
+            
         return compareLeft && compareRight;
     }
 }
-
 ```
 
 #### 572 另一个树的子树
@@ -10571,47 +10567,65 @@ class Solution {
 
 ```java
 
-// 双递归版本 ，，也是第一次遇到这样写法。。主要这道题 可以 在 力扣100题的基础上，稍加修改。
+// 大致思路： 
+// 要判断一个 树subRoot 是不是 树root 的子树，
 
-// 要判断一个树 t 是不是树 s 的子树，那么可以判断 t 是否和树 s 的任意子树相等。满足下面3个情况之一就行，所以是 或 的关系 
-
- // 	当前两棵树相等  ---- > 对应 主函数 return 的第1个  表达式 
-//   或者，t 是 s 的左子树； ---- > 对应 主函数 return的第2个  表达式 
-//   或者，t 是 s 的右子树。---- >  对应 主函数 return的第3个  表达式  
+// 满足下面3个情况之一就行：
+ //  当 前两棵树相等
+//   树subRoot 是 树root的 左子树 
+//   树subRoot 是 树root的 右子树   
 
 class Solution {
-    public boolean isSubtree(TreeNode s, TreeNode t) {
+    public boolean isSubtree(TreeNode root, TreeNode subRoot) {
         
         
-        // 仍然是 多个 递归出口 
-        if(s == null && t == null) 
+        //  多个 递归出口：
+        
+        // 当root和subRoot 这两棵树都为null 空树的时候，也是相等的，返回true
+        if(root == null && subRoot == null) 
             return true;
         
-        // 这里的 s和 t 是否为 null的情况必须分开！！ 这道题 是不太一样的 。。。
-        if(t == null) 
+        // 那么剩下的就是 root和subRoot 其中某一棵树 为空的情况：
+        // 这里的 subRoot为null的时候，root不为空null ，那么就是 subRoot这个空树 肯定是 root的子树 
+        if(subRoot == null) 
             return true;
-        if(s==null)
+        
+   // 这里的 root 为null空树，subRoot不为空树 的时候，，那么就是 subRoot这个空树肯定不是 s的子树 
+        if(root==null)
             return false;   
         
         
-        // 这里的话，主函数的 这里就不需要 判断 s.val 是不是等于 t.val了，因为只需要判断s的某个节点下面的 子树，和 t 这个二叉树是否相等就行了，，，，，，而且 主函数的 最下面的 return 第一个表达式就是 调用下面的 “次”递归函数，这里面 会有对 val的判断的，交给他就行 ！！！
+        // 因为我们把以上情况都排除之后，剩下就是 subRoot 和 root这两棵树 都不为空null 的情况，并且相同的情况：
+       //  因为是 “判断”类型的 二叉树  ，  采用的是 ---> 后序遍历 
         
-        return isSametree(s,t)   || isSubtree(s.left,t) || isSubtree(s.right,t);
+        
+    //这里的 "递归"调用，只需要判断 subRoot 是不是 root的左子树 或 右子树 的 子树 就行了。。。
+        // 还要记得调用 下面的 isSametree()方法，判断是不是 root 和subRoot 这两棵树相等
+        return isSubtree(root.left,subRoot) || isSubtree(root.right,subRoot) || isSametree(root,subRoot);
     }
     
     
-    public boolean isSametree(TreeNode s, TreeNode t) {
+    // 这个 函数，主要是判断 这两颗树 是不是 相同的。。。。
+    public boolean isSametree(TreeNode root, TreeNode subRoot) {
         
-        if(s == null && t == null) 
+        // 两棵树 都为空，那么 它们这两棵树肯定相同
+        if(root == null && subRoot == null) 
             return true;
         
-        if(s == null || t == null) 
+         // 两棵树 其中一个为null，另外一颗树 不为null，那么 它们这两棵树肯定 不相同
+        if(root == null || subRoot == null) 
             return false;
         
-        if(s.val != t.val)
+          // 两棵树 都不为null，它们的 val不相同，那么 它们这两棵树肯定 也不相同
+        if(root.val != subRoot.val)
             return false;
         
-        return isSametree(s.left,t.left) && isSametree(s.right,t.right);
+        
+  // 因为我们把以上情况都排除之后，剩下的就是 两棵树的当前节点 都不为空null，且val数值相同的情况。
+        //  因为是 “判断”类型的 二叉树  ，  采用的是 ---> 后序遍历  
+        
+      // 递归地比较两棵树的 左子树和右子树  ，如果都相同 则整棵树 相同，返回true
+        return isSametree(root.left,subRoot.left) && isSametree(root.right,subRoot.right);
     }
 }
 ```
@@ -10639,26 +10653,33 @@ class Solution {
 
 ```java
 
-
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
+大致思路： 
+  当 root 节点为空时，说明高度为 0，所以返回 0，
+  当 root 节点不为空时，则分别求 root的左右子树的 高度的最大值，同时加 1 表示 当前二叉树的最大深度。
+
+**/
+
+
 class Solution {
     public int maxDepth(TreeNode root) {
         
+        // 递归出口：
+        // 当这棵树为null空树 的时候，高度是 0 
+        // 也就是 当前节点 为空null 
         if(root == null)
             return 0;
          	
-           			// 因为是 计算，所以是 -----> 后序遍历 
         
+        
+       // root节点 不为空null 时,
+  	// 因为是 "计算“类型的二叉树 ，所以是 -----> 后序遍历 
+        
+        
+   //  root 节点不为空时，分别求 左右子树的高度的最大值，同时加 1 表示当前节点的高度，返回该数值，
+        // 一直向上传递，一直向上计算
         int left = maxDepth(root.left);  // 左 
-        int right = maxDepth(root.right);  //右
+        int right = maxDepth(root.right);  // 右
        	
 		return Math.max(left, right) + 1;		//中
         
@@ -10687,19 +10708,8 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+ 
+ 
  */
 
 class Solution {
@@ -10708,29 +10718,29 @@ class Solution {
     public boolean isBalanced(TreeNode root) {
        
         
-         // 首先是 递归三部曲的 第二步： 书写  递归出口 
-     // 因为 这道题 比较 “复杂” ，所以 这里的采用的 递归出口 是 多个。   
         
-    // 第 1 个 递归出口 就是，它是一棵 空树 ，就是 true， 是 平衡二叉树  
+     // 递归出口 是 多个：   
+        
+    // 当 root 是一棵 空树null，就是 true， 肯定是 平衡二叉树  
     if (root == null) {
         return true;
     }
-     
-   // 第 2个 递归出口 就是，它的  左右两个子树  的深度差的绝对值 超过1，就是 false， 不是 平衡二叉树  
-    // 这里 就要 调用下面的 “次”方法， 去求 左、右子树的深度 
+   
+    
+   // 当 root 不为空树null，并且它的 左右两个子树的高度差的绝对值 超过1，就是 false， 不是 平衡二叉树  
+    // 这里 就要 调用下面定义的 “次”方法 getTreeDepth()， 去求 左、右子树的高度
     int leftDepth = getTreeDepth(root.left);
     int rightDepth = getTreeDepth(root.right);
     if (Math.abs(leftDepth - rightDepth) > 1) {
         return false;
     }
-        
-        // 那么剩下的情况就是 左右子树 的深度差，小于等于1的情况，
- 
- // 现在 这里才是 递归三部曲的第三步 ： 确定单层 操作逻辑，以及 选 前序 还是 后序。
-        //  因为是 判断 ，所以选择 ---> 后序 
+     
+    
+   // 那么剩下的情况就是 root不为空树null， 然后它的 左、右子树 的高度差，小于等于1的情况：
+        //  因为是 "判断”类型的 二叉树 ，所以选择 ---> 后序 
 
     
-      boolean leftFlag = isBalanced(root.left);   // 左
+       boolean leftFlag = isBalanced(root.left);   // 左
        boolean  rightFlag = isBalanced(root.right);  // 右 
         
        //左右两个子树都是一棵平衡二叉树的话，那么 这整个二叉树 才是平衡的 
@@ -10740,14 +10750,23 @@ class Solution {
 
     
     
-   // “次”方法，求二叉树的 深度 。用的是之前的 层序遍历 去求的。力扣104题  。用来 被上面调用 ，主要是去求 左、右子树的 深度的 
+   // “次”方法，求二叉树的 深度。。。这个 递归方法实现的 比较基础
  public int getTreeDepth(TreeNode root) {
         
+     
+      // 递归出口：
+        // 当这棵树为null空树 的时候，高度是 0 
+        // 也就是 当前节点 为空null 
         if(root == null)
             return 0;
          	
-           			// 因为是 计算，所以是 -----> 后序遍历 
+
+       // root节点 不为空null 时,
+  	// 因为是 "计算“类型的二叉树 ，所以是 -----> 后序遍历 
         
+        
+   //  root 节点不为空时，分别求 左右子树的高度的最大值，同时加 1 表示当前节点的高度，返回该数值，
+        // 一直向上传递，一直向上计算
         int left = getTreeDepth(root.left);  // 左 
         int right = getTreeDepth(root.right);  //右
        	
@@ -10781,28 +10800,23 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+主要思路： 
+	它初始化 结果列表res，以及一个 路径字符串path
+	采用先序 "递归" 地访问每个节点，如果不是叶子节点，则继续 递归遍历其 左右子节点。
+	当遇到 叶子节点 时，将从 root根节点到该叶子节点的路径path的字符串 添加到结果列表res 中。
+	
  */
 
 class Solution {
 	
-  // 这道题比较特殊，因为自带的主函数的形参不够用。。所以又在下面定义了个 “次”函数，它作为递归函数。
-//  然后在 主函数里面调用下面的 “次”递归函数，记得传入 list集合，以及初始化 path = "" 
+    
+  // 这道题 因为自带的主函数 的形参不够用。。所以又在下面定义了个 “次”函数，它作为递归函数。
+//  然后在 主函数里面调用下面的  “次”递归函数，记得传入 list集合，以及 初始化参数 path = ""，空字符串
     public List<String> binaryTreePaths(TreeNode root) {
         
-         List<String> res = new ArrayList<>();
+        // res是一个 引用数据类型，会在 下面的paths()递归函数里面，不断更新变化的。。。。
+        List<String> res = new ArrayList<>();
+        
         paths(root,res,"");
 
         return res;
@@ -10810,18 +10824,19 @@ class Solution {
 
     public void paths(TreeNode root,List<String> res,String path) {
      
-        // 一个递归出口，很简单，就是考虑遍历到空节点null的时候
+        // 递归出口： 遍历到空节点null的时候，那么就 return 
         if (root==null)
             return;
 
-        // 因为本题 属于  找...的类型，所以适合用  ----->前序
-        // 只有当 遍历到 叶子 节点，才 添加一次 结果路径字符串 到 res集合
-     // 题目中这个 加了return，其实没必要加的，因为再执行一次递归函数，就达到了 叶子节点的左孩子， 其实空节点，也会自动返回的。。。
         
+        // 那么剩下的情况就是， 节点非空 null 。。。。
+        // 因为本题 属于  "查找"类型的 二叉树，所以适合用  ----->前序
+        
+        // 只有当 遍历到 叶子节点， 才 添加一次  结果路径字符串paht  到 res集合  
        if (root.left==null &&root.right==null)      //   中 
                 res.add(path+root.val);
                 
-      // 只不过 这里递归函数的  形参里 用了一些 小小的 逻辑 
+      // 记得！！ 递归函数的  path形参，每次递归用了一些 小小的 逻辑 ，字符串拼接 
         paths(root.left,res,path+root.val+"->");		// 左
         paths(root.right,res,path+root.val+"->");		// 右
        
@@ -10853,50 +10868,52 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+
+主要思路： 
+	它初始化 结果列表res，并且初始化一个 sum求和参数，。。
+	采用先序 "递归" 地访问每个节点，如果不是叶子节点，则继续 递归遍历 其 左右子节点，不断累加 sum。
+	当遇到 叶子节点 时，将从 root根节点到该叶子节点的路径之和sum 添加到结果列表res 中。
+	
+	最后再判断， res集合里面，有没有 等于 targetSum的 路径和，有的话才是 返回true 
  */
-   // 就是 在 257二叉树的所有路径 这道题的基础上，稍微改改，，就是"次"函数中间的第二个形参改一下。
+
+
+
 class Solution {
     
-  // 这道题比较特殊，因为自带的主函数的形参不够用。。所以又在下面定义了个 “次”函数，它作为递归函数。
-//  然后在 主函数里面调用下面的 “次”递归函数，记得传入 list集合，以及初始化 的sum =0，
+  //这道题比较特殊，因为自带的主函数 的形参不够用。。所以又在下面定义了个 “次”函数，它作为递归函数。
+//  然后在 主函数里面调用下面的 “次”递归函数，记得传入 list集合，以及初始化参数 的sum =0，
     public boolean hasPathSum(TreeNode root, int targetSum) {
 				
     
-  // 让res 集合 保存 每一条路径上的 之和，其实就是作为 每一个元素。最后再看看里面的元素 是否包含 targetSum。包含的话就是 true，否则就是 false 	
+  // 让res 集合 保存 每一条路径上的 之和sum，其实就是作为 每一个元素。
         List<Integer> res = new ArrayList<>();
         pathSum(root,0,res);
-        		//  最后就是还要 调用一下这个 contains()函数 ，是否包含 targetSum
+        
+        
+          // 最后再看看里面的元素 是否包含 targetSum。包含的话就是 true，否则就是 false 	
+      //  最后就是还要 调用一下这个 contains()函数 ，是否包含 targetSum
         return res.contains(targetSum);
        
     }
     		
    
     public void pathSum(TreeNode root,int sum,List<Integer> res) {	
-        // 一个递归出口，很简单，就是考虑 遍历到空节点null的时候
+        
+        // 递归出口： 遍历到空节点null的时候，那么就 return 
         if (root==null)
             return; 
             		
-        	// 本道题 是 属于  找... 的类型，所以我们采用的是---->前序
+         // 那么剩下的情况就是， 节点非空 null 。。。。
+        // 因为本题 属于  "查找"类型的 二叉树，所以适合用  ----->前序
         
-        	//  每次遍历到 叶子节点，那么就必须要 往这个 res里添加 这一条路径上的总和了
-        	// 所以 res集合里面 保存的都是 每一条路径之和 
+      
+        //  每次遍历到 叶子节点，那么就必须要 往这个 res里添加 这一条路径上的总和sum 了
+       // 所以 res集合里面 保存的都是 每一条路径之和sum 
         if (root.left==null&&root.right==null)    // 中 
             res.add(sum + root.val);
         			
-      //在 257二叉树的所有路径 这道题的基础上，稍微改改，，就是"次"函数中间的第二个形参改一下。
+      // 记得！！递归函数的 sum形参，每次递归用了一些 小小的 逻辑 ，一直向下 累加
         pathSum(root.left,sum+root.val,res);		// 左
         pathSum(root.right,sum+root.val,res);    // 右
     }
@@ -10913,7 +10930,7 @@ class Solution {
 
 叶子节点 是指没有子节点的节点。
 
- 
+
 
 示例 1：
 
@@ -10927,44 +10944,67 @@ class Solution {
 题解：https://leetcode.cn/problems/path-sum-ii/solutions/867902/dai-ma-sui-xiang-lu-dai-ni-xue-tou-er-ch-sbm3/ 
 
 ```java
+/**
 
-// 这道题。。。比较特殊 。。。只能用  回溯法去做 ！！！
+这道题。。。比较特殊 。。。只能用  "回溯法“ 的 递归去做。。。。！！！
+
+大致思路：
+
+
+
+**/
+
 class Solution {
     		
-    // 依旧的 两个全局变量，，，
+     // 在方法外面，定义 两个全局变量，，，
+    
+	 // temp是对应每一条 路径，保存的 每个节点值val   
+      List<Integer> temp = new ArrayList<>();
+    // res 是结果集合，当遍历到 叶子节点的时候，并且符合条件的，才会把temp的这个集合，保存进去
     List<List<Integer>> res = new ArrayList<>();
-    List<Integer> temp = new ArrayList<>();
-
+  
+    
     public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
        
+        // 在下面定义了个 "次"方法，用来 递归的方法。
+        // 定义了个新的参数 sum ，代表 一条路径的总和
+       
+        // 调用“次”函数，记得传入 初始值 sum 为 0
         travesal(root, targetSum,0);
+        
         return res;
         
     }
 
+    // “次”方法，用来 先序递归遍历，找到符合条件的 路径。。。
     private void travesal(TreeNode root, int targetSum,int sum) {
         	
-        // 当传入的是一颗空树的时候。。或者 是遍历到了 空节点，那么就要返回了 
+        // 递归出口： 当传入的是一颗空树null的时候， 或者 是遍历到了 空节点，那么就要返回了 
         if (root == null) 
             return;
       		
-        // 这里是 寻找，所以用的是 --->前序遍历
+        // 这里是 "寻找”类型的二叉树，，，所以用的是 --->前序遍历
         // 开始 单层的递归逻辑了。。。
-        sum+=root.val;
-        temp.add(root.val);
+        
+        sum+=root.val;  // 每次递归遍历的时候，就要将 当前节点的值val 累加到 路径和sum 中
+        temp.add(root.val);   // 还要将 当前节点的值，添加到 临时路径列表temp 中
         
         
-        if (root.left == null && root.right == null &&  sum== targetSum) {
-            		// 小细节，要new 添加 它
+       // 如果当前节点是否为 叶子节点 ，并且 当前路径和sun 等于目标路径和targetSum
+        // 那么，将当前临时路径列表temp的 添加到  结果列表res 中
+        if (root.left == null && root.right == null &&  sum== targetSum) {  // 中
+            		
             	res.add(new ArrayList<>(temp));	
-     	// 特殊1 ，不能加 return！！！！！！这样子的话，找到的这个节点不能自己撤销自己了
+     	
         }
-
-        travesal(root.left, targetSum,sum);
-        travesal(root.right, targetSum,sum);
+					
+         // 递归遍历 当前节点的 左、右 孩子，继续寻找 满足条件的 路径
+        travesal(root.left, targetSum,sum); // 左
+        travesal(root.right, targetSum,sum); // 右 
         
-        			//  特殊2 ，这里也不需要那个 sum-=root.val，其实这里没用了。。。。
-        temp.remove(temp.size() - 1); // 撤销之前的添加，回溯 
+       // "回溯" 操作，记得要 "撤销" 之前的 添加节点值val的操作，，，，
+        // 这样才能保证在遍历 其他路径 时，temp 中存储的是 正确的当前路径 节点值 		
+        temp.remove(temp.size() - 1); 
         
     }
 }
