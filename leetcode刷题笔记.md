@@ -11029,72 +11029,68 @@ class Solution {
 
 <img src="https://piggo-zwj.oss-cn-shanghai.aliyuncs.com/leetcode_pig/image-20250303200657017.png" alt="image-20250303200657017" style="zoom:33%;" />
 
-题解： [https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+题解：https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/solutions/290944/kan-wo-jiu-gou-liao-san-chong-bian-li-fang-shi-g-2/
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
+/**	
+    这道题目是， 中序 + 后序的数组 ===》 构建一棵  二叉树
+	首先我们可以显然知道当前  postorder[最后那个下标]，只用找出它在 inorder中序数组中的 下标位置index，也就是 要构造二叉树的root根节点，然后就可以把 左、右子树分开来了 
+	
+	
+	中序遍历中： 我们知道 左子树：[inorder_start,index-1], 右子树：[index+1, inorder_end]
+	在后序遍历：左子树起始位置为 post_start，左子树一共有(index- inorder_start-1)个，所以 左子树的下标是 [post_start, post_start + (index-1 - inorder_start)]
+		右子树的终止位置为post_end - 1，因此右子树:[post_end - 1 - (inorder_end - (index+1)), post_end - 1]
+**/
+
+public class Solution {
     
-       // 在方法的最外面，定义一个全局变量，这个写法很特殊！！主要是为了根据节点值查找 下标位置  
-            Map<Integer, Integer> map = new HashMap<>();  
-    
-    
+    // 在方法的最外面，定义一个全局变量map
+    // 主要是为了根据 postorder后序数组的 节点值，去 inorder中序数组 查找 下标位置index，也就是根节点
+    Map<Integer, Integer> map = new HashMap<>();
+
     public TreeNode buildTree(int[] inorder, int[] postorder) {
-        
-        // 用 map 保存 中序数组 的每个数值，对应的下标位置
-  //目的是，为了在 下面递归函数里面， 根据后序数组的，最后一个元素值，也就是根节点。然后去map中找到它  在中序数组 的 下标值。这个很关键！！！
-        for (int i = 0; i < inorder.length; i++) 
+        // 先用 map 保存 inorder中序数组的 每个数值，以及 对应的下标，从 0 开始。
+        // 目的是，为了在 下面"递归"函数里面，每次都会根据 postorder后序数组，最后下标的 元素值。
+        // 然后去map中 找到它 在中序数组 的 下标值 i，也就是 二叉树的根节点root。
+        // 这个很关键！！！找到 下标值i 之后，就找到了 root的 左右子树，就可以很方便的 左、右 递归构建二叉树了。
+        for (int i = 0; i < inorder.length; i++)
             map.put(inorder[i], i);
-                                                                                               // 左闭右开 [ , )  所有传入的是  两个数组的长度 length  
-        return findNode(inorder,  0, inorder.length, postorder,0, postorder.length);    
+        // 调用下面定义的 findNode()递归函数，形参是 中序数组的起始、结束 下标 ；以及 后序数组的 起始、结束下标。
+        // 传入的初始值就是 0，以及 对应的数组长度。 这里是 [ , ) 左闭右开的区间。
+        return findNode(inorder, 0, inorder.length, postorder, 0, postorder.length);
     }
 
-    	
-    public TreeNode findNode(int[] inorder, int is, int ie, int[] postorder, int ps, int pe) {
-        
-        // 参数里的范围都是 左闭右开 [, )
-          // 不满足左闭右开 [ , )  所以要在 大于号 > 的基础上 加上等于号=  
-           // 也就是起始下标 >= 终止下标  ，说明没有元素，返回空树 null
-        if (is >= ie || ps >= pe)   
+    // 下面定义的 一个 “递归”函数 findNode()，形参是 中序数组的起始、结束 下标 ；以及 后序数组的 起始、结束下标。
+    public TreeNode findNode(int[] inorder, int i_start, int i_end, int[] postorder, int p_start, int p_end) {
+        // 递归出口 ：
+        // 当"递归"遍历数组的时候，起始下标 >= 终止下标  ，说明没有元素，返回空树 null
+        if (i_start >= i_end || p_start >= p_end)
             return null;
-        	
-        
-        	//  因为是 “修改”，构造，所以采用 --->前序遍历
-        		// 中 
-        int rootIndex = map.get(postorder[pe - 1]);  // 先找  后序数组 的最后一个元素 是根节点， 找它在中序遍历中的位置
-        TreeNode root = new TreeNode(inorder[rootIndex]);  // new 构造 根结点，主要就是传入对应的 val 值
-        int lenOfLeft = rootIndex - is;  //保存中序数组 左子树的节点个数，用来下面，确定后序数组中 需要遍历的 末尾下标是多少，会被用到2次，很关键！！！
 
+        //  因为是 “修改，构造”类型的二叉树 。。所以采用 --->前序遍历
 
-         // 左  
+        // 中 ：
+        // 先找  postorder后序数组 最后下标的 元素值。 然后去map中 找到它 在中序数组 的 下标值 index。也就是 二叉树的根节点root。
+        int rootIndex = map.get(postorder[p_end - 1]);
+
+        // 然后就可以 new 一个 根结点root 了，主要就是 传入 inorder中序数组下标index 对应的val值
+        TreeNode root = new TreeNode(inorder[rootIndex]);
+        // 记得 保存 inorder中序数组里面，左子树的节点个数。
+        // 因为 要用来 确定 postorder后序数组中 需要遍历的 结束下标是多少 ，，，，很关键！！！
+        int lenOfLeft = rootIndex - i_start;
+
+        // 左 ：
         // 递归 构造左子树：   中左数组 + 后左数组
-        root.left = findNode(inorder, is, rootIndex,       //   中左数组 的 终止下标是   rootIndex，也就是根节点。而且 这里是 左闭右开，所以 也就是 遍历不到 根节点的。放心好了
-                postorder, ps, ps + lenOfLeft);   //  后左数组的 终止下标，就是起始下标 ps 必须再加上 lenOfLeft 。死记硬背就行了!!!它同 后右数组的 起始下标
+        root.left = findNode(inorder, i_start, rootIndex,  // 中左数组 的 终止下标是   rootIndex，也就是根节点root。
+                postorder, p_start, p_start + lenOfLeft); // 后左数组的 终止下标，就是起始下标 p_start 必须再加上 lenOfLeft 。它 和 后右数组的 起始下标 相同
 
-        
-        
-        // 右
+        // 右 ：
         // 递归构造 右子树：   中右数组 + 后右数组
-          root.right = findNode(inorder, rootIndex + 1, ie, // 为什么中右数组，起始下标 这里是 rootIndex +1 。是因为 rootIndex 就是根节点，不能从它开始遍历，而且是[ 闭区间，rootIndex +1 是 右子树的 第一个起始节点，得从它开始遍历
-             postorder, ps + lenOfLeft, pe - 1); //因为后序数组的 最后一个元素是 根节点，已经被用掉了，而且是 开区间 )，所以 后右数组的 终止下标 你就死记硬背吧，pe-1
+        root.right = findNode(inorder, rootIndex + 1, i_end, // 为什么中右数组，起始下标 这里是 rootIndex +1 。是因为 rootIndex 就是根节点，不需要再从它 开始遍历
+                postorder, p_start + lenOfLeft, p_end - 1); // 因为后序数组的 最后一个元素是 根节点，已经被用掉了，所以 后右数组的 终止下标是 p_end - 1
 
         return root;
     }
-    
 }
 ```
 
@@ -11115,70 +11111,65 @@ class Solution {
 
 <img src="../../../AppData/Roaming/Typora/typora-user-images/image-20250303200736231.png" alt="image-20250303200736231" style="zoom:33%;" />
 
-题解：https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+题解：https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/solutions/107105/dong-hua-yan-shi-105-cong-qian-xu-yu-zhong-xu-bian/
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-	//  仿照 106 的模板，稍微改改然后就好了
-class Solution {
-    
-   // 在方法的最外面，定义一个全局变量，这个写法很特殊！！主要是为了根据节点值查找 下标位置  
-    Map<Integer, Integer> map = new HashMap<>(); 
-    
-    
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
+  这道题目是， 前序 + 后序的数组 ===》 构建一棵  二叉树
+	首先我们可以显然知道当前  preorder[第一个下标]，只用找出它在 inorder中序数组中的 下标位置index，也就是 要构造二叉树的root根节点，然后就可以把 左、右子树分开来了 
+	
+	中序遍历中： 我们知道 左子树：[inorder_start,index-1], 右子树：[index+1, inorder_end]
+	在前序遍历：左子树的起始位置 为 pre_start+1,左子树一共有(index-1 - inorder_start)个，因此左子树：[pre_start+1, pre_start+1 + (index-1 - inorder_start)]
+		右子树的起始位置 为 左子树终止位置+1，终止位置为 pre_end，因此右子树：[ pre_start+1 + (index-1 - inorder_start) + 1, pre_end]
 
-       // 用 map 保存 中序数组 的每个数值，对应的下标位置
-  //目的是，为了在 下面递归函数里面， 根据后序数组的，最后一个元素值，也就是根节点。然后去map中找到它  在中序数组 的 下标值。这个很关键！！！
-        for (int i = 0; i < inorder.length; i++) 
+
+
+ */
+
+
+	
+public class Solution {
+    // 在方法的最外面，定义一个全局变量map
+    // 主要是为了根据 preorder前序数组的 节点值，去 inorder中序数组 查找 下标位置index，也就是根节点root
+    Map<Integer, Integer> map = new HashMap<>();
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        // 先用 map 保存 inorder中序数组的 每个数值，以及 对应的下标，从 0 开始。
+        // 目的是，为了在 下面"递归"函数里面，每次都会根据 preorder前序数组，第一个下标的 元素值。
+        // 然后去map中 找到它 在中序数组 的 下标值 i，也就是 二叉树的根节点root。
+        // 这个很关键！！！找到 下标值i 之后，就找到了 root的 左右子树，就可以很方便的 左、右 递归构建二叉树了。
+        for (int i = 0; i < inorder.length; i++) {
             map.put(inorder[i], i);
-        
-		// 左闭右开 [ , )  所有传入的是  两个数组的长度 length
-        return findNode(inorder,  0, inorder.length, preorder,0, preorder.length);  
-   
+        }
+        // 调用下面定义的 findNode()递归函数，形参是 中序数组的起始、结束 下标 ；以及 前序数组的 起始、结束下标。
+        // 传入的初始值就是 0，以及 对应的数组长度。 这里是 [ , ) 左闭右开的区间。
+        return findNode(inorder, 0, inorder.length, preorder, 0, preorder.length);
     }
 
-    public TreeNode findNode(int[] inorder, int is, int ie, int[] preorder, int ps, int pe) {
-        
-         // 参数里的范围都是 左闭右开 [, )
-          // 不满足左闭右开 [ , )  所以要在 大于号 > 的基础上 加上等于号=  
-           // 也就是起始下标 >= 终止下标  ，说明没有元素，返回空树 null
-        if (is >= ie || ps >= pe) 
+    public TreeNode findNode(int[] inorder, int i_start, int i_end, int[] preorder, int p_start, int p_end) {
+        // 递归出口 ：
+        // 当"递归"遍历数组的时候，起始下标 >= 终止下标  ，说明没有元素，返回空树 null
+        if (i_start >= i_end || p_start >= p_end) {
             return null;
-      
-		
-        
-        
-        	//  因为是  因为是 “修改”，构造，所以采用 --->前序遍历
-        	// 中
-        int rootIndex = map.get(preorder[ps]);  // 先找  前序遍历的第一个元素 是根节点， 找它在中序遍历中的位置
-        TreeNode root = new TreeNode(inorder[rootIndex]);  //  new构造 根结点
-        int lenOfLeft = rootIndex - is;  // 保存中序数组 左子树的节点个数，用来确定前序数组中 需要遍历的末尾下标
+        }
 
-		// 左
+        // 中 ：
+        // 先找  preorder前序数组 第一个下标的 元素值。 然后去map中 找到它 在中序数组 的 下标值 index。也就是 二叉树的根节点root。
+        int rootIndex = map.get(preorder[p_start]);
+        // 然后就可以 new 一个 根结点root 了，主要就是 传入 inorder中序数组下标index 对应的val值
+        TreeNode root = new TreeNode(inorder[rootIndex]);
+        // 保存中序数组 左子树的节点个数，用来确定前序数组中 需要遍历的 结束下标
+        int lenOfLeft = rootIndex - i_start;
+
+        // 左：
         // 递归 构造左子树：   中左数组 + 前左数组
-        root.left = findNode(inorder, is, rootIndex,// 中左数组 的 终止下标是   rootIndex，也就是根节点。而且 这里是 左闭右开，所以 也就是 遍历不到 根节点的。放心好了
-         preorder, ps+1,  ps+1+ lenOfLeft); //前左数组的 起始下标 肯定是除了第一个根节点的下一个 下标，那么就是 ps+1 。那么前左数组的 终止下标，就是起始 ps+1 必须再加上 lenOfLeft 。死记硬背就行了!!!它同 前右数组的 起始下标
+        root.left = findNode(inorder, i_start, rootIndex, // 中左数组 的 终止下标是   rootIndex，也就是根节点。
+                preorder, p_start + 1, p_start + 1 + lenOfLeft); // 前左数组的 起始下标 肯定是除了第一个根节点的下一个 下标，那么就是 p_start + 1 。那么前左数组的 终止下标，就是起始 p_start + 1 必须再加上 lenOfLeft。它 和 前右数组的 起始下标，是一样的
 
-        
-        // 右
+        // 右：
         // 递归 构造右子树：  中右数组 + 前右数组
-        root.right = findNode(inorder, rootIndex + 1, ie, // 为什么中右数组，起始下标 这里是 rootIndex +1 。是因为 rootIndex 就是根节点，不能从它开始遍历，而且是[ 闭区间，rootIndex +1 是 右子树的 第一个起始节点，得从它开始遍历
-           preorder, ps+1+ lenOfLeft, pe); // 前右数组的 终止下标就是 末尾了，因为是 右开区间) 
+        root.right = findNode(inorder, rootIndex + 1, i_end, // 为什么中右数组，起始下标 这里是 rootIndex +1 。是因为 rootIndex 就是根节点，不需要再从它 开始遍历
+                preorder, p_start + 1 + lenOfLeft, p_end); // 前右数组的 终止下标就是 末尾了，
 
         return root;
     }
@@ -11212,35 +11203,19 @@ class Solution {
 题解 ：[https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/](https://leetcode.cn/problems/merge-two-binary-trees/solutions/424346/617-he-bing-er-cha-shu-san-chong-di-gui-yi-chong-d/)
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode { 
- *     
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+
 class Solution {
     
     public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {
         
-        //  递归出口  有多个 。。
+        //  递归出口  有多个：
      // 递归 出口，只要 遇到 root1 或者 root 2 中 某个节点为空的话，那么就返回另外一个树的 节点					
                 if (root1 == null) return root2;
                 if (root2 == null) return root1;
         
-// 因为2个递归出口的情况排除后，只剩下 root1 和 root2 遍历节点都非空的情况，就可以正常书写 逻辑了
-               
-       		      // 因为是 因为是 “修改”，构造，采用的是  --->前序 遍历 
-        
-        		//中 
+// 当递归出口的情况排除后，只剩下 root1和root2 遍历节点 都非空的情况，就可以正常书写 "递归"逻辑
+ // 因为是 因为是 “修改”类型的二叉树 ，采用的是  --->前序 遍历         
+        		//中 ：
                 TreeNode root = new TreeNode(root1.val + root2.val);
                  
         // 左： 当然都是  两棵树的 左子树 
@@ -11261,7 +11236,7 @@ class Solution {
 题目描述：
 
 ```
-给你一棵二叉树的根节点，返回该树的 直径 。
+给你一棵 二叉树的根节点，返回该树的 直径。
 
 二叉树的 直径 是指树中任意两个节点之间最长路径的 长度 。这条路径可能经过也可能不经过根节点 root 。
 
@@ -11282,33 +11257,51 @@ class Solution {
 题解:https://leetcode.cn/problems/diameter-of-binary-tree/solutions/37205/hot-100-9er-cha-shu-de-zhi-jing-python3-di-gui-ye-/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
+/**
+
+大致思路： 
+	 要求出二叉树的直径(任意两个节点之间最长路径的 长度)，
+     对于二叉树，里面的 每一个结点，都要记录 以此结点为根root 的直径情况：
+     也就是每个节点的 左子树高度+右子树高度的和，要和 最终结果值max 不断地比较，然后更新 max，，，
+       这样就能求出 二叉树的直径了。。。
+
+**/
+
 class Solution {
     
-    //用于记录最终结果，定义在最外面,这个写法 其实也很“常见”。。。。
-    // 它会在 “次”递归函数里面不断被更新 
-    int res=0;
-    
+    //  定义一个 成员变量，  用于记录最终结果，  定义在最外面,这个写法 其实也很“常见”。。。
+    // max 这个变量。。。会在 “次”递归函数find()，里面不断被 更新 ！！！
+    int max =0;
     
     public int diameterOfBinaryTree(TreeNode root) {
         
-        dfs(root);
+        // 调用下面的 "次"函数 ，主要就是 求每个节点为root的时候，它的左、右子树的高度。。。
+        find(root);
         
-        return res;
+        return max;
     }
     
-    // 求二叉树的深度的 “次”函数
-    int dfs(TreeNode root){
-        
+    
+    //  “次”函数，用于 递归。。。。主要就是 求每个节点为root的时候，它的左、右子树的高度，记得 把它们相加。。。 相加之后的 值，然后不断和 max 进行比较更新，就可以求出 整个二叉树的 直径了 。。。
+    int find(TreeNode root){
+           
+           // 递归出口：
+        // 当这棵树为null空树 的时候，高度是 0 
+        // 也就是 当前节点 为空null 
         if (root==null) 
             return 0;
+               
+          // root节点 不为空null 时,
+  	// 因为是 "计算“类型的二叉树 ，求高度，所以是 -----> 后序遍历 
+                
+   
+        int left = find(root.left);  // 左 ：计算左子树的高度 
+        int right = find(root.right);  // 右 ：计算右子树的高度
         
-        int left=dfs(root.left);
-        int right=dfs(root.right);
+   // 要每次都要进行比较，对每个节点的 左、右子树的高度之和 与 最终结果max 比较，哪个更大，然后更新
+        max = Math.max(max,left+right);
         
-   // 要每次都要进行比较，对每个节点的左、右子树的深度之和 与 最终结果res 比较，哪个更大，然后更新
-        res=Math.max(res,left+right);
-        
-        return Math.max(left,right)+1;
+        return Math.max(left,right)+1;  // 中  ：
     }
     
 }
@@ -11341,32 +11334,44 @@ class Solution {
 题解：https://leetcode.cn/problems/delete-node-in-a-bst/solutions/582561/miao-dong-jiu-wan-shi-liao-by-terry2020-tc0o/
 
 ```java
+/**
 
+递归的逻辑  ：
+	如果 key 大于 当前节点值，肯定是去 二叉搜索树的 右子树中删除；
+	如果 key 小于 当前节点值，肯定是去 二叉搜索树的 左子树中删除；
+	
+	如果 key 就是 当前节点，又要分为 以下三种情况：
+		当前节点 没有 左孩子：其右子顶替其位置 ==》也就是 删除了该节点；
+		当前节点 没有 右孩子：其左子顶替其位置 ==》也就是 删除了该节点；
+		当前节点 左右孩子都有：其左子树 转移到 其右子树的最左节点的 左子树上，然后右子树顶替其位置 ==》也就是 删除了该节点。
+
+**/
 
 class Solution {
     public TreeNode deleteNode(TreeNode root, int key) {
-        
-        
-        // 递归出口也只需要考虑 1种，就当 传入的 root 为空树null，另一种含义就是递归过程中遍历到了null空节点
+           
+        // 递归出口： 就当 传入的 root 为空树null，遍历到了null空节点的时候，就说明不需要删除节点了。返回null就行。
         if (root == null) 
             return null;
         
         
-        // 因为是 删除，也就是 因为是 “修改”，所以用-----> 前序 
+        // 因为是 删除，也就是 因为是 “修改”类型的二叉树 ，所以用-----> 前序 
         
-        if (root.val == key) {				//中 
-                  
-          //这里的“删除”root节点,在代码中的体现就是直接 return 返回 它的 左、右子树就行！！！
-            							// 这个“规律”，我们要熟记和掌握的！！
+        // 如果 key 就是 当前节点，那么就可以开始 "删除” 节点了	  //  中 
+        if (root.val == key) {			
+          
+      //   当前节点 没有 左孩子：其右子顶替其位置 ==》也就是 删除了该节点；
+        // 这里的“删除”节点,在代码中的体现，就是直接 return 返回 它的 左、右子树就行！！
             if (root.left == null)  
                 return root.right;   
             
+         //   当前节点 没有 右孩子：其左子顶替其位置 ==》也就是 删除了该节点； 
             else if (root.right == null) 
                 return root.left;
             
                // 剩下的就只有 左、右子树 都不为空的情况
             else{
-			       // 临时移动指针 t ，用于去找 root.right右子树中的最左边的那个节点 
+			       //定义一个 临时移动指针 t ，用于去找 root.right右子树中的最左边的那个节点 
                     TreeNode t = root.right;
 
                 //注意，while的终止条件必须是 t.left不为空，这里你画个草稿纸就知道了
@@ -11381,16 +11386,17 @@ class Solution {
             
         } 
         
+         // 如果 key 小于 当前节点值，肯定是去 二叉搜索树的 右子树中删除；
         else if (key<root.val)  
             root.left = deleteNode(root.left, key);   // 左 
+        
+       // 如果 key 大于 当前节点值，肯定是去 二叉搜索树的 右子树中删除；
         else 
             root.right = deleteNode(root.right, key); // 右
         
         return root;
     }
 }
-
-
 ```
 
 #### 98 验证二叉搜索树
@@ -11419,6 +11425,15 @@ class Solution {
 题解：https://leetcode.cn/problems/validate-binary-search-tree/solutions/84032/er-cha-sou-suo-shu-yu-zhong-xu-bian-li-by-wisemove/
 
 ```java
+/**
+
+主要思路就是 ：
+	因为 二叉搜索树的 中序遍历 是一个 有序数组。
+	然后根据 数组 顺序连续遍历，如果不是顺序递增的 那么肯定就不是二叉搜索树。  
+	通过这点特点 ，来判断 它是不是 二叉搜索树 。。。。
+
+**/
+
 class Solution {
 
             
@@ -11428,22 +11443,27 @@ class Solution {
             List<Integer> res = new ArrayList<>();
                 
       // 因为是 二叉搜索树，所以它的  中序遍历 是递增的，这个“特点”一定要记住！！！！！！
-        //  所以 先调用“次”函数，  往list集合添加元素。
-            // 然后通过下面的 for循环，来看看是否 是递增的，如果出现 前面元素大于 后面元素，就不是 而二叉搜索树，返回false
+        //  所以 先调用“次”函数inorder()，使用 中序遍历的方式，往list集合添加元素。
             inorder(root,res);
 
+               // 然后再通过下面的 for循环，遍历 list集合 ，来看看是否 是递增的↑
+            //  如果出现 前面元素大于 后面元素，就不是 而二叉搜索树，返回false  
             for(int i = 0; i < res.size() - 1; i++){
                 if(res.get(i) >= res.get(i+1))
                     return false;	
             }
+            
+            
             return true;
         }
 
-        //  “次”函数 。通过中序遍历 二叉搜索树，往list集合添加元素 
+    
+        //  “次”函数 inorder() 。通过中序遍历 二叉搜索树，往list集合添加元素 
         public void inorder(TreeNode node,List<Integer> res){
 
             if(node == null)
                 return;
+            
             midorder(node.left,res);
             res.add(node.val);
             midorder(node.right,res);
@@ -11475,42 +11495,34 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+
+  主要就是每次递归的时候，都要先去 找到 有序数组的中间下标index，也就是 根节点root 
+  然后 在 它的最左侧下标 到index-1，是它的左子树。。
+  它的 index+1，到最右侧下标，是它的 右子树。。。。
+  不断递归下去 。。。就创建完成了 二叉搜索树。。。
+
  */
 
-
-//  主要就是 找中间值+ 递归  ，具体的可以参考105，和106 。这里仍然是 左闭右开原则 [ , )
 class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
-
+		
+        // 要去调用下面的一个 "次"函数，负责 递归创建 二叉搜索树。。。
         return fun(nums,0,nums.length);
     }
-
 
     public TreeNode fun(int[] nums,int start,int end) {
 		
         if(start>=end)
             return null;
 
-        // 因为是  构造，所以是---> 前序 
+        // 因为是  “构造”类型的二叉树 ，所以是---> 前序  
         
-        int mid = (start+end)/2;                 // 中
-        TreeNode root = new TreeNode(nums[mid]);
+        // 先找到中间下标mid，也就是 根节点 root 				// 中
+        int mid = (start+end)/2;                		
+        TreeNode root = new TreeNode(nums[mid]);  // 创建 该root节点。。
         
-        root.left = fun(nums,start,mid);  // 左
-        root.right = fun(nums,mid+1,end); // 右
+        root.left = fun(nums,start,mid);  // 左：创建左 子树
+        root.right = fun(nums,mid+1,end); // 右：创建右 子树
         return root;
 
     }
@@ -11539,19 +11551,11 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+
+这道题 也是用到了 二叉搜索树的 中序遍历结果是单调自增的特性。先把结果保存到 list集合里面 。
+然后第k个的话，就可以直接根据 list的get()方法，传入k-1 ，就能获取到了。。。
+
+
  */
 class Solution {
     public int kthSmallest(TreeNode root, int k) {
@@ -11559,15 +11563,17 @@ class Solution {
         List<Integer> list = new ArrayList<>();
         inorder(root,list);
         
-          //  记得是 k-1
+          // 传入的是 k-1
         return list.get(k-1);
         
     }
-		// 这道题 也是用到了 二叉搜索树的 中序遍历结果是单调自增的特性，直接解出来了。
+		
+    // “次”函数，用于 中序递归遍历。。二叉树 。。。
     public void inorder(TreeNode root,List<Integer> list) {
         
             if (root == null)   
                 return;
+        
             inorder(root.left,list);
             list.add(root.val);
             inorder(root.right,list);
@@ -11606,28 +11612,58 @@ class Solution {
 
 ```java
 
-// 这道题，，，理解有点困难。。。。背一下吧。。。。。。。。
+/**
+
+大致思路 ：
+
+若 root 是 p,q 的 最近公共祖先 ，则只可能为以下情况之一：
+
+	p 和 q 在 root 的子树中，且分列 root 的 异侧（即分别在左、右子树中）；
+	p = root ，且 q 在 root 的左或右子树中；
+	q = root ，且 p 在 root 的左或右子树中；
+
+**/
+
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         
-             // 一个递归出口，很简单，就是考虑遍历到空节点null的时候
+ // 递归出口: 就是考虑遍历到空节点null的时候,当传入的二叉树为 null空树的时候，公共父节点就是 null
         if(root == null)
             return null;
-        	
-        		// 因为是 查找，所以用--->前序遍历 
-        if(root == p || root == q)            // 中
-            return root;
+      
+     
+    // 因为是 "查找"类型的二叉树。所以用--->前序遍历 
+        
+        // 当 root节点非空的时候，，，
+     // 当 root节点 等于 q或者 p的时候。那么说明 剩下的q或者p肯定是在 root的左子树和右子树，
+        // 所以此时 直接返回 root 就行。root就是 q 和 p的最近公告祖先  
+        if(root == p || root == q)            // 中 ：
+            return root;	
         					
+        
+// 当root 根节点不是  p和q中的任意一个节点。。那么就继续 分别往 左子树、右子树找p和q的最近公共祖先
         TreeNode left = lowestCommonAncestor(root.left, p, q);   //左 
         TreeNode right = lowestCommonAncestor(root.right, p, q);   //右
         	
-  	// 所以 剩下的这堆 逻辑。。。  和 “前序”遍历的，其实 是有点中途的，”特殊”记忆吧。。用于不断向上返回，，，，
+  	
 
-                // 其实 题目中分析的太全面了，但是 本题目的q和p是一定存在二叉树的，所以 1.情况是不需要考虑的！！！所以我这里就没写
-        if(left != null && right != null) return root; // 2. 
+
+        //左子树和右子树 都没找到 它们的 公共祖先 ，那就返回 null
+        if(left == null && right == null) {
+            return null;
+        }
         
-        if(right == null) return left; // 3.
-        else	return right; //4.  要这么写，否则 力扣的最后返回值会出问题。。。。
+        //左子树 没找到 它们的 公共祖先，就返回右子树的结果
+        if (left == null) {
+            return right;
+        }
+        //右子树 没找到 它们的 公共祖先，就返回左子树的结果
+        if (right == null) {
+            return left;
+        }
+        
+        //左、右子树都找到p和q了的公共祖先了，那就说明 p和q分别在左、右两个子树上，所以此时的最近公共祖先就是 root根节点
+        return root;
             
         
         
@@ -11662,39 +11698,54 @@ class Solution {
 题解：https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/solutions/17274/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--26/?envType=study-plan-v2&envId=top-100-liked
 
 ```java
+/**
 
-//  “原地”修改   -- --  ！！！！
-// 这道题的话就记住这个解法就够了 √ ！！。。。“递归”的解法×，实在很难理解。。。。
-//  代码的写法 和 解法一的图片顺序有点不太一样的。。按照代码顺序即可。！！
+      采用的是 迭代的方式，，没有采用 “递归”的解法。。。
+      
+  主要思路：
+  
+  外面是一个while循环。。。root根节点，作为一个移动指针，一直向右边移动！！当 左节点为空的时候，root一直向右移动。。。。当 left左节点不为空的时候，就要进行以下 3步操作：
+  
+  1. 先找到 root左子树的 最右边的那个节点
+  2. 找到之后，，然后 将原来的root右子树，接到 root左子树的最右边那个节点
+  3. 最后 将root左子树插入到 原来root右子树的地方
+  
+  之后，root肯定还是要 继续 指向右节点right 。。
+  
+
+**/
+
 class Solution {
       
-public void flatten(TreeNode root) {
+	public void flatten(TreeNode root) {
     
-		// 外面要套一层while循环，这个root节点，好比是一个 "移动"指针，一直是 移动 到root的 right 右节点！！...  一直重复上边的过程，直到 新的右子树为 null
-    while (root != null) { 
+		// 外面要套一层 while循环，这个root节点，好比是一个 "移动"指针，一直是 移动 到root的 right 右节点！！...  一直重复上边的过程，直到 新的节点的 ，，右子树为空 null
+    	while (root != null) { 
         
-        // 左子树为 null，直接考虑下一个节点，也就是root的右节点right 。
+        //如果root它的左子树为 null，直接考虑 下一个节点，也就是root的右节点right 。
         if (root.left == null) {
             root = root.right;
         } 
-        		// 左子树不为空null 的时候 
+        		// 如果root的左子树 不为空null 的时候 
         else {
             
-            // 2.先找  左子树最右边的节点，用 pre 临时移动指针 每次去保存。每一次while循环 都会重新初始化。
+            // 1.先找 root左子树最右边的那个节点
+    // 先声明一个 pre 临时移动指针，初始指向 root的left左节点。。在while 循环里面，一直向右边找
             TreeNode pre = root.left;
             while (pre.right != null) {
                 pre = pre.right;
             } 
             
-            //1.将原来的右子树 接到  左子树的最右边节点
+            //2.当找到 root左子树最右边的那个节点之后，，将原来的root的右子树 接到  root左子树的最右边节点，的右边 。
             pre.right = root.right;
                
-            // 将左子树插入到右子树的地方，记得给 root的左节点置为null，题目要求的
+  //将 原来的root左子树 ，插入到 root 右子树的地方，记得给 root的左节点left置为null，题目要求
             root.right = root.left;
             root.left = null;
             
             
-            // 做完上边的操作之和，肯定也要考虑下一个节点，也就是root的右节点 right
+            // 做完上边的操作之和，肯定也要考虑 root下一个节点，也就是root的右节点 right
+            // 一直while循环，向右 移动。。
             root = root.right;
         }
     }
@@ -11729,57 +11780,63 @@ public void flatten(TreeNode root) {
 
 题解：
 
-https://leetcode.cn/problems/binary-tree-maximum-path-sum/solutions/297276/shou-hui-tu-jie-hen-you-ya-de-yi-dao-dfsti-by-hyj8/?envType=study-plan-v2&envId=top-100-liked  文字思路 
-
 https://leetcode.cn/problems/binary-tree-maximum-path-sum/solutions/275919/er-cha-shu-de-zui-da-lu-jing-he-zhu-yao-li-jie-ti-/?envType=study-plan-v2&envId=top-100-liked  代码参考
 
 ```java
-// 别纠结 递归的细节 ！！！！！！！！要直接想象成 已经遍历好的结果。。。
 
-//核心：在于计算结果的时候要 先计算 左右子树的最大路径和，然后每次都要 更新全局变量res 最大路径和，也就是 leftmax+rightmax+root.val ，最后递归向上返回的时候只能返回 较大的一边，并且加上根节点。
+/** 
+    大致思路：
+	  在向下"递归"遍历↓ 的时候，先计算 当前节点的 左、右子树的最大路径和，分别是  leftmax 和 rightmax
+	  然后每次都要 更新全局变量res 最大路径和，也就是res和(leftmax+rightmax+root.val当前节点)  进行比较，，不断更新最终的res值。。。。
+  然后 "递归"向上↑返回的时候, 只能返回 较大的一边 leftmax还是 rightmax，记得再加上 root.val。
 
+**/
 
 class Solution {
     
-    // 挺常见的写法，递归的时候，定义一个 全局变量res 
-    // 因为 找最大值的话，都是 把res 定义成 Integer的最小值，然后在过程中不断比较，更新res的值
-    int res = Integer.MIN_VALUE;
+    // 定义一个 全局变量 max，因为 找最大值的话，都是 把 max 定义成 Integer的最小值，然后在过程中不断比较，更新 max 的值
+    int max = Integer.MIN_VALUE;
+    
     
     public int maxPathSum(TreeNode root) {
         
-         
-        dfs(root);
-        return res;
+         // 调用下面的"次"函数，它负责 "递归" 计算的。。。。
+        find(root);
+        
+        return max;
+        
     }
 
-    public int dfs(TreeNode root) {
+    public int find(TreeNode root) {
         
-        // 这里的递归出口就只是 遍历到空节点的时候，那么此时返回的最大路径和就是0
-        // 另一种含义的话，就是 传入的是一颗空树，那么它的 最大路径和当然是0
-        
-        // 这道题的话，就只需要 考虑 为空的递归出口就行;对于 不符合题意的，不需要讨论了！！~~
+    // 递归出口: 遍历到空节点的时候，就是 传入的是一颗空树null ，那么此时返回的最大路径和就是0
         if (root == null) {
             return 0;
         }
+       
+        
+        
+        
+        //  因为是 "计算"类型的二叉树 ，所以是 ---> 后序
+        
         
     /**
-    Q：左、右孩子贡献 为什么要大于等于0？
-    A: 因为计算从某一节点出发的路径和的时候，计算公式为： 当前节点值 + 左孩子贡献 + 右孩子贡献，
+    Q：为什么这里面的 还要Math.max(0,find()) 和 0 进行比较， 左、右孩子贡献 为什么要大于等于0？
+    A: 因为计算 从某一节点出发的 路径和，计算公式:当前节点值root.val + 左孩子贡献 + 右孩子贡献，
         而左、右孩子贡献 是「可选的」，也就是说当某一边贡献小于0的时候，也就是 负数 ，其实是不需要去选择 左边 或右边 的路径，只需要返回 0，就代表 不选择 某一边的路径。。。当两边路径都是 负数的时候，完全可以两条路径 都不，也就是都选择 0。那么就只需要 0+0+ root.val  = root.val ，当前节点root的值就可以作为从该节点root 出发的最大路径和 
-    **/
+   				↓
+   				↓    
+   **/
+         
+        int leftMax  = Math.max(0, find(root.left));         // 左：左孩子贡献
+        int rightMax = Math.max(0, find(root.right));        // 右：右孩子贡献
+        
+        // 这个 max 肯定是要一直更新的，三者的要相加 ！！！ 	=====》 主要是为了计算最终的答案				  (当前节点值root.val + 左孩子贡献 + 右孩子贡献)					
+        max = Math.max(max, root.val + leftMax + rightMax); // 中：
         
         
-        //  因为是 计算类型的题目，所以是 --->后序
-        
-        int leftMax  = Math.max(0, dfs(root.left));         // 左：左孩子贡献
-        int rightMax = Math.max(0, dfs(root.right));        // 右：右孩子贡献
-        
-        // 这个 肯定是要一直更新的，三者的要相加 ！！！ 				
-        													
-        res = Math.max(res, root.val + leftMax + rightMax); // 中：更新res
-        
-        
-        return root.val + Math.max(leftMax, rightMax);      // 返回当前节点的总贡献
+ // 每次计算完，记得 向上"递归"返回，当前节点root 的总贡献。。。<---选择某个更大贡献的 子树 再加+ 															当前节点 root.val 
+        return root.val + Math.max(leftMax, rightMax);      
     }
 
     
@@ -11790,8 +11847,6 @@ class Solution {
 ### BFS 广度优先遍历
 
    基本上就是这套模板了，如果 某道题目你要用 **层序**遍历的话，就按照 **双层while循环**的 写法。**外层 while 循环**  控制 遍历是否结束，只要 队列Deque 不为空，遍历就没结束；**内层 for循环** 控制 入队的元素个数 ，然后配合一个 队列 Deque和  定义的一个 **队列长度 size**的 变量，代表 二叉树 **每一层的节点数**。不过  根据 题目的不同，   代码 **有些地方 是需要改  **，比如  返回值 return 的地方，或者 其他地方。。
-
-
 
 #### 107 二叉树的层次遍历 II
 
@@ -11815,19 +11870,10 @@ class Solution {
 
 ```java
 /**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
+
+
+
+
  */
 class Solution {
     public List<List<Integer>> levelOrderBottom(TreeNode root) {
@@ -13399,12 +13445,13 @@ public class TreeNode {
       int val;
       TreeNode left;
       TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-     TreeNode(int val, TreeNode left, TreeNode right) {
-        	this.val = val;
-            this.left = left;
-           this.right = right;
+      TreeNode() {
+          
+      }
+      TreeNode(int val) { 
+          this.val = val; 
+      }
+    
       }
 }
 
@@ -13432,10 +13479,10 @@ class Solution {
         // 首先把 树的 根节点root 入队列 
         queue.offerLast(root);
 
-        // 模板 ！ 双层 while循环。 队列非空 作为循环 终止条件
+        // 模板！！！ 双层 while循环。 Deque 队列非空，作为 循环的终止条件
         while (!queue.isEmpty()) {
 
-  //每次最外层循环开始的时候，必须 重新记录 此时的 队列的长度, 即 二叉树的 当前层的需遍历的节点数， 很关键 ！！
+  // 每次最外层 while循环 开始的时候，必须 重新记录 此时队列Deque 的长度, 即 二叉树的 当前层的 需遍历的节点数， 很关键 ！！
             int size = queue.size();
             // level 集合 保存  每一层的 节点，按顺序添加。
             List<Integer> level = new ArrayList<>();
@@ -13447,7 +13494,7 @@ class Solution {
                 TreeNode node = queue.pollFirst();
                 level.add(node.val);
 
-                // 只要 出队的节点 有 左右孩子节点，那么就要 把他们 插入 队列 ！
+                // 只要 出队的节点 有 左、右孩子节点，那么就要 把他们 插入 队列 ！
                 if (node.left != null) {
                     queue.add(node.left);
                 }
@@ -13480,13 +13527,11 @@ public class TreeNode {
       int val;
       TreeNode left;
       TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-     TreeNode(int val, TreeNode left, TreeNode right) {
-        	this.val = val;
-            this.left = left;
-           this.right = right;
+    
+      TreeNode(int val) { 
+          this.val = val; 
       }
+    
   }
 
 
@@ -13670,21 +13715,16 @@ class Solution {
 题解：https://www.bilibili.com/video/BV1Wh411S7xt/?spm_id_from=333.788&vd_source=5fe50b1b35a25689fb0988c454fec5e0
 
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
+public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+    
+      TreeNode(int val) { 
+          this.val = val; 
+      }
+    
+  }
 
 // 前序遍历, 中  左右
 class Solution {
