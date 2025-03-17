@@ -2205,7 +2205,8 @@ class Solution {
                 arr.add(matrix[top][i]);
             }
             top++; // 上边界 top 向下移动一行
-            if (top > down) break;    // 如果 上下边界 相遇，则退出循环 break
+            if (top > down) 
+                break;    // 如果 上下边界 相遇，则退出循环 break
             				
             
             // 从上到下遍历并将元素添加到结果列表
@@ -2213,7 +2214,8 @@ class Solution {
                 arr.add(matrix[i][right]);
             }
             right--; // 右边界right 向左移动一列
-            if (left > right) break; // 如果左右边界相遇，则退出循环 break
+            if (left > right) 
+                break; // 如果左右边界相遇，则退出循环 break
             
             	// 从上到下遍历的话	和下面的从下到上 一样，if 条件都是 left > right 
             
@@ -2222,7 +2224,8 @@ class Solution {
                 arr.add(matrix[down][i]);
             }
             down--; // 下边界down 向上移动一行
-            if (top > down) break; // 如果上下边界相遇，则退出循环 break
+            if (top > down) 
+                break; // 如果上下边界相遇，则退出循环 break
             				
             
             
@@ -2231,7 +2234,8 @@ class Solution {
                 arr.add(matrix[i][left]);
             }
             left++; // 左边界向右移动一列
-            if (left == right) break; // 如果左右边界相遇，则退出循环
+            if (left > right) 
+                break; // 如果左右边界相遇，则退出循环
         
         }
         
