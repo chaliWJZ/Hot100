@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git config *)",
+      "Bash(switch-cc --version)",
+      "Bash(npm update *)",
+      "Bash(npm search *)",
+      "Bash(npm view *)",
+      "Bash(npm config *)",
+      "Bash(javac -encoding UTF-8 -sourcepath src -d /tmp/classes src/main/java/org/example/BinaryTree/BFS/No513/Solution513.java src/main/java/org/example/CommonArray/No240/Test.java src/main/java/org/example/CommonArray/No416/Solution416.java src/main/java/org/example/CommonArray/No48/Test.java src/main/java/org/example/CommonArray/No63/Test.java src/main/java/org/example/CommonArray/No64/Test.java)",
+      "Bash(npm ls *)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No240/Test.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No416/Solution416.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No48/Test.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No63/Test.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No64/Test.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No73/Test.java src/main/java/org/example/CommonArray/No74/Test.java src/main/java/org/example/CommonString/No20/Test.java src/main/java/org/example/CommonString/No394/Test.java src/main/java/org/example/CommonString/No516/Test.java src/main/java/org/example/CommonString/No72/Test.java src/main/java/org/example/CommonString/No93/Test.java src/main/java/org/example/ListNode/DummyHead/No23/Test.java src/main/java/org/example/ListNode/NoDummyHead/No141/Test.java src/main/java/org/example/ListNode/NoDummyHead/No142/Test.java src/main/java/org/example/ListNode/NoDummyHead/No160/Test.java)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/CommonArray/No73/Solution73.java src/main/java/org/example/CommonArray/No74/Solution74.java src/main/java/org/example/CommonString/No20/Solution20.java src/main/java/org/example/CommonString/No394/Solution394.java src/main/java/org/example/CommonString/No516/Solution516.java src/main/java/org/example/CommonString/No72/Solution72.java src/main/java/org/example/CommonString/No93/Solution93.java src/main/java/org/example/ListNode/DummyHead/No23/Solution23.java src/main/java/org/example/ListNode/NoDummyHead/No141/Solution141.java src/main/java/org/example/ListNode/NoDummyHead/No142/Solution142.java src/main/java/org/example/ListNode/NoDummyHead/No160/Solution160.java)",
+      "Bash(npm install *)",
+      "Bash(claude *)",
+      "Bash(npx api-switch-cc *)",
+      "Bash(api-switch-cc --version)",
+      "Bash(dir C:\\\\Program Files\\\\nodejs\\\\node_modules\\\\api-switch-cc *)",
+      "Bash(api-switch *)",
+      "Bash(git show *)",
+      "Bash(cat \"build.gradle\")",
+      "Bash(cat \"pom.xml\")",
+      "Bash(ls *.gradle *.xml)",
+      "Bash(git stash *)",
+      "Bash(ls \"src/main/java/org/example/\")",
+      "Bash(mvn compile *)",
+      "Bash(mvn clean *)",
+      "Bash(nvm install *)",
+      "Bash(nvm use *)",
+      "Bash(nvm alias *)",
+      "Bash(nvm list *)",
+      "Bash(javac -encoding UTF-8 -sourcepath src/main/java -d /tmp/classes src/main/java/org/example/BinaryTree/BFS/No513/Solution513.java)"
+    ]
+  }
+}
