@@ -31,12 +31,23 @@ public class Solution35 {
          				// 主要是这行代码，很重要 ！！！
         		return left;
         
- 	 /*** 
-        可以返回 right + 1，也可以返回 left 的原因： 
-        因为循环的最后一步一定是left==right，如果导致这个循环打破只有两个原因，要么是right = mid - 1导致left>right，说明我们要插入的元素位置应该是小于mid元素。这种情况也就导致了right的最终下标相对我们要插入的元素位置是左移的，所以最后的位置应该是right + 1； 
-        要么是left=mid +1，导致的 left >right，说明我们要插入的元素位置应该是大于mid元素的。这就说明left的最终位置是相对插入元素右移了一位，因为本身插入的元素就应该右移，所以只需要返回left即可
-           
-           ***/
+ /***
+        为什么未找到时返回 left（或 right + 1）就是插入位置：
+ 
+        循环退出时一定有 left > right，且恒有 left == right + 1（左闭右闭区间 [left, right] 已为空）。
+        退出前的最后一次迭代一定满足 left == right == mid，此时只有两种情况：
+ 
+        情况一：nums[mid] > target → 执行 right = mid - 1 后退出。
+            说明 target 比当前 mid 元素小，应插在 mid 的位置（即该位置元素整体后移）。
+            所以返回 right + 1 = (mid - 1) + 1 = mid，也与插入位置一致。
+ 
+        情况二：nums[mid] < target → 执行 left = mid + 1 后退出。
+            说明 target 比当前 mid 元素大，应插在 mid + 1 的位置。
+            此时退出时 left == mid + 1，正好等于插入位置；
+            所以返回 left下标
+ 
+        因为循环退出时恒有 left == right + 1，所以返回 left 和返回 right + 1 完全等价。
+        ***/
 
     }
 }
