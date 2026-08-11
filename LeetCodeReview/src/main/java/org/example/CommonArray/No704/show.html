@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode 704 - 二分查找动画 (解法一: 左闭右闭)</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --text: #e0e0e0;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --mid-color: #f5a623;
+            --found-color: #27ae60;
+            --out-range: #555;
+            --in-range: #3498db;
+            --left-ptr: #e74c3c;
+            --right-ptr: #9b59b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #3498db, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 0.95em;
+            margin-bottom: 25px;
+        }
+
+        .subtitle span {
+            color: var(--highlight);
+            font-weight: bold;
+        }
+
+        /* ---------- 输入区 ---------- */
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        .input-group input {
+            padding: 10px 14px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 1em;
+            width: 140px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--highlight);
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            color: #fff;
+        }
+
+        .btn-reset { background: #e94560; }
+        .btn-reset:hover { background: #c0392b; transform: translateY(-2px); }
+
+        /* ---------- 数组可视化 ---------- */
+        .array-section {
+            margin-bottom: 20px;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
+            min-height: 130px;
+            position: relative;
+        }
+
+        .array-cell {
+            width: 65px;
+            height: 65px;
+            background: var(--out-range);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #fff;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid transparent;
+        }
+
+        .array-cell.in-range {
+            background: var(--in-range);
+            border-color: #5dade2;
+            box-shadow: 0 0 20px rgba(52,152,219,0.4);
+        }
+
+        .array-cell.mid {
+            background: var(--mid-color);
+            border-color: #f7dc6f;
+            box-shadow: 0 0 25px rgba(245,166,35,0.6);
+            transform: translateY(-10px) scale(1.08);
+            z-index: 2;
+        }
+
+        .array-cell.found {
+            background: var(--found-color);
+            border-color: #2ecc71;
+            box-shadow: 0 0 30px rgba(39,174,96,0.7);
+            transform: translateY(-12px) scale(1.1);
+            animation: pulse-found 0.6s ease-in-out infinite alternate;
+            z-index: 3;
+        }
+
+        .array-cell.not-found {
+            background: #e74c3c;
+            border-color: #c0392b;
+            animation: shake 0.5s ease;
+        }
+
+        .array-cell.out-range {
+            background: #3a3a5c;
+            border-color: #555;
+            opacity: 0.5;
+        }
+
+        .array-index {
+            text-align: center;
+            font-size: 0.75em;
+            color: #aaa;
+            margin-top: 6px;
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            right: 0;
+        }
+
+        /* ---------- 指针标签 ---------- */
+        .pointer-labels {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #ccc;
+            min-height: 24px;
+        }
+
+        .pointer-labels .cell-ptr {
+            width: 65px;
+            text-align: center;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .ptr-L { color: var(--left-ptr); }
+        .ptr-M { color: var(--mid-color); }
+        .ptr-R { color: var(--right-ptr); }
+
+        /* ---------- 图例 ---------- */
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .ld-in-range { background: var(--in-range); }
+        .ld-mid { background: var(--mid-color); }
+        .ld-found { background: var(--found-color); }
+        .ld-out { background: #3a3a5c; }
+
+        /* ---------- 代码面板 ---------- */
+        .code-section {
+            margin-bottom: 20px;
+        }
+
+        .code-section h3 {
+            font-size: 0.95em;
+            color: #aaa;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .code-panel {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Consolas', 'Courier New', 'Microsoft YaHei', monospace;
+            font-size: 0.88em;
+            line-height: 1.8;
+            max-height: 328px;
+            overflow-y: auto;
+        }
+
+        .code-line {
+            display: flex;
+            padding: 0 16px;
+            transition: background 0.35s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .code-line .line-num {
+            color: #6e7681;
+            text-align: right;
+            min-width: 36px;
+            padding-right: 16px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .code-line .line-code {
+            color: #c9d1d9;
+            white-space: pre;
+        }
+
+        /* 关键字颜色 */
+        .code-line .kw { color: #ff7b72; }
+        .code-line .type { color: #ffa657; }
+        .code-line .fn { color: #d2a8ff; }
+        .code-line .num { color: #79c0ff; }
+        .code-line .cmt { color: #8b949e; font-style: italic; }
+
+        /* 当前执行行 - 红色高亮 */
+        .code-line.active {
+            background: rgba(233, 69, 96, 0.25);
+            border-left-color: #e94560;
+        }
+
+        .code-line.active .line-num {
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .code-line.active .line-code {
+            color: #fff;
+        }
+
+        /* ---------- 状态信息 ---------- */
+        .status-panel {
+            background: #0f3460;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 0.8em;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .status-value.left { color: var(--left-ptr); }
+        .status-value.mid { color: var(--mid-color); }
+        .status-value.right { color: var(--right-ptr); }
+
+        .status-msg {
+            flex-basis: 100%;
+            text-align: center;
+            font-size: 1em;
+            color: #ccc;
+            min-height: 24px;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        /* ---------- 按钮区 ---------- */
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-play { background: #27ae60; }
+        .btn-play:hover { background: #219a52; transform: translateY(-2px); }
+        .btn-play.paused { background: #f39c12; }
+
+        .btn-prev { background: #636e72; }
+        .btn-prev:hover { background: #4a5558; transform: translateY(-2px); }
+        .btn-step { background: #3498db; }
+        .btn-step:hover { background: #2980b9; transform: translateY(-2px); }
+
+        .btn-speed { background: #8e44ad; }
+        .btn-speed:hover { background: #7d3c98; transform: translateY(-2px); }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ---------- 动画 ---------- */
+        @keyframes pulse-found {
+            from { box-shadow: 0 0 25px rgba(39,174,96,0.7); }
+            to { box-shadow: 0 0 45px rgba(39,174,96,1); }
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in { animation: slideIn 0.4s ease forwards; }
+
+        /* ---------- 响应式 ---------- */
+        @media (max-width: 700px) {
+            .container { padding: 20px; }
+            .array-cell { width: 48px; height: 48px; font-size: 1em; }
+            .pointer-labels .cell-ptr { width: 48px; font-size: 0.7em; }
+            .code-panel { font-size: 0.75em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 LeetCode 704 · 二分查找</h1>
+        <p class="subtitle">解法一：<span>左闭右闭 [left, right]</span> — while(left &lt;= right)</p>
+
+        <!-- 输入 -->
+        <div class="input-row">
+            <div class="input-group">
+                <label>📋 数组 (逗号分隔, 有序):</label>
+                <input type="text" id="arrInput" value="-1,0,3,5,9,12" oninput="resetAll()">
+            </div>
+            <div class="input-group">
+                <label>🎯 target:</label>
+                <input type="text" id="targetInput" value="9" oninput="resetAll()">
+            </div>
+            <button class="btn btn-reset" onclick="resetAll()">🔄 重置</button>
+        </div>
+
+        <!-- 图例 -->
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot ld-in-range"></span> 搜索范围 [left, right]</div>
+            <div class="legend-item"><span class="legend-dot ld-mid"></span> mid 当前比较</div>
+            <div class="legend-item"><span class="legend-dot ld-found"></span> 找到目标 🎉</div>
+            <div class="legend-item"><span class="legend-dot ld-out"></span> 已排除</div>
+        </div>
+
+        <!-- 数组可视化 -->
+        <div class="array-section">
+            <div class="array-container" id="arrayContainer"></div>
+            <div class="pointer-labels" id="pointerLabels"></div>
+        </div>
+
+        <!-- 代码执行区 -->
+        <div class="code-section">
+            <h3>📝 代码执行追踪</h3>
+            <div class="code-panel" id="codePanel">
+                <div class="code-line" data-line="1"><span class="line-num">1</span><span class="line-code"><span class="kw">int</span> <span class="fn">search</span>(<span class="type">int</span>[] nums, <span class="type">int</span> target) {</span></div>
+                <div class="code-line" data-line="2"><span class="line-num">2</span><span class="line-code">    <span class="type">int</span> left = <span class="num">0</span>, right = nums.length - <span class="num">1</span>;</span></div>
+                <div class="code-line" data-line="3"><span class="line-num">3</span><span class="line-code">    <span class="kw">while</span> (left &lt;= right) {  <span class="cmt">// 左闭右闭</span></span></div>
+                <div class="code-line" data-line="4"><span class="line-num">4</span><span class="line-code">        <span class="type">int</span> mid = (left + right) / <span class="num">2</span>;</span></div>
+                <div class="code-line" data-line="5"><span class="line-num">5</span><span class="line-code">        <span class="kw">if</span> (nums[mid] == target)</span></div>
+                <div class="code-line" data-line="6"><span class="line-num">6</span><span class="line-code">            <span class="kw">return</span> mid;  <span class="cmt">// 找到了！</span></span></div>
+                <div class="code-line" data-line="7"><span class="line-num">7</span><span class="line-code">        <span class="kw">if</span> (target &lt; nums[mid])</span></div>
+                <div class="code-line" data-line="8"><span class="line-num">8</span><span class="line-code">            right = mid - <span class="num">1</span>;  <span class="cmt">// 目标在左半边</span></span></div>
+                <div class="code-line" data-line="9"><span class="line-num">9</span><span class="line-code">        <span class="kw">else</span></span></div>
+                <div class="code-line" data-line="10"><span class="line-num">10</span><span class="line-code">            left = mid + <span class="num">1</span>;  <span class="cmt">// 目标在右半边</span></span></div>
+                <div class="code-line" data-line="11"><span class="line-num">11</span><span class="line-code">    }</span></div>
+                <div class="code-line" data-line="12"><span class="line-num">12</span><span class="line-code">    <span class="kw">return</span> -<span class="num">1</span>;  <span class="cmt">// 未找到</span></span></div>
+                <div class="code-line" data-line="13"><span class="line-num">13</span><span class="line-code">}</span></div>
+            </div>
+        </div>
+
+        <!-- 状态面板 -->
+        <div class="status-panel">
+            <div class="status-item">
+                <div class="status-label">LEFT</div>
+                <div class="status-value left" id="valLeft">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">MID</div>
+                <div class="status-value mid" id="valMid">-</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">RIGHT</div>
+                <div class="status-value right" id="valRight">-</div>
+            </div>
+            <div class="status-msg" id="statusMsg">点击 "▶ 自动播放" 或 "→ 下一步" 开始</div>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="controls">
+            <button class="btn btn-prev" id="btnPrev" onclick="stepBackward()">← 上一步</button>
+            <button class="btn btn-play" id="btnPlay" onclick="togglePlay()">▶ 自动播放</button>
+            <button class="btn btn-step" id="btnStep" onclick="stepForward()">→ 下一步</button>
+            <button class="btn btn-speed" id="btnSpeed" onclick="cycleSpeed()">⏱ 速度: 1x</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 状态管理 ====================
+        let nums = [];
+        let target = null;
+        let left = 0, right = 0, mid = -1;
+        let steps = [];           // 所有步骤的快照
+        let currentStep = 0;     // 当前步骤索引 (0 = 初始状态)
+        let isPlaying = false;
+        let playTimer = null;
+        let speedLevel = 3;      // 0=0.25x, 1=0.5x, 2=0.75x, 3=1x, 4=1.5x
+        const speeds = [4000, 2000, 1333, 1000, 667];
+        let found = false;
+        let foundIndex = -1;
+
+        // ==================== 代码行映射 (phase → 行号) ====================
+        const phaseToLine = {
+            'init':         2,   // int left = 0, right = nums.length - 1;
+            'calc_mid':     4,   // int mid = (left + right) / 2;
+            'found':        6,   // return mid;
+            'go_left':      7,   // if (target < nums[mid])
+            'update_right': 8,   // right = mid - 1;
+            'go_right':    10,   // left = mid + 1;
+            'update_left': 10,   // left = mid + 1;
+            'not_found':   12,   // return -1;
+        };
+
+        function highlightCodeLine(lineNum) {
+            const allLines = document.querySelectorAll('#codePanel .code-line');
+            allLines.forEach(el => el.classList.remove('active'));
+            if (lineNum > 0) {
+                const target = document.querySelector('#codePanel .code-line[data-line="' + lineNum + '"]');
+                if (target) {
+                    target.classList.add('active');
+                    target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+            }
+        }
+
+        // ==================== 核心：模拟算法并录制步骤 ====================
+        function recordSteps() {
+            steps = [];
+            found = false;
+            foundIndex = -1;
+
+            let l = 0, r = nums.length - 1;
+            steps.push({ left: 0, right: nums.length - 1, mid: -1, phase: 'init' });
+
+            while (l <= r) {
+                let m = Math.floor((l + r) / 2);
+                steps.push({ left: l, right: r, mid: m, phase: 'calc_mid' });
+
+                if (nums[m] === target) {
+                    steps.push({ left: l, right: r, mid: m, phase: 'found' });
+                    found = true;
+                    foundIndex = m;
+                    return;
+                } else if (target < nums[m]) {
+                    steps.push({ left: l, right: r, mid: m, phase: 'go_left' });
+                    r = m - 1;
+                    steps.push({ left: l, right: r, mid: m, phase: 'update_right' });
+                } else {
+                    steps.push({ left: l, right: r, mid: m, phase: 'go_right' });
+                    l = m + 1;
+                    steps.push({ left: l, right: r, mid: m, phase: 'update_left' });
+                }
+            }
+
+            steps.push({ left: l, right: r, mid: -1, phase: 'not_found' });
+        }
+
+        // ==================== 渲染 ====================
+        function renderStep(stepIndex) {
+            if (stepIndex >= steps.length) return;
+            const step = steps[stepIndex];
+            left = step.left;
+            right = step.right;
+            mid = step.mid;
+            currentStep = stepIndex;
+
+            const container = document.getElementById('arrayContainer');
+            const labels = document.getElementById('pointerLabels');
+
+            let cellsHTML = '';
+            let labelsHTML = '';
+
+            for (let i = 0; i < nums.length; i++) {
+                let cls = 'array-cell';
+                let ptrText = '';
+
+                if (found && step.phase === 'found' && i === foundIndex) {
+                    cls += ' found';
+                    ptrText = '✅';
+                } else if (step.phase === 'not_found') {
+                    cls += ' not-found';
+                } else if (i >= left && i <= right) {
+                    cls += ' in-range';
+                    if (i === mid) {
+                        cls += ' mid';
+                        ptrText = '🔽 M';
+                    }
+                } else {
+                    cls += ' out-range';
+                }
+
+                cellsHTML += `<div class="array-cell ${cls} slide-in" style="animation-delay:${i * 0.03}s">
+                    ${nums[i]}<span class="array-index">[${i}]</span>
+                </div>`;
+
+                let ptrClass = '';
+                if (i === left && i === right) {
+                    ptrClass = 'ptr-L';
+                    ptrText = 'L,R';
+                } else if (i === left) {
+                    ptrClass = 'ptr-L';
+                    ptrText = ptrText ? ptrText : '🔽 L';
+                } else if (i === right) {
+                    ptrClass = 'ptr-R';
+                    ptrText = ptrText ? ptrText : '🔽 R';
+                } else if (i === mid && ptrText === '') {
+                    ptrClass = 'ptr-M';
+                    ptrText = '🔽 M';
+                }
+                labelsHTML += `<div class="cell-ptr ${ptrClass}">${ptrText}</div>`;
+            }
+
+            container.innerHTML = cellsHTML;
+            labels.innerHTML = labelsHTML;
+
+            document.getElementById('valLeft').textContent = left;
+            document.getElementById('valRight').textContent = right;
+            document.getElementById('valMid').textContent = mid >= 0 ? mid : '-';
+
+            const msgEl = document.getElementById('statusMsg');
+            switch (step.phase) {
+                case 'init':
+                    msgEl.innerHTML = `🔰 初始化：left = <b style="color:#e74c3c">0</b>，right = <b style="color:#9b59b6">${nums.length - 1}</b>（左闭右闭）`;
+                    break;
+                case 'calc_mid':
+                    msgEl.innerHTML = `📐 计算 mid = (${left} + ${right}) / 2 = <b style="color:#f5a623">${mid}</b>，nums[${mid}] = <b style="color:#f5a623">${nums[mid]}</b>`;
+                    break;
+                case 'found':
+                    msgEl.innerHTML = `🎉 <b style="color:#27ae60">nums[${mid}] == target(${target})</b> 找到了！返回索引 <b style="color:#27ae60">${mid}</b>`;
+                    break;
+                case 'go_left':
+                    msgEl.innerHTML = `⬅️ target(${target}) &lt; nums[${mid}](${nums[mid]})，目标在<u>左半边</u> → right = mid - 1 = <b style="color:#9b59b6">${mid - 1}</b>`;
+                    break;
+                case 'update_right':
+                    msgEl.innerHTML = `📌 更新搜索范围：[<b style="color:#e74c3c">${left}</b>, <b style="color:#9b59b6">${right}</b>]`;
+                    break;
+                case 'go_right':
+                    msgEl.innerHTML = `➡️ target(${target}) &gt; nums[${mid}](${nums[mid]})，目标在<u>右半边</u> → left = mid + 1 = <b style="color:#e74c3c">${mid + 1}</b>`;
+                    break;
+                case 'update_left':
+                    msgEl.innerHTML = `📌 更新搜索范围：[<b style="color:#e74c3c">${left}</b>, <b style="color:#9b59b6">${right}</b>]`;
+                    break;
+                case 'not_found':
+                    msgEl.innerHTML = `❌ left(${left}) &gt; right(${right})，循环结束，未找到 target(${target})，返回 <b style="color:#e94560">-1</b>`;
+                    break;
+            }
+
+            updateButtons();
+            highlightCodeLine(phaseToLine[step.phase] || 0);
+        }
+
+        function updateButtons() {
+            const btnPlay = document.getElementById('btnPlay');
+            const btnStep = document.getElementById('btnStep');
+            const btnPrev = document.getElementById('btnPrev');
+
+            btnPrev.disabled = (currentStep <= 0);
+
+            if (currentStep >= steps.length - 1) {
+                stopPlay();
+                btnPlay.disabled = true;
+                btnPlay.textContent = '⏹ 已完成';
+                btnStep.disabled = true;
+            } else {
+                btnPlay.disabled = false;
+                btnStep.disabled = false;
+                if (isPlaying) {
+                    btnPlay.textContent = '⏸ 暂停';
+                    btnPlay.classList.add('paused');
+                } else {
+                    btnPlay.textContent = '▶ 自动播放';
+                    btnPlay.classList.remove('paused');
+                }
+            }
+        }
+
+        // ==================== 控制函数 ====================
+        function stepForward() {
+            if (currentStep < steps.length - 1) {
+                renderStep(currentStep + 1);
+            }
+        }
+
+        function stepBackward() {
+            if (currentStep > 0) {
+                renderStep(currentStep - 1);
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                if (currentStep >= steps.length - 1) return;
+                startPlay();
+            }
+            updateButtons();
+        }
+
+        function startPlay() {
+            isPlaying = true;
+            updateButtons();
+            scheduleNext();
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            if (playTimer) {
+                clearTimeout(playTimer);
+                playTimer = null;
+            }
+            updateButtons();
+        }
+
+        function scheduleNext() {
+            if (!isPlaying) return;
+            if (currentStep >= steps.length - 1) {
+                stopPlay();
+                return;
+            }
+            playTimer = setTimeout(() => {
+                stepForward();
+                scheduleNext();
+            }, speeds[speedLevel]);
+        }
+
+        function cycleSpeed() {
+            speedLevel = (speedLevel + 1) % speeds.length;
+            const labels = ['0.25x', '0.5x', '0.75x', '1x', '1.5x'];
+            document.getElementById('btnSpeed').textContent = `⏱ 速度: ${labels[speedLevel]}`;
+        }
+
+        function resetAll() {
+            stopPlay();
+
+            const arrStr = document.getElementById('arrInput').value.trim();
+            const targetStr = document.getElementById('targetInput').value.trim();
+
+            try {
+                nums = arrStr.split(',').map(s => parseInt(s.trim()));
+                if (nums.some(isNaN)) return;
+            } catch (e) {
+                return;
+            }
+
+            target = parseInt(targetStr);
+            if (isNaN(target)) {
+                return;
+            }
+
+            currentStep = 0;
+            found = false;
+            foundIndex = -1;
+            recordSteps();
+            renderStep(0);
+            highlightCodeLine(phaseToLine['init']);
+            document.getElementById('btnPlay').disabled = false;
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('btnPlay').textContent = '▶ 自动播放';
+            document.getElementById('btnPlay').classList.remove('paused');
+        }
+
+        // ==================== 初始化 ====================
+        function init() {
+            const arrStr = document.getElementById('arrInput').value.trim();
+            const targetStr = document.getElementById('targetInput').value.trim();
+            nums = arrStr.split(',').map(s => parseInt(s.trim()));
+            target = parseInt(targetStr);
+            recordSteps();
+            renderStep(0);
+            updateButtons();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                stepForward();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentStep > 0) renderStep(currentStep - 1);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                togglePlay();
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                resetAll();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
